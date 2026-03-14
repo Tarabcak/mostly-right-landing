@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostly Right — Prediction Market Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ─── HERO (full viewport, animation background) ─── -->
+  <section class="hero">
+    <canvas id="waveCanvas"></canvas>
+
+    <nav>
+      <a href="/" class="nav-logo"><img src="logo.svg" alt="Mostly Right" class="logo"></a>
+      <a href="#early-access" class="nav-link">Get Early Access</a>
+    </nav>
+
+    <div class="hero-content">
+      <h1>The trading stack for<br>prediction markets.</h1>
+      <p class="hero-sub">Market data, real-world observations, backtesting, and execution — every pipeline between your model and profit, already built.</p>
+      <a href="#early-access" class="cta-btn">Get Early Access</a>
+    </div>
+  </section>
+
+  <!-- ─── FEATURES ─── -->
+  <section class="features">
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Market Data</h3>
+        <p>Real-time and historical orderbooks, tick-level depth, and 1-min OHLCV candles across Kalshi and Polymarket. No scraping. No gaps.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Real-World Data</h3>
+        <p>5-min weather observations, sports results, economic indicators — collected at ML-grade precision, already matched to the right market contracts.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Backtesting</h3>
+        <p>Years of paired market + outcome data ready to query. Walk-forward validation, bracket alignment, and fill simulation built in.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Execution</h3>
+        <p>Signal to order in milliseconds. Fill tracking, position management, and auto-settlement. You build the model. We handle the rest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta-section" id="early-access">
+    <p class="cta-tagline">You find the edge.<br>We handle everything else.</p>
+    <form class="cta-form" onsubmit="return handleSubmit(event)">
+      <input type="email" class="cta-input" placeholder="you@email.com" required>
+      <button type="submit" class="cta-btn cta-btn-form">Get Early Access</button>
+    </form>
+    <p class="cta-note">No spam. Early users get free API access.</p>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <img src="logo.svg" alt="Mostly Right" class="footer-logo">
+    <p>Built by traders who got tired of building the same pipeline twice.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
