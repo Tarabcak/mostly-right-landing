@@ -5,50 +5,270 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mostly Right — Prediction Market Infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; background: #0a0a0a; color: #fff; }
+    
+    .hero-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 48px;
+    }
+    .logo { height: 28px; width: auto; opacity: .8; }
+    .nav-link {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: #0a0a0a;
+      background: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      transition: opacity 0.2s;
+    }
+    .nav-link:hover { opacity: .85; }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100vh - 92px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 48px 100px;
+    }
+    h1 {
+      font-family: 'Funnel Display', sans-serif;
+      font-weight: 400;
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: rgba(255,255,255,.4);
+      max-width: 720px;
+      margin-bottom: 48px;
+    }
+    .cta-btn {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: #0a0a0a;
+      background: #fff;
+      border: none;
+      padding: 16px 36px;
+      cursor: pointer;
+      text-decoration: none;
+      width: fit-content;
+      transition: opacity 0.2s;
+    }
+    .cta-btn:hover { opacity: .85; }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,.08);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ─── FEATURES ─── */
+    .features {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 56px 80px;
+    }
+    .feature-card h3 {
+      font-family: 'Funnel Display', sans-serif;
+      font-weight: 400;
+      font-size: 24px;
+      color: rgba(255,255,255,.9);
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: rgba(255,255,255,.35);
+    }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 48px 120px;
+      text-align: center;
+    }
+    .cta-tagline {
+      font-family: 'Funnel Display', sans-serif;
+      font-weight: 400;
+      font-size: clamp(24px, 3vw, 34px);
+      color: rgba(255,255,255,.9);
+      margin-bottom: 36px;
+      line-height: 1.25;
+    }
+    .cta-form {
+      display: flex;
+      gap: 0;
+      margin-bottom: 14px;
+    }
+    .cta-input {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.15);
+      border-right: none;
+      color: #fff;
+      outline: none;
+    }
+    .cta-input::placeholder { color: rgba(255,255,255,.2); }
+    .cta-input:focus { border-color: rgba(255,255,255,.35); }
+    .cta-btn-form {
+      background: #fff;
+      color: #0a0a0a;
+      border: 1px solid #fff;
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .cta-btn-form:hover { opacity: .85; }
+    .cta-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,.2);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo { height: 14px; opacity: .25; }
+    footer p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,.2);
+      text-align: right;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .logo { height: 20px; }
+      .nav-link { font-size: 10px; padding: 8px 14px; }
+      h1 { font-size: clamp(32px, 10vw, 48px); margin-bottom: 20px; }
+      .hero { padding: 0 20px 48px; min-height: calc(100vh - 60px); }
+      .hero-sub { font-size: 12px; line-height: 1.7; margin-bottom: 32px; max-width: 100%; }
+      .cta-btn { font-size: 11px; padding: 14px 28px; }
+      .features { padding: 60px 20px; }
+      .features-grid { grid-template-columns: 1fr; gap: 32px; }
+      .feature-card h3 { font-size: 20px; }
+      .feature-card p { font-size: 11px; }
+      .cta-section { padding: 40px 20px 60px; max-width: 100%; }
+      .cta-tagline { font-size: clamp(20px, 5vw, 28px); }
+      .cta-form { flex-direction: column; }
+      .cta-input { border-right: 1px solid rgba(255,255,255,.15); border-bottom: none; }
+      .cta-btn-form { width: 100%; }
+      .divider { margin: 0 20px; }
+      footer { padding: 16px 20px; flex-direction: column; gap: 8px; }
+      footer p { text-align: center; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ─── HERO (full viewport, animation background) ─── -->
-  <section class="hero">
-    <canvas id="waveCanvas"></canvas>
+  <div class="hero-wrapper">
+  <canvas id="waveCanvas"></canvas>
 
-    <nav>
-      <a href="/" class="nav-logo"><img src="logo.svg" alt="Mostly Right" class="logo"></a>
-      <a href="#early-access" class="nav-link">Get Early Access</a>
-    </nav>
+  <nav>
+    <a href="/"><img src="logo-white.svg" alt="Mostly Right" class="logo"></a>
+    <a href="#early-access" class="nav-link">Get Early Access</a>
+  </nav>
 
-    <div class="hero-content">
-      <h1>The trading stack for<br>prediction markets.</h1>
-      <p class="hero-sub">Market data, real-world observations, backtesting, and execution — every pipeline between your model and profit, already built.</p>
-      <a href="#early-access" class="cta-btn">Get Early Access</a>
-    </div>
-  </section>
+  <div class="hero">
+    <h1>The trading stack for<br>prediction markets.</h1>
+    <p class="hero-sub">Clean market data. Real-world source data. The infrastructure to backtest, deploy, and execute — all in one place.</p>
+    <a href="#early-access" class="cta-btn">Get Early Access</a>
+  </div>
+  </div>
 
-  <!-- ─── FEATURES ─── -->
   <section class="features">
     <div class="features-grid">
       <div class="feature-card">
-        <h3>Market Data</h3>
-        <p>Real-time and historical orderbooks, tick-level depth, and 1-min OHLCV candles across Kalshi and Polymarket. No scraping. No gaps.</p>
+        <h3>Clean, structured market data</h3>
+        <p>Market candles, orderbook snapshots, and settlement history from Kalshi and Polymarket. No more scraping. No more duct-taping APIs.</p>
       </div>
       <div class="feature-card">
-        <h3>Real-World Data</h3>
-        <p>5-min weather observations, sports results, economic indicators — collected at ML-grade precision, already matched to the right market contracts.</p>
+        <h3>Real-world source data</h3>
+        <p>Weather observations, sports stats, economic indicators. The ground-truth data that drives prediction market outcomes, structured and ready for your models.</p>
       </div>
       <div class="feature-card">
-        <h3>Backtesting</h3>
-        <p>Years of paired market + outcome data ready to query. Walk-forward validation, bracket alignment, and fill simulation built in.</p>
+        <h3>Compute on demand</h3>
+        <p>Run backtests, train ML models, test hypotheses on our infrastructure. No local setup. No DevOps. Just bring your code.</p>
       </div>
       <div class="feature-card">
-        <h3>Execution</h3>
-        <p>Signal to order in milliseconds. Fill tracking, position management, and auto-settlement. You build the model. We handle the rest.</p>
+        <h3>Execution built in</h3>
+        <p>Go live when you're ready. Smart order routing, position management, risk controls. One integration from research to production.</p>
       </div>
     </div>
   </section>
 
-  <!-- ─── CTA ─── -->
+  <hr class="divider">
   <section class="cta-section" id="early-access">
     <p class="cta-tagline">You find the edge.<br>We handle everything else.</p>
     <form class="cta-form" onsubmit="return handleSubmit(event)">
@@ -58,10 +278,10 @@
     <p class="cta-note">No spam. Early users get free API access.</p>
   </section>
 
-  <!-- ─── FOOTER ─── -->
+  <hr class="divider">
   <footer>
-    <img src="logo.svg" alt="Mostly Right" class="footer-logo">
-    <p>Built by traders who got tired of building the same pipeline twice.</p>
+    <img src="logo-white.svg" alt="Mostly Right" class="footer-logo">
+    <p>Built by traders for traders.</p>
   </footer>
 
   <script src="app.js"></script>
