@@ -3,7 +3,7 @@
   const canvas = document.getElementById('waveCanvas');
   const ctx = canvas.getContext('2d');
   
-  const COLS = 120;
+  let COLS = window.innerWidth < 768 ? 50 : 120;
   const charSet = ' .,;:!|/\\-_~^';
   let cellW, cellH, rowCount, time = 0;
   let w, h;
@@ -19,6 +19,7 @@
     const parent = canvas.parentElement;
     w = parent.offsetWidth || window.innerWidth;
     h = parent.offsetHeight || window.innerHeight;
+    COLS = w < 768 ? 50 : 120;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
