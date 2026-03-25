@@ -1,5 +1,7 @@
 // ── Wave Field — 120-col grid with mouse interaction ──────────────────────
 (function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
   const canvas = document.getElementById('waveCanvas');
   const ctx = canvas.getContext('2d');
   
@@ -137,7 +139,7 @@ function handleSubmit(e) {
   const input = e.target.querySelector('.cta-input');
   const btn = e.target.querySelector('.cta-btn');
   btn.textContent = 'Added to waitlist';
-  btn.style.opacity = '0.5';
+  btn.classList.add('success');
   input.disabled = true;
   btn.disabled = true;
   return false;
