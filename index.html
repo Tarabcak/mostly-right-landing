@@ -256,7 +256,11 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: var(--text-subtle);
+      transition: color 0.3s;
     }
+    .cta-note.success { color: #4ade80; }
+    .cta-note.info { color: var(--text-body); }
+    .cta-note.error { color: #f87171; }
 
     /* ─── FOOTER ─── */
     footer {
@@ -323,7 +327,7 @@
   </nav>
 
   <div class="hero">
-    <h1>The research stack for<br>prediction markets.</h1>
+    <h1>The research stack for prediction markets.</h1>
     <p class="hero-sub">Clean market data from Kalshi and Polymarket. The real-world data behind the outcomes. Infrastructure to backtest, model, and deploy.</p>
     <a href="#early-access" class="cta-btn">Get Early Access</a>
   </div>
@@ -353,7 +357,7 @@
   <hr class="divider">
   <section class="cta-section" id="early-access">
     <p class="cta-tagline">You find the edge.<br>We handle everything else.</p>
-    <form class="cta-form" onsubmit="return handleSubmit(event)">
+    <form class="cta-form">
       <input type="email" class="cta-input" placeholder="you@email.com" required aria-label="Email address">
       <button type="submit" class="cta-btn cta-btn-form">Get Early Access</button>
     </form>
@@ -365,6 +369,7 @@
     <img src="logo-white.svg" alt="Mostly Right" class="footer-logo">
   </footer>
 
-  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.0" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
