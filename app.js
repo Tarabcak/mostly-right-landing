@@ -141,16 +141,22 @@
   var DEFAULT_NOTE = 'No spam. Early users get free API access.';
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Init client once — defer ordering guarantees supabase-js loads first
-  var sb = typeof window.supabase !== 'undefined'
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
-
-  // Cache DOM elements once
+  // Cache DOM elements first — listener must attach even if Supabase fails
   var form = document.querySelector('.cta-form');
+  if (!form) return;
   var inputEl = form.querySelector('.cta-input');
   var btnEl = form.querySelector('.cta-btn');
   var noteEl = document.querySelector('.cta-note');
+
+  // Init client — wrapped in try-catch so a bad key/version never kills the listener
+  var sb = null;
+  try {
+    if (typeof window.supabase !== 'undefined') {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  } catch (err) {
+    console.error('[waitlist] Supabase init failed:', err);
+  }
 
   var submitting = false;
   var resetTimer = null;
@@ -222,6 +228,7 @@
       } else if (result.error.code === '23505') {
         setFormState('duplicate');
       } else {
+        console.error('[waitlist]', result.error);
         setFormState('error');
       }
     } catch (err) {
