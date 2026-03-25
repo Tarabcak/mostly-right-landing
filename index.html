@@ -302,6 +302,20 @@
       .footer-logo { height: 16px; }
     }
 
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
     /* ─── REDUCED MOTION ─── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -309,6 +323,7 @@
         animation-duration: 0.01ms !important;
       }
       canvas { display: none; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -331,19 +346,19 @@
 
   <section class="features">
     <div class="features-grid">
-      <div class="feature-card">
+      <div class="feature-card reveal">
         <h3>Market data, structured</h3>
         <p>Prices, orderbooks, and settlement history across Kalshi and Polymarket. Clean, normalized, and queryable. No scraping, no duct-taping APIs.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal reveal-delay-1">
         <h3>Real-world data built in</h3>
         <p>Weather observations, sports stats, economic indicators. The ground-truth data behind prediction market outcomes, structured and ready for your models.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal reveal-delay-2">
         <h3>Compute on demand</h3>
         <p>Run backtests, train models, test hypotheses on our infrastructure. No local setup. No DevOps. Bring your code.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card reveal reveal-delay-3">
         <h3>AI-agent ready</h3>
         <p>Structured for programmatic access. Whether it's you in a notebook or an autonomous agent making decisions, the data and tools just work.</p>
       </div>
@@ -351,7 +366,7 @@
   </section>
 
   <hr class="divider">
-  <section class="cta-section" id="early-access">
+  <section class="cta-section reveal" id="early-access">
     <p class="cta-tagline">You find the edge.<br>We handle everything else.</p>
     <form class="cta-form" onsubmit="return handleSubmit(event)">
       <input type="email" class="cta-input" placeholder="you@email.com" required aria-label="Email address">
