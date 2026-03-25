@@ -134,25 +134,6 @@
   draw();
 })();
 
-// ── Scroll Reveal — fade-up on viewport entry ─────────────────────────────
-(function() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15 }
-  );
-
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-})();
-
 function handleSubmit(e) {
   e.preventDefault();
   const input = e.target.querySelector('.cta-input');
