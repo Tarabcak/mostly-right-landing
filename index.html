@@ -425,8 +425,9 @@
       max-width: 580px;
       width: 90%;
       max-height: 80vh;
-      overflow-y: auto;
-      padding: 56px 48px;
+      display: flex;
+      flex-direction: column;
+      padding: 56px 48px 32px;
       background: var(--bg-primary);
       border: 1px solid var(--border-default);
       transform: translateY(20px);
@@ -452,8 +453,26 @@
       font-weight: 400;
       font-size: 28px;
       color: var(--text-primary);
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+      flex-shrink: 0;
     }
+    .modal-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border-default);
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+      padding-right: 12px;
+    }
+    .modal-body::-webkit-scrollbar { width: 4px; }
+    .modal-body::-webkit-scrollbar-track { background: transparent; }
+    .modal-body::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 2px; }
+    .modal-body::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
     .modal-body p {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
@@ -513,10 +532,10 @@
       .divider { margin: 0 24px; }
       .nav-right { gap: 16px; }
       .nav-text-link { font-size: 10px; }
-      .modal { padding: 40px 24px; }
+      .modal { padding: 40px 24px 24px; }
       .modal-title { font-size: 22px; }
       .modal-body p { font-size: 11px; }
-      .modal-body h3 { margin-top: 28px; }
+      .modal-body { padding-right: 8px; }
       footer { padding: 24px 24px; flex-direction: column; gap: 8px; }
       footer p { text-align: center; font-size: 11px; }
       .footer-logo { height: 16px; }
@@ -593,6 +612,7 @@
     <div class="modal">
       <button class="modal-close" id="principles-close">&times;</button>
       <h2 class="modal-title">Our Mission</h2>
+      <div class="modal-divider"></div>
       <div class="modal-body">
         <p>There's a weird thing happening right now that most people haven't noticed.</p>
         <p>When the 2024 election was too close for every pollster to call, prediction markets had it right. When weather models disagree on whether tomorrow will hit 90 degrees in Miami, there's a market where people are betting real money on the answer. And they're weirdly accurate.</p>
