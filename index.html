@@ -497,9 +497,21 @@
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
-      nav { padding: 16px 24px; }
+      nav {
+        padding: 16px 24px;
+        flex-direction: column;
+        gap: 0;
+      }
       .logo { height: 22px; }
-      .nav-link { font-size: 9px; padding: 8px 12px; letter-spacing: .04em; white-space: nowrap; }
+      .nav-right {
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 12px;
+        margin-top: 12px;
+        border-top: 1px solid var(--border-default);
+      }
+      .nav-link { font-size: 11px; padding: 10px 18px; letter-spacing: .04em; white-space: nowrap; }
       .hero-wrapper { min-height: 100vh; min-height: 100dvh; }
       h1 { font-size: 38px; line-height: 1.1; margin-bottom: 16px; }
       .hero { padding: 0 24px 40px; min-height: calc(100vh - 50px); min-height: calc(100dvh - 50px); }
