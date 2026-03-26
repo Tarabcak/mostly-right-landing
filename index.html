@@ -382,25 +382,9 @@
       text-decoration: none;
       letter-spacing: .06em;
       padding: 12px 16px;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-      transition: color 0.3s cubic-bezier(0.33, 1, 0.68, 1), transform 0.15s ease-out;
+      transition: color 0.3s ease;
     }
-    .nav-text-link::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -5%; right: -5%;
-      height: 120%;
-      background: var(--surface-white);
-      z-index: -1;
-      transform: translateY(-100%);
-      transform-origin: top left;
-      transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-    .nav-text-link:hover { color: var(--surface-dark); }
-    .nav-text-link:hover::before { transform: translateY(0); }
-    .nav-text-link:active { transform: scale(0.96); }
+    .nav-text-link:hover { color: var(--text-primary); }
 
     /* ─── MODAL ─── */
     .modal-overlay {
