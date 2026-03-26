@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    html { scroll-behavior: smooth; }
     :root {
       --bg-primary: #0a0a0a;
       --bg-section: #0d0d0d;
@@ -69,13 +70,31 @@
       font-size: 12px;
       font-weight: 700;
       letter-spacing: .06em;
+      text-transform: uppercase;
       color: var(--surface-dark);
       background: var(--surface-white);
+      border: 2px solid var(--surface-white);
       text-decoration: none;
       padding: 12px 24px;
-      transition: transform 0.2s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: color 0.6s cubic-bezier(0.85, 0, 0.15, 1), transform 0.15s ease-out;
     }
-    .nav-link:hover { opacity: .85; transform: translateY(-1px); }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -5%; right: -5%;
+      height: 120%;
+      background: var(--surface-dark);
+      z-index: -1;
+      transform: translateY(100%);
+      transform-origin: bottom left;
+      transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    .nav-link:hover { color: var(--surface-white); }
+    .nav-link:hover::before { transform: translateY(0); }
+    .nav-link:active { transform: scale(0.96); }
     .nav-link:focus-visible {
       outline: 2px solid var(--border-focus);
       outline-offset: 4px;
@@ -117,16 +136,33 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: .06em;
+      text-transform: uppercase;
       color: var(--surface-dark);
       background: var(--surface-white);
-      border: none;
+      border: 2px solid var(--surface-white);
       padding: 16px 36px;
       cursor: pointer;
       text-decoration: none;
       width: fit-content;
-      transition: transform 0.2s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: color 0.6s cubic-bezier(0.85, 0, 0.15, 1), transform 0.15s ease-out;
     }
-    .cta-btn:hover { opacity: .85; transform: translateY(-1px); }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -5%; right: -5%;
+      height: 120%;
+      background: var(--surface-dark);
+      z-index: -1;
+      transform: translateY(100%);
+      transform-origin: bottom left;
+      transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    .cta-btn:hover { color: var(--surface-white); }
+    .cta-btn:hover::before { transform: translateY(0); }
+    .cta-btn:active { transform: scale(0.96); }
     .cta-btn:focus-visible {
       outline: 2px solid var(--border-focus);
       outline-offset: 4px;
@@ -223,16 +259,33 @@
     .cta-btn-form {
       background: var(--surface-white);
       color: var(--surface-dark);
-      border: 1px solid var(--surface-white);
+      border: 2px solid var(--surface-white);
       white-space: nowrap;
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 700;
+      text-transform: uppercase;
       padding: 14px 20px;
       cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s, background 0.3s, border-color 0.3s, color 0.3s;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: color 0.6s cubic-bezier(0.85, 0, 0.15, 1), transform 0.15s ease-out, background 0.3s, border-color 0.3s;
     }
-    .cta-btn-form:hover { opacity: .85; transform: translateY(-1px); }
+    .cta-btn-form::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -5%; right: -5%;
+      height: 120%;
+      background: var(--surface-dark);
+      z-index: -1;
+      transform: translateY(100%);
+      transform-origin: bottom left;
+      transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    .cta-btn-form:hover { color: var(--surface-white); }
+    .cta-btn-form:hover::before { transform: translateY(0); }
+    .cta-btn-form:active { transform: scale(0.96); }
     .cta-btn-form:focus-visible {
       outline: 2px solid var(--border-focus);
       outline-offset: 4px;
@@ -366,6 +419,31 @@
     <img src="logo-white.svg" alt="Mostly Right" class="footer-logo">
   </footer>
 
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        const start = window.scrollY;
+        const end = target.getBoundingClientRect().top + start - 40;
+        const distance = end - start;
+        const duration = 1000;
+        let startTime = null;
+        function easeInOutExpo(t) {
+          if (t === 0 || t === 1) return t;
+          return t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+        }
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          const p = Math.min((ts - startTime) / duration, 1);
+          window.scrollTo(0, start + distance * easeInOutExpo(p));
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.0" defer></script>
   <script src="app.js" defer></script>
 </body>
