@@ -112,15 +112,13 @@
         // Skip low density cells
         if (density < 0.05) continue;
         
-        // Check if this cell should be part of a word
-        const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
-        const rnd = hash - Math.floor(hash);
-        
-        // Normal character rendering
+        // Map density to character: higher density = heavier character
+        // charSet: ' .,;:!|/\-_~^' (space=0, ^=12)
         const charIndex = Math.floor(density * (charSet.length - 1));
         const ch = charSet[charIndex];
         if (ch === ' ') continue;
         
+        // Draw with opacity proportional to density
         const opacity = (density * 0.6).toFixed(2);
         ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
         ctx.fillText(ch, cx, cy);
