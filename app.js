@@ -17,6 +17,12 @@
   let cellW, cellH, rows, w, h;
   let time = 0;
 
+  // Mouse state
+  let mouse = { x: -1, y: -1 };
+  let smooth = { x: -1, y: -1 };
+  let mouseDecay = 0;
+  let mouseActive = false;
+
   // ── Resize ──────────────────────────────────────────────────────────────
   function resize() {
     const dpr = window.devicePixelRatio || 1;
@@ -41,6 +47,23 @@
   resize();
   window.addEventListener('resize', resize);
 
+  // Mouse events
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouseActive = true;
+    mouseDecay = 1.0;
+  });
+  window.addEventListener('mouseleave', () => { mouseActive = false; });
+  window.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    mouse.x = t.clientX;
+    mouse.y = t.clientY;
+    mouseActive = true;
+    mouseDecay = 1.0;
+  }, { passive: true });
+  window.addEventListener('touchend', () => { mouseActive = false; });
+
   // ── Wave amplitude function ─────────────────────────────────────────────
   function waveAmp(col, band, t) {
     const nx = col / COLS;  // normalized 0–1
@@ -54,6 +77,14 @@
     ctx.fillStyle = BG_COLOR;
     ctx.fillRect(0, 0, w, h);
 
+    // Smooth mouse position
+    if (smooth.x < 0) { smooth.x = mouse.x; smooth.y = mouse.y; }
+    smooth.x += (mouse.x - smooth.x) * 0.08;
+    smooth.y += (mouse.y - smooth.y) * 0.08;
+    if (!mouseActive) mouseDecay *= 0.99;
+
+    const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
+
     // Draw each cell
     for (let row = 0; row < rows; row++) {
       const band = Math.floor(row / 4);  // horizontal striations
@@ -64,7 +95,17 @@
         const cx = col * cellW + cellW / 2;
         
         // Get wave amplitude at this column
-        const amp = waveAmp(col, band, time);
+        let amp = waveAmp(col, band, time);
+        
+        // Mouse interaction: displace wave toward cursor
+        if (doMouse) {
+          const dx = (cx - smooth.x) / w;
+          const dy = (cy - smooth.y) / h;
+          const distSq = dx * dx + dy * dy;
+          const pull = Math.exp(-distSq / 0.015) * mouseDecay;
+          const mouseNormY = smooth.y / h;
+          amp += (mouseNormY - 0.5 - amp) * pull * 0.6;
+        }
         
         // Gaussian density: how close is this row to wave center?
         const distFromCenter = normalizedY - (0.5 + amp);
@@ -85,8 +126,10 @@
       }
     }
 
-    // Advance time
-    time += 0.02;
+    // Breathing heartbeat timing (slower, organic)
+    const beat = Math.sin(time * 0.15);
+    const eased = beat * beat * beat * beat;
+    time += 0.003 + 0.005 * eased;
     
     requestAnimationFrame(draw);
   }
