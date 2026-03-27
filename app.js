@@ -198,14 +198,8 @@
         noteEl.className = 'cta-note success';
         break;
       case 'duplicate':
-        submitting = false;
-        btnEl.classList.remove('loading');
-        btnEl.disabled = false;
-        btnEl.textContent = 'Get Early Access';
-        inputEl.disabled = false;
-        noteEl.textContent = "You're already signed up!";
-        noteEl.className = 'cta-note info';
-        scheduleReset();
+        // Show same success state to prevent email enumeration
+        setFormState('success');
         break;
       case 'validation-error':
         submitting = false;
