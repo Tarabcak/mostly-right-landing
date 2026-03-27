@@ -62,22 +62,25 @@
     // Multiple word slots at different positions
     const slots = [
       { xOffset: 0.1, yOffset: -1, timeOffset: 0 },
-      { xOffset: 0.4, yOffset: 0, timeOffset: 2 },
-      { xOffset: 0.7, yOffset: 1, timeOffset: 4 },
+      { xOffset: 0.4, yOffset: 0, timeOffset: 1 },
+      { xOffset: 0.7, yOffset: 1, timeOffset: 2 },
     ];
     
     for (let i = 0; i < slots.length; i++) {
       const slot = slots[i];
-      const wordIdx = (Math.floor((t + slot.timeOffset) * 0.4) + i) % words.length;
+      // Faster word cycling (every ~0.8s)
+      const wordIdx = (Math.floor((t + slot.timeOffset) * 1.5) + i) % words.length;
       const wordObj = words[wordIdx];
       const word = wordObj.text;
       
-      // Word row drifts up/down
+      // Faster drift up/down
       const baseRow = Math.floor(rows * 0.5);
-      const drift = (Math.floor(t * 0.3) % 3 - 1) * 4;
-      const wordRow = baseRow + drift + slot.yOffset * 4;
+      const drift = (Math.floor(t * 0.8) % 5 - 2) * 3;
+      const wordRow = baseRow + drift + slot.yOffset * 3;
       
-      const wordColStart = Math.floor(COLS * slot.xOffset);
+      // Horizontal drift too
+      const xDrift = Math.floor(Math.sin(t * 0.5 + i * 2) * 8);
+      const wordColStart = Math.floor(COLS * slot.xOffset) + xDrift;
       
       if (row === wordRow && col >= wordColStart && col < wordColStart + word.length) {
         return { char: word[col - wordColStart], color: wordObj.color };
