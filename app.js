@@ -148,30 +148,48 @@
     const t = time;
     const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
-    // Determine which words to show this frame (based on time, changes slowly)
-    const wordSlots = [];
-    const wordCells = new Map(); // key: "row,col" -> { char, color }
-    const numWords = Math.min(4, Math.floor(COLS / 25)); // ~4 words on desktop, fewer on mobile
+    // Animated words that pop in and out
+    const wordCells = new Map(); // key: "row,col" -> { char, color, opacity }
+    const numSlots = Math.min(5, Math.floor(COLS / 20)); // ~5 word slots
+    const cycleDuration = 3.0; // seconds per word cycle
     
-    for (let i = 0; i < numWords; i++) {
-      // Each word slot cycles through words at different rates
-      const wordPhase = Math.floor(t * 0.3 + i * 2.5) % WORDS.length;
-      const word = WORDS[wordPhase];
+    for (let i = 0; i < numSlots; i++) {
+      // Each slot has its own phase, offset so they don't all change at once
+      const slotPhase = (t * 0.4 + i * 1.3) % cycleDuration;
       
-      // Position based on slot and slight time variation
-      const slotWidth = COLS / numWords;
-      const baseCol = Math.floor(slotWidth * i + slotWidth * 0.3);
-      const colOffset = Math.floor(Math.sin(t * 0.5 + i * 1.7) * 3);
-      const col = Math.max(0, Math.min(COLS - word.text.length, baseCol + colOffset));
+      // Lifecycle: 0-0.3 fade in, 0.3-2.7 visible, 2.7-3.0 fade out
+      let opacity = 1.0;
+      if (slotPhase < 0.3) {
+        opacity = slotPhase / 0.3; // fade in
+      } else if (slotPhase > cycleDuration - 0.3) {
+        opacity = (cycleDuration - slotPhase) / 0.3; // fade out
+      }
       
-      // Row position: stick to the dense center band with slight movement
-      const baseRow = Math.floor(rowCount * 0.45);
-      const rowOffset = Math.floor(Math.sin(t * 0.4 + i * 2.1) * 2);
-      const row = Math.max(0, Math.min(rowCount - 1, baseRow + rowOffset));
+      if (opacity < 0.05) continue; // skip if invisible
       
-      // Register each character of the word
+      // Which word to show (changes each cycle)
+      const cycleIndex = Math.floor((t * 0.4 + i * 1.3) / cycleDuration);
+      const wordIndex = (cycleIndex + i * 3) % WORDS.length;
+      const word = WORDS[wordIndex];
+      
+      // Position: pseudo-random but stable within a cycle
+      const seed = Math.sin(cycleIndex * 127.1 + i * 311.7) * 43758.5453;
+      const rnd = seed - Math.floor(seed);
+      const rnd2 = Math.sin(seed * 127.1) * 43758.5453;
+      const rnd2n = rnd2 - Math.floor(rnd2);
+      
+      const col = Math.floor(rnd * (COLS - word.text.length - 4)) + 2;
+      const rowRange = Math.floor(rowCount * 0.3); // center 30% of rows
+      const rowStart = Math.floor(rowCount * 0.35);
+      const row = rowStart + Math.floor(rnd2n * rowRange);
+      
+      // Register each character
       for (let c = 0; c < word.text.length; c++) {
-        wordCells.set(`${row},${col + c}`, { char: word.text[c], color: word.color });
+        wordCells.set(`${row},${col + c}`, { 
+          char: word.text[c], 
+          color: word.color,
+          opacity: opacity 
+        });
       }
     }
 
@@ -211,10 +229,15 @@
 
         // Check if this cell is part of a word
         const wordCell = wordCells.get(`${row},${col}`);
-        if (wordCell && density > 0.4) {
-          // Render word character at 100% opacity
+        if (wordCell && density > 0.3) {
+          // Render word character with animated opacity
           ch = wordCell.char;
-          ctx.fillStyle = wordCell.color;
+          // Convert hex to rgba with opacity
+          const hex = wordCell.color;
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${wordCell.opacity})`;
         } else if (density > 0.6) {
           // Scatter probability numbers in dense zones
           const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
