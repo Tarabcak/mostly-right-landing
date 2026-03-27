@@ -107,15 +107,15 @@
         
         // Gaussian density: how close is this row to wave center?
         const distFromCenter = normalizedY - (0.5 + amp);
-        const density = Math.exp(-(distFromCenter * distFromCenter) / 0.04);  // wider falloff
+        const density = Math.exp(-(distFromCenter * distFromCenter) / 0.02);
         
         // Skip low density cells
         if (density < 0.05) continue;
         
-        // Map density to character: higher density = heavier character
+        // Map density to character: stretch 0.05-1.0 range to full charSet
         // charSet: ' .,;:!|/\-_~^' (space=0, ^=12)
-        // Use sqrt to spread characters more evenly across visible range
-        const charIndex = Math.floor(Math.sqrt(density) * (charSet.length - 1));
+        const normalizedDensity = (density - 0.05) / 0.95;  // 0 to 1
+        const charIndex = Math.floor(normalizedDensity * (charSet.length - 1));
         const ch = charSet[charIndex];
         if (ch === ' ') continue;
         
