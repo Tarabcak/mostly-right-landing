@@ -130,16 +130,22 @@
         const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
         const rnd = hash - Math.floor(hash);
         
-        // Word spawning: check if a word starts nearby
+        // Word spawning: dynamic, flickering words in dense zones
         let wordChar = null;
         let wordColor = null;
         if (density > 0.5) {
           for (let checkCol = Math.max(0, col - 8); checkCol <= col; checkCol++) {
-            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9 + Math.floor(time * 0.5)) * 43758.5453;
+            // Fast time-based hash for rapid flickering
+            const timeSlice = Math.floor(time * 3);  // changes every ~0.3s
+            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9 + timeSlice * 17.3) * 43758.5453;
             const wordRnd = wordHash - Math.floor(wordHash);
             
-            if (wordRnd > 0.992) {  // rare spawn
-              const wordIndex = Math.floor(wordRnd * 1000) % WORDS.length;
+            // Flicker: words appear/disappear based on fast-changing condition
+            const flickerHash = Math.sin(checkCol * 41.1 + row * 73.7 + time * 8) * 43758.5453;
+            const flickerRnd = flickerHash - Math.floor(flickerHash);
+            
+            if (wordRnd > 0.985 && flickerRnd > 0.3) {  // spawn + flicker
+              const wordIndex = Math.floor((wordRnd * 1000 + timeSlice) % WORDS.length);
               const word = WORDS[wordIndex];
               const charIdx = col - checkCol;
               
