@@ -130,48 +130,53 @@
         const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
         const rnd = hash - Math.floor(hash);
         
-        // Word spawning: dynamic, flickering words in dense zones
-        let wordChar = null;
-        let wordColor = null;
-        if (density > 0.5) {
-          for (let checkCol = Math.max(0, col - 8); checkCol <= col; checkCol++) {
-            // Fast time-based hash for rapid flickering
-            const timeSlice = Math.floor(time * 3);  // changes every ~0.3s
-            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9 + timeSlice * 17.3) * 43758.5453;
-            const wordRnd = wordHash - Math.floor(wordHash);
-            
-            // Flicker: words appear/disappear based on fast-changing condition
-            const flickerHash = Math.sin(checkCol * 41.1 + row * 73.7 + time * 8) * 43758.5453;
-            const flickerRnd = flickerHash - Math.floor(flickerHash);
-            
-            if (wordRnd > 0.985 && flickerRnd > 0.3) {  // spawn + flicker
-              const wordIndex = Math.floor((wordRnd * 1000 + timeSlice) % WORDS.length);
-              const word = WORDS[wordIndex];
-              const charIdx = col - checkCol;
-              
-              if (charIdx >= 0 && charIdx < word.text.length) {
-                wordChar = word.text[charIdx];
-                wordColor = word.color;
-                break;
-              }
-            }
-          }
-        }
+        // Normal character rendering
+        const charIndex = Math.floor(density * (charSet.length - 1));
+        const ch = charSet[charIndex];
+        if (ch === ' ') continue;
         
-        if (wordChar) {
-          // Draw word character at 100% opacity
-          ctx.fillStyle = wordColor;
-          ctx.fillText(wordChar, cx, cy);
-        } else {
-          // Normal character with density-based opacity
-          const charIndex = Math.floor(density * (charSet.length - 1));
-          const ch = charSet[charIndex];
-          if (ch === ' ') continue;
-          
-          const opacity = (density * 0.6).toFixed(2);
-          ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
-          ctx.fillText(ch, cx, cy);
-        }
+        const opacity = (density * 0.6).toFixed(2);
+        ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
+        ctx.fillText(ch, cx, cy);
+      }
+    }
+
+    // Overlay 2-3 words that drift with the wave
+    const wordPositions = [
+      { slot: 0, offset: 0.15 },   // left area
+      { slot: 1, offset: 0.5 },    // center
+      { slot: 2, offset: 0.8 },    // right area
+    ];
+    
+    const activeWords = COLS > 80 ? 3 : 2;
+    for (let i = 0; i < activeWords; i++) {
+      const pos = wordPositions[i];
+      
+      // Cycle through words slowly
+      const wordIndex = (Math.floor(time * 0.15) + i * 3) % WORDS.length;
+      const word = WORDS[wordIndex];
+      
+      // Column position drifts slowly
+      const baseCol = Math.floor(pos.offset * (COLS - word.text.length));
+      const driftCol = Math.floor(Math.sin(time * 0.2 + i * 2) * 5);
+      const col = Math.max(1, Math.min(COLS - word.text.length - 1, baseCol + driftCol));
+      
+      // Row follows wave at this position
+      const nx = col / COLS;
+      const waveY = 0.5 + 0.15 * Math.sin(nx * 5 + time) + 0.1 * Math.cos(nx * 10 - time * 0.5);
+      const row = Math.floor(waveY * rows);
+      const cy = row * cellH + cellH / 2;
+      
+      // Only draw if in visible wave area (density check)
+      const distFromCenter = (row / rows) - waveY;
+      const density = Math.exp(-(distFromCenter * distFromCenter) / 0.02);
+      if (density < 0.4) continue;
+      
+      // Draw word at 100% opacity
+      ctx.fillStyle = word.color;
+      for (let c = 0; c < word.text.length; c++) {
+        const cx = (col + c) * cellW + cellW / 2;
+        ctx.fillText(word.text[c], cx, cy);
       }
     }
 
