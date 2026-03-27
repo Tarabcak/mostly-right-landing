@@ -13,21 +13,6 @@
   }
 
   const charSet = ' .,;:!|/\\-_~^';
-  
-  // Market topic words with colors: green (#35BE76) for sports/weather, blue (#1C57BE) for politics/econ
-  const WORDS = [
-    { text: 'TRUMP', color: '#1C57BE' },
-    { text: 'NBA', color: '#35BE76' },
-    { text: 'WEATHER', color: '#35BE76' },
-    { text: 'FED', color: '#1C57BE' },
-    { text: 'BTC', color: '#1C57BE' },
-    { text: 'F1', color: '#35BE76' },
-    { text: 'RAIN', color: '#35BE76' },
-    { text: 'AI', color: '#1C57BE' },
-    { text: 'NFL', color: '#35BE76' },
-    { text: 'ELECTION', color: '#1C57BE' },
-  ];
-  
   let COLS = getCols();
   let cellW, cellH, rowCount, time = 0;
   let w, h;
@@ -182,51 +167,18 @@
 
         const opacity = density * 0.6;
 
-        // Numbers in dense zones
-        if (density > 0.6) {
-          const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
-          const rnd = hash - Math.floor(hash);
-          if (rnd > 0.85) {
-            const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
-            const digits = prob.toString().padStart(2, '0');
-            ch = digits[Math.floor(rnd * 10) % 2];
-            ctx.fillStyle = getColor(opacity, true);
-          } else {
-            ctx.fillStyle = getColor(opacity, false);
-          }
+        // Scatter probability numbers in dense zones
+        const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
+        const rnd = hash - Math.floor(hash);
+        if (density > 0.6 && rnd > 0.85) {
+          const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
+          const digits = prob.toString().padStart(2, '0');
+          ch = digits[Math.floor(rnd * 10) % 2];
+          ctx.fillStyle = getColor(opacity, true);
         } else {
           ctx.fillStyle = getColor(opacity, false);
         }
         ctx.fillText(ch, cx, cy);
-      }
-    }
-
-    // Draw 2-3 words at animated positions, 100% opacity
-    const numWords = COLS > 80 ? 3 : 2;
-    for (let i = 0; i < numWords; i++) {
-      // Cycle through words, each slot offset
-      const wordIndex = (Math.floor(t * 0.2) + i * 3) % WORDS.length;
-      const word = WORDS[wordIndex];
-      
-      // Animated position: moves across and follows wave
-      const phase = t * 0.3 + i * 2.5;
-      const colFloat = ((phase * 0.5 + i * 30) % (COLS - word.text.length - 4)) + 2;
-      const col = Math.floor(colFloat);
-      
-      // Row follows wave at this column
-      const normalizedX = col / COLS;
-      const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
-      const row = Math.floor(waveY * rowCount);
-      
-      // Draw each character at 100% opacity
-      ctx.fillStyle = word.color;
-      for (let c = 0; c < word.text.length; c++) {
-        const charCol = col + c;
-        if (charCol < COLS) {
-          const cx = charCol * cellW + cellW / 2;
-          const cy = row * cellH + cellH / 2;
-          ctx.fillText(word.text[c], cx, cy);
-        }
       }
     }
 
