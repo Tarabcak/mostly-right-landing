@@ -13,6 +13,21 @@
   }
 
   const charSet = ' .,;:!|/\\-_~^';
+  
+  // Market topic words with colors: green (#35BE76) for sports/weather, blue (#1C57BE) for politics/econ
+  const WORDS = [
+    { text: 'TRUMP', color: '#1C57BE' },
+    { text: 'NBA', color: '#35BE76' },
+    { text: 'WEATHER', color: '#35BE76' },
+    { text: 'FED', color: '#1C57BE' },
+    { text: 'BTC', color: '#1C57BE' },
+    { text: 'F1', color: '#35BE76' },
+    { text: 'RAIN', color: '#35BE76' },
+    { text: 'AI', color: '#1C57BE' },
+    { text: 'NFL', color: '#35BE76' },
+    { text: 'ELECTION', color: '#1C57BE' },
+  ];
+  
   let COLS = getCols();
   let cellW, cellH, rowCount, time = 0;
   let w, h;
@@ -133,6 +148,33 @@
     const t = time;
     const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
+    // Determine which words to show this frame (based on time, changes slowly)
+    const wordSlots = [];
+    const wordCells = new Map(); // key: "row,col" -> { char, color }
+    const numWords = Math.min(4, Math.floor(COLS / 25)); // ~4 words on desktop, fewer on mobile
+    
+    for (let i = 0; i < numWords; i++) {
+      // Each word slot cycles through words at different rates
+      const wordPhase = Math.floor(t * 0.3 + i * 2.5) % WORDS.length;
+      const word = WORDS[wordPhase];
+      
+      // Position based on slot and slight time variation
+      const slotWidth = COLS / numWords;
+      const baseCol = Math.floor(slotWidth * i + slotWidth * 0.3);
+      const colOffset = Math.floor(Math.sin(t * 0.5 + i * 1.7) * 3);
+      const col = Math.max(0, Math.min(COLS - word.text.length, baseCol + colOffset));
+      
+      // Row position: stick to the dense center band with slight movement
+      const baseRow = Math.floor(rowCount * 0.45);
+      const rowOffset = Math.floor(Math.sin(t * 0.4 + i * 2.1) * 2);
+      const row = Math.max(0, Math.min(rowCount - 1, baseRow + rowOffset));
+      
+      // Register each character of the word
+      for (let c = 0; c < word.text.length; c++) {
+        wordCells.set(`${row},${col + c}`, { char: word.text[c], color: word.color });
+      }
+    }
+
     for (let row = 0; row < rowCount; row++) {
       const band = Math.floor(row / 4);
       const cy = row * cellH + cellH / 2;
@@ -167,14 +209,24 @@
 
         const opacity = density * 0.6;
 
-        // Scatter probability numbers in dense zones
-        const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
-        const rnd = hash - Math.floor(hash);
-        if (density > 0.6 && rnd > 0.85) {
-          const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
-          const digits = prob.toString().padStart(2, '0');
-          ch = digits[Math.floor(rnd * 10) % 2];
-          ctx.fillStyle = getColor(opacity, true);
+        // Check if this cell is part of a word
+        const wordCell = wordCells.get(`${row},${col}`);
+        if (wordCell && density > 0.4) {
+          // Render word character at 100% opacity
+          ch = wordCell.char;
+          ctx.fillStyle = wordCell.color;
+        } else if (density > 0.6) {
+          // Scatter probability numbers in dense zones
+          const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
+          const rnd = hash - Math.floor(hash);
+          if (rnd > 0.85) {
+            const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
+            const digits = prob.toString().padStart(2, '0');
+            ch = digits[Math.floor(rnd * 10) % 2];
+            ctx.fillStyle = getColor(opacity, true);
+          } else {
+            ctx.fillStyle = getColor(opacity, false);
+          }
         } else {
           ctx.fillStyle = getColor(opacity, false);
         }
