@@ -10,9 +10,14 @@
   // Config
   const BG_COLOR = '#0A0A0A';
   const CHAR_COLOR = '232, 230, 224';  // E8E6E0 as RGB
-  const COLS = 120;
   const waveChars = ' .,;:!|/\\-_~^`';  // space lowest, backtick highest
 
+  // Responsive columns: 50 mobile, 120 desktop
+  function getCols() {
+    return window.innerWidth < 768 ? 50 : 120;
+  }
+
+  let COLS = getCols();
   let cellW, cellH, rows, w, h;
   let time = 0;
 
@@ -26,6 +31,7 @@
     canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
     
+    COLS = getCols();  // responsive columns
     cellW = w / COLS;
     cellH = cellW * 1.6;
     rows = Math.ceil(h / cellH);
