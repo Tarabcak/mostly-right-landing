@@ -126,8 +126,8 @@
       }
     }
 
-    // Advance time
-    time += 0.02;
+    // Advance time (slower)
+    time += 0.008;
     
     requestAnimationFrame(draw);
   }
