@@ -1,43 +1,75 @@
-// ── Wave Field — 120-col grid with mouse interaction ──────────────────────
+// ── Wave Field — optimized ASCII wave with mouse interaction ──────────────
 (function() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.getElementById('waveCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const BG_COLOR = '#0a0a0a'; // matches --bg-primary
+  const BG_COLOR = '#0a0a0a';
 
-  let COLS = window.innerWidth < 768 ? 50 : 120;
+  // Responsive column count: mobile 40, tablet 60, desktop 90
+  function getCols() {
+    const width = window.innerWidth;
+    if (width < 768) return 40;
+    if (width < 1200) return 60;
+    return 90;
+  }
+
   const charSet = ' .,;:!|/\\-_~^';
+  let COLS = getCols();
   let cellW, cellH, rowCount, time = 0;
   let w, h;
+  let animationId = null;
+  let isVisible = true;
+  let lastFrameTime = 0;
+  const TARGET_FPS = 30;
+  const FRAME_DURATION = 1000 / TARGET_FPS;
 
-  // Mouse
+  // Pre-compute opacity colors (avoid string allocation in loop)
+  const colorCache = new Map();
+  function getColor(opacity, bright) {
+    const key = `${Math.round(opacity * 100)}-${bright ? 1 : 0}`;
+    if (!colorCache.has(key)) {
+      const a = bright ? Math.min(opacity * 1.4, 0.85) : opacity;
+      colorCache.set(key, `rgba(200, 200, 195, ${a.toFixed(2)})`);
+    }
+    return colorCache.get(key);
+  }
+
+  // Mouse state
   let mouse = { x: -1, y: -1 };
   let smooth = { x: -1, y: -1 };
   let mouseDecay = 0;
   let mouseActive = false;
 
   function resize() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x
     const parent = canvas.parentElement;
     w = parent.offsetWidth || window.innerWidth;
     h = parent.offsetHeight || window.innerHeight;
-    COLS = w < 768 ? 50 : 120;
+    COLS = getCols();
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cellW = w / COLS;
     cellH = cellW * 1.6;
     rowCount = Math.ceil(h / cellH);
+    
+    // Set font once on resize (not every frame)
+    const fontSize = Math.max(8, cellW * 0.85);
+    ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
   }
 
   resize();
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 100);
+    resizeTimer = setTimeout(resize, 150);
   });
 
+  // Mouse events
   window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -54,22 +86,55 @@
   }, { passive: true });
   window.addEventListener('touchend', () => { mouseActive = false; });
 
-  function draw() {
+  // Pause when tab hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      isVisible = false;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    } else {
+      isVisible = true;
+      lastFrameTime = 0;
+      if (!animationId) animationId = requestAnimationFrame(draw);
+    }
+  });
+
+  // Pause when scrolled out of view
+  const observer = new IntersectionObserver((entries) => {
+    isVisible = entries[0].isIntersecting;
+    if (isVisible && !animationId) {
+      lastFrameTime = 0;
+      animationId = requestAnimationFrame(draw);
+    }
+  }, { threshold: 0.1 });
+  observer.observe(canvas);
+
+  function draw(timestamp) {
+    if (!isVisible) {
+      animationId = null;
+      return;
+    }
+
+    // Throttle to target FPS
+    if (timestamp - lastFrameTime < FRAME_DURATION) {
+      animationId = requestAnimationFrame(draw);
+      return;
+    }
+    lastFrameTime = timestamp;
+
     ctx.fillStyle = BG_COLOR;
     ctx.fillRect(0, 0, w, h);
-
-    const fontSize = Math.max(8, cellW * 0.85);
-    ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
 
     // Smooth mouse
     if (smooth.x < 0) { smooth.x = mouse.x; smooth.y = mouse.y; }
     smooth.x += (mouse.x - smooth.x) * 0.08;
     smooth.y += (mouse.y - smooth.y) * 0.08;
-    if (!mouseActive) mouseDecay *= 0.993;
+    if (!mouseActive) mouseDecay *= 0.99;
 
     const t = time;
+    const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
     for (let row = 0; row < rowCount; row++) {
       const band = Math.floor(row / 4);
@@ -85,12 +150,11 @@
                     + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
 
         // Mouse wave displacement
-        if (mouseDecay > 0.01 && smooth.x >= 0) {
+        if (doMouse) {
           const dx = (cx - smooth.x) / w;
           const dy = (cy - smooth.y) / h;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          const pull = Math.exp(-dist * dist / 0.015) * mouseDecay;
+          const distSq = dx * dx + dy * dy;
+          const pull = Math.exp(-distSq / 0.015) * mouseDecay;
           const mouseNormY = smooth.y / h;
           waveAmp += (mouseNormY - 0.5 - waveAmp) * pull * 0.6;
         }
@@ -106,31 +170,30 @@
 
         const opacity = density * 0.6;
 
-        // Scatter probability numbers in the dense zones
+        // Scatter probability numbers in dense zones
         const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
         const rnd = hash - Math.floor(hash);
         if (density > 0.6 && rnd > 0.85) {
           const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
           const digits = prob.toString().padStart(2, '0');
-          const digitIdx = Math.floor(rnd * 10) % 2;
-          ch = digits[digitIdx];
-          ctx.fillStyle = `rgba(200, 200, 195, ${Math.min(opacity * 1.4, 0.85)})`;
+          ch = digits[Math.floor(rnd * 10) % 2];
+          ctx.fillStyle = getColor(opacity, true);
         } else {
-          ctx.fillStyle = `rgba(200, 200, 195, ${opacity})`;
+          ctx.fillStyle = getColor(opacity, false);
         }
         ctx.fillText(ch, cx, cy);
       }
     }
 
-    // Heartbeat with easing
+    // Heartbeat timing
     const beat = Math.sin(time * 0.15);
     const eased = beat * beat * beat * beat;
-    const heartbeat = 0.003 + 0.005 * eased;
-    time += heartbeat;
-    requestAnimationFrame(draw);
+    time += 0.003 + 0.005 * eased;
+    
+    animationId = requestAnimationFrame(draw);
   }
 
-  draw();
+  animationId = requestAnimationFrame(draw);
 })();
 
 // ── Supabase Waitlist ──────────────────────────────────────────────────────
