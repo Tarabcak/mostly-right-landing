@@ -59,16 +59,29 @@
 
   // ── Word overlay function ───────────────────────────────────────────────
   function getWordOverlay(col, row, t) {
-    const wordObj = words[Math.floor(t * 0.5) % words.length];
-    const word = wordObj.text;
-    const color = wordObj.color;
+    // Multiple word slots at different positions
+    const slots = [
+      { xOffset: 0.1, yOffset: -1, timeOffset: 0 },
+      { xOffset: 0.4, yOffset: 0, timeOffset: 2 },
+      { xOffset: 0.7, yOffset: 1, timeOffset: 4 },
+    ];
     
-    // Word row drifts up/down through bands
-    const wordRow = Math.floor(rows * 0.5) + (Math.floor(t * 0.3) % 3 - 1) * 8;
-    const wordColStart = Math.floor(COLS * 0.15);
-    
-    if (row === wordRow && col >= wordColStart && col < wordColStart + word.length) {
-      return { char: word[col - wordColStart], color: color };
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i];
+      const wordIdx = (Math.floor((t + slot.timeOffset) * 0.4) + i) % words.length;
+      const wordObj = words[wordIdx];
+      const word = wordObj.text;
+      
+      // Word row drifts up/down
+      const baseRow = Math.floor(rows * 0.5);
+      const drift = (Math.floor(t * 0.3) % 3 - 1) * 4;
+      const wordRow = baseRow + drift + slot.yOffset * 4;
+      
+      const wordColStart = Math.floor(COLS * slot.xOffset);
+      
+      if (row === wordRow && col >= wordColStart && col < wordColStart + word.length) {
+        return { char: word[col - wordColStart], color: wordObj.color };
+      }
     }
     return null;
   }
@@ -103,13 +116,13 @@
         let opacity = density * 0.6;
         let color = CHAR_COLOR;
         
-        // Word appears only in high-density areas
-        if (density > 0.7) {
+        // Word appears in dense areas (100% opacity)
+        if (density > 0.4) {
           const wordOverlay = getWordOverlay(col, row, time);
           if (wordOverlay) {
             char = wordOverlay.char;
             color = wordOverlay.color;
-            opacity = density * 0.85;  // brighter for words
+            opacity = 1.0;  // 100% opacity for words
           }
         }
         
