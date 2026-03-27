@@ -148,48 +148,31 @@
     const t = time;
     const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
-    // Animated words that pop in and out
-    const wordCells = new Map(); // key: "row,col" -> { char, color, opacity }
-    const numSlots = Math.min(5, Math.floor(COLS / 20)); // ~5 word slots
-    const cycleDuration = 3.0; // seconds per word cycle
+    // Place words that flow with the wave (only visible when density is high)
+    const wordCells = new Map(); // key: "row,col" -> { char, color }
+    const numSlots = Math.min(6, Math.floor(COLS / 18));
     
     for (let i = 0; i < numSlots; i++) {
-      // Each slot has its own phase, offset so they don't all change at once
-      const slotPhase = (t * 0.4 + i * 1.3) % cycleDuration;
-      
-      // Lifecycle: 0-0.3 fade in, 0.3-2.7 visible, 2.7-3.0 fade out
-      let opacity = 1.0;
-      if (slotPhase < 0.3) {
-        opacity = slotPhase / 0.3; // fade in
-      } else if (slotPhase > cycleDuration - 0.3) {
-        opacity = (cycleDuration - slotPhase) / 0.3; // fade out
-      }
-      
-      if (opacity < 0.05) continue; // skip if invisible
-      
-      // Which word to show (changes each cycle)
-      const cycleIndex = Math.floor((t * 0.4 + i * 1.3) / cycleDuration);
+      // Word changes every few seconds
+      const cycleIndex = Math.floor(t * 0.15 + i * 0.7);
       const wordIndex = (cycleIndex + i * 3) % WORDS.length;
       const word = WORDS[wordIndex];
       
-      // Position: pseudo-random but stable within a cycle
-      const seed = Math.sin(cycleIndex * 127.1 + i * 311.7) * 43758.5453;
-      const rnd = seed - Math.floor(seed);
-      const rnd2 = Math.sin(seed * 127.1) * 43758.5453;
-      const rnd2n = rnd2 - Math.floor(rnd2);
+      // Spread words across columns
+      const slotWidth = COLS / numSlots;
+      const col = Math.floor(slotWidth * i + slotWidth * 0.2);
       
-      const col = Math.floor(rnd * (COLS - word.text.length - 4)) + 2;
-      const rowRange = Math.floor(rowCount * 0.3); // center 30% of rows
-      const rowStart = Math.floor(rowCount * 0.35);
-      const row = rowStart + Math.floor(rnd2n * rowRange);
+      // Row follows the wave center
+      const normalizedX = col / COLS;
+      const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
+      const row = Math.floor(waveY * rowCount);
       
-      // Register each character
+      // Register each character (will only render if density is high enough)
       for (let c = 0; c < word.text.length; c++) {
-        wordCells.set(`${row},${col + c}`, { 
-          char: word.text[c], 
-          color: word.color,
-          opacity: opacity 
-        });
+        const cellCol = col + c;
+        if (cellCol < COLS) {
+          wordCells.set(`${row},${cellCol}`, { char: word.text[c], color: word.color });
+        }
       }
     }
 
@@ -229,15 +212,10 @@
 
         // Check if this cell is part of a word
         const wordCell = wordCells.get(`${row},${col}`);
-        if (wordCell && density > 0.3) {
-          // Render word character with animated opacity
+        if (wordCell && density > 0.5) {
+          // Render word character at 100% opacity — flows with wave
           ch = wordCell.char;
-          // Convert hex to rgba with opacity
-          const hex = wordCell.color;
-          const r = parseInt(hex.slice(1, 3), 16);
-          const g = parseInt(hex.slice(3, 5), 16);
-          const b = parseInt(hex.slice(5, 7), 16);
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${wordCell.opacity})`;
+          ctx.fillStyle = wordCell.color;
         } else if (density > 0.6) {
           // Scatter probability numbers in dense zones
           const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
