@@ -1,7 +1,6 @@
-// ── ASCII Wave Animation ──────────────────────────────────────────────────
+// ── ASCII Wave Animation with Word Overlays ───────────────────────────────
 // Pure canvas + math, no libraries
 (function() {
-  // Respect reduced motion preference
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.getElementById('waveCanvas');
@@ -9,19 +8,27 @@
   const ctx = canvas.getContext('2d');
 
   // Config
-  const BG_COLOR = '#0a0a0a';
-  const CHAR_COLOR = 'rgba(200, 200, 195,';  // opacity appended
+  const BG_COLOR = '#0A0A0A';
+  const CHAR_COLOR = '232, 230, 224';  // E8E6E0 as RGB
   const COLS = 120;
-  const charSet = ' .,;:!|/\\-_~^';
+  const waveChars = ' .,;:!|/\\-_~^`';  // space lowest, backtick highest
+
+  // Prediction market words with colors (green = sports/weather, blue = politics/econ)
+  const words = [
+    { text: 'TRUMP', color: '28, 87, 190' },      // #1C57BE
+    { text: 'NBA', color: '53, 190, 118' },       // #35BE76
+    { text: 'WEATHER', color: '53, 190, 118' },
+    { text: 'FED', color: '28, 87, 190' },
+    { text: 'BTC', color: '28, 87, 190' },
+    { text: 'F1', color: '53, 190, 118' },
+    { text: 'RAIN', color: '53, 190, 118' },
+    { text: 'AI', color: '28, 87, 190' },
+    { text: 'NFL', color: '53, 190, 118' },
+    { text: 'ELECTION', color: '28, 87, 190' },
+  ];
 
   let cellW, cellH, rows, w, h;
   let time = 0;
-
-  // Mouse state
-  let mouse = { x: -1, y: -1 };
-  let smooth = { x: -1, y: -1 };
-  let mouseDecay = 0;
-  let mouseActive = false;
 
   // ── Resize ──────────────────────────────────────────────────────────────
   function resize() {
@@ -31,43 +38,39 @@
     
     canvas.width = w * dpr;
     canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.scale(dpr, dpr);
     
     cellW = w / COLS;
     cellH = cellW * 1.6;
     rows = Math.ceil(h / cellH);
     
-    // Set font once
+    // Font: cellH * 0.6
     const fontSize = Math.max(8, cellH * 0.6);
-    ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
+    ctx.font = `${fontSize}px "JetBrains Mono", "Fragment Mono", monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
   }
 
   resize();
-  window.addEventListener('resize', resize);
-
-  // Mouse events
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    mouseActive = true;
-    mouseDecay = 1.0;
+  window.addEventListener('resize', () => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);  // reset before resize
+    resize();
   });
-  window.addEventListener('mouseleave', () => { mouseActive = false; });
-  window.addEventListener('touchmove', (e) => {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-    mouseActive = true;
-    mouseDecay = 1.0;
-  }, { passive: true });
-  window.addEventListener('touchend', () => { mouseActive = false; });
 
-  // ── Wave amplitude function ─────────────────────────────────────────────
-  function waveAmp(col, band, t) {
-    const nx = col / COLS;  // normalized 0–1
-    return 0.15 * Math.sin(nx * 5 + t + band) + 
-           0.1 * Math.cos(nx * 10 - t * 0.5);
+  // ── Word overlay function ───────────────────────────────────────────────
+  function getWordOverlay(col, row, t) {
+    const wordObj = words[Math.floor(t * 0.5) % words.length];
+    const word = wordObj.text;
+    const color = wordObj.color;
+    
+    // Word row drifts up/down through bands
+    const wordRow = Math.floor(rows * 0.5) + (Math.floor(t * 0.3) % 3 - 1) * 8;
+    const wordColStart = Math.floor(COLS * 0.15);
+    
+    if (row === wordRow && col >= wordColStart && col < wordColStart + word.length) {
+      return { char: word[col - wordColStart], color: color };
+    }
+    return null;
   }
 
   // ── Draw frame ──────────────────────────────────────────────────────────
@@ -76,64 +79,60 @@
     ctx.fillStyle = BG_COLOR;
     ctx.fillRect(0, 0, w, h);
 
-    // Smooth mouse
-    if (smooth.x < 0) { smooth.x = mouse.x; smooth.y = mouse.y; }
-    smooth.x += (mouse.x - smooth.x) * 0.08;
-    smooth.y += (mouse.y - smooth.y) * 0.08;
-    if (!mouseActive) mouseDecay *= 0.99;
-    const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
-
     // Draw each cell
     for (let row = 0; row < rows; row++) {
       const band = Math.floor(row / 4);  // horizontal striations
-      const cy = row * cellH + cellH / 2;
-      const normalizedY = row / rows;
+      const py = row * cellH + cellH / 2;
 
       for (let col = 0; col < COLS; col++) {
-        const cx = col * cellW + cellW / 2;
+        const px = col * cellW + cellW / 2;
+        const nx = col / COLS;
         
-        // Get wave amplitude at this column
-        let amp = waveAmp(col, band, time);
+        // Two overlapping waves
+        const amp = 0.15 * Math.sin(nx * 5 + time + band) + 
+                    0.1 * Math.cos(nx * 10 - time * 0.5);
         
-        // Mouse interaction: displace wave toward cursor
-        if (doMouse) {
-          const dx = (cx - smooth.x) / w;
-          const dy = (cy - smooth.y) / h;
-          const distSq = dx * dx + dy * dy;
-          const pull = Math.exp(-distSq / 0.015) * mouseDecay;
-          const mouseNormY = smooth.y / h;
-          amp += (mouseNormY - 0.5 - amp) * pull * 0.6;
-        }
+        // Gaussian density from wave centerline
+        const dist = (row / rows) - (0.5 + amp);
+        const density = Math.exp(-(dist * dist) / 0.02);
         
-        // Gaussian density: how close is this row to wave center?
-        // Wide sigma (0.08) for gradual falloff across full char range
-        const distFromCenter = normalizedY - (0.5 + amp);
-        const density = Math.exp(-(distFromCenter * distFromCenter) / 0.08);
-        
-        // Skip low density cells
+        // Skip low density
         if (density < 0.05) continue;
         
-        // Map density to character: stretch 0.05-1.0 range to full charSet
-        // charSet: ' .,;:!|/\-_~^' (space=0, ^=12)
-        const normalizedDensity = (density - 0.05) / 0.95;  // 0 to 1
-        const charIndex = Math.floor(normalizedDensity * (charSet.length - 1));
-        const ch = charSet[charIndex];
-        if (ch === ' ') continue;
+        let char = null;
+        let opacity = density * 0.6;
+        let color = CHAR_COLOR;
         
-        // Draw with opacity proportional to density
-        const opacity = (density * 0.6).toFixed(2);
-        ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
-        ctx.fillText(ch, cx, cy);
+        // Word appears only in high-density areas
+        if (density > 0.7) {
+          const wordOverlay = getWordOverlay(col, row, time);
+          if (wordOverlay) {
+            char = wordOverlay.char;
+            color = wordOverlay.color;
+            opacity = density * 0.85;  // brighter for words
+          }
+        }
+        
+        // Default: wave character
+        if (!char) {
+          const charIdx = Math.floor(density * (waveChars.length - 1));
+          char = waveChars[Math.min(charIdx, waveChars.length - 1)];
+        }
+        
+        if (char === ' ') continue;
+        
+        ctx.fillStyle = `rgba(${color}, ${opacity.toFixed(2)})`;
+        ctx.fillText(char, px, py);
       }
     }
 
-    // Advance time (slower)
-    time += 0.005;
+    // Advance time
+    time += 0.02;
     
     requestAnimationFrame(draw);
   }
 
-  // Start animation
+  // Start
   requestAnimationFrame(draw);
 })();
 
