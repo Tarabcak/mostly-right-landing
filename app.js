@@ -13,6 +13,20 @@
   const CHAR_COLOR = 'rgba(200, 200, 195,';  // opacity appended
   const COLS = 120;
   const charSet = ' .,;:!|/\\-_~^';
+  
+  // Market words (green = sports/weather, blue = politics/econ)
+  const WORDS = [
+    { text: 'TRUMP', color: '#1C57BE' },
+    { text: 'NBA', color: '#35BE76' },
+    { text: 'WEATHER', color: '#35BE76' },
+    { text: 'FED', color: '#1C57BE' },
+    { text: 'BTC', color: '#1C57BE' },
+    { text: 'F1', color: '#35BE76' },
+    { text: 'RAIN', color: '#35BE76' },
+    { text: 'AI', color: '#1C57BE' },
+    { text: 'NFL', color: '#35BE76' },
+    { text: 'ELECTION', color: '#1C57BE' },
+  ];
 
   let cellW, cellH, rows, w, h;
   let time = 0;
@@ -121,6 +135,31 @@
         const opacity = (density * 0.6).toFixed(2);
         ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
         ctx.fillText(ch, cx, cy);
+      }
+    }
+
+    // Draw 2 subtle words at 100% opacity
+    const numWords = 2;
+    for (let i = 0; i < numWords; i++) {
+      // Slowly cycle through words
+      const wordIndex = (Math.floor(time * 0.3) + i * 4) % WORDS.length;
+      const word = WORDS[wordIndex];
+      
+      // Drift position slowly across screen
+      const drift = (time * 0.1 + i * 50) % (COLS - word.text.length - 4);
+      const col = Math.floor(drift + 2);
+      
+      // Follow wave at this column
+      const nx = col / COLS;
+      const waveY = 0.5 + 0.15 * Math.sin(nx * 5 + time) + 0.1 * Math.cos(nx * 10 - time * 0.5);
+      const row = Math.floor(waveY * rows);
+      const cy = row * cellH + cellH / 2;
+      
+      // Draw word at 100% opacity
+      ctx.fillStyle = word.color;
+      for (let c = 0; c < word.text.length; c++) {
+        const cx = (col + c) * cellW + cellW / 2;
+        ctx.fillText(word.text[c], cx, cy);
       }
     }
 
