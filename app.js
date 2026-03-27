@@ -148,33 +148,6 @@
     const t = time;
     const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
-    // Place words that flow with the wave — each character follows the wave at its column
-    const wordCells = new Map(); // key: "row,col" -> { char, color }
-    const numSlots = Math.max(3, Math.min(6, Math.floor(COLS / 15))); // at least 3 on mobile
-    
-    for (let i = 0; i < numSlots; i++) {
-      // Word changes every few seconds (faster cycling)
-      const cycleIndex = Math.floor(t * 0.25 + i * 1.1);
-      const wordIndex = (cycleIndex + i * 3) % WORDS.length;
-      const word = WORDS[wordIndex];
-      
-      // Spread words across columns with some padding
-      const slotWidth = (COLS - 10) / numSlots;
-      const col = Math.floor(5 + slotWidth * i);
-      
-      // Register each character — each follows wave at its own column
-      for (let c = 0; c < word.text.length; c++) {
-        const cellCol = col + c;
-        if (cellCol < COLS - 2) {
-          // Calculate wave position at this specific column
-          const normalizedX = cellCol / COLS;
-          const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
-          const charRow = Math.floor(waveY * rowCount);
-          wordCells.set(`${charRow},${cellCol}`, { char: word.text[c], color: word.color });
-        }
-      }
-    }
-
     for (let row = 0; row < rowCount; row++) {
       const band = Math.floor(row / 4);
       const cy = row * cellH + cellH / 2;
@@ -209,23 +182,45 @@
 
         const opacity = density * 0.6;
 
-        // Check if this cell is part of a word
-        const wordCell = wordCells.get(`${row},${col}`);
-        if (wordCell && density > 0.5) {
-          // Render word character at 100% opacity — flows with wave
-          ch = wordCell.char;
-          ctx.fillStyle = wordCell.color;
-        } else if (density > 0.6) {
-          // Scatter probability numbers in dense zones
+        // Scatter words and numbers in dense zones
+        if (density > 0.5) {
           const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
           const rnd = hash - Math.floor(hash);
-          if (rnd > 0.85) {
-            const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
-            const digits = prob.toString().padStart(2, '0');
-            ch = digits[Math.floor(rnd * 10) % 2];
-            ctx.fillStyle = getColor(opacity, true);
-          } else {
-            ctx.fillStyle = getColor(opacity, false);
+          
+          // Words: check if any word starts within range that would cover this cell
+          let isWord = false;
+          for (let checkCol = Math.max(0, col - 8); checkCol <= col; checkCol++) {
+            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9) * 43758.5453;
+            const wordRnd = wordHash - Math.floor(wordHash);
+            // Words appear rarely (threshold 0.97) and persist longer (slower time factor)
+            const timeSlot = Math.floor(t * 0.1);
+            const wordTrigger = Math.sin(checkCol * 71.7 + row * 113.3 + timeSlot * 0.5) * 43758.5453;
+            const wordTriggerRnd = wordTrigger - Math.floor(wordTrigger);
+            
+            if (wordRnd > 0.97 && wordTriggerRnd > 0.5) {
+              const wordIndex = Math.floor(wordRnd * 1000) % WORDS.length;
+              const word = WORDS[wordIndex];
+              const charIndex = col - checkCol;
+              
+              if (charIndex >= 0 && charIndex < word.text.length) {
+                ch = word.text[charIndex];
+                ctx.fillStyle = word.color;
+                isWord = true;
+                break;
+              }
+            }
+          }
+          
+          if (!isWord) {
+            // Numbers (same as before)
+            if (density > 0.6 && rnd > 0.85) {
+              const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
+              const digits = prob.toString().padStart(2, '0');
+              ch = digits[Math.floor(rnd * 10) % 2];
+              ctx.fillStyle = getColor(opacity, true);
+            } else {
+              ctx.fillStyle = getColor(opacity, false);
+            }
           }
         } else {
           ctx.fillStyle = getColor(opacity, false);
