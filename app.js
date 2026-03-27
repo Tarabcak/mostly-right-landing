@@ -182,50 +182,51 @@
 
         const opacity = density * 0.6;
 
-        // Scatter words and numbers in dense zones
-        if (density > 0.5) {
+        // Numbers in dense zones
+        if (density > 0.6) {
           const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
           const rnd = hash - Math.floor(hash);
-          
-          // Words: check if any word starts within range that would cover this cell
-          let isWord = false;
-          for (let checkCol = Math.max(0, col - 8); checkCol <= col; checkCol++) {
-            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9) * 43758.5453;
-            const wordRnd = wordHash - Math.floor(wordHash);
-            // Words appear rarely (threshold 0.97) and persist longer (slower time factor)
-            const timeSlot = Math.floor(t * 0.1);
-            const wordTrigger = Math.sin(checkCol * 71.7 + row * 113.3 + timeSlot * 0.5) * 43758.5453;
-            const wordTriggerRnd = wordTrigger - Math.floor(wordTrigger);
-            
-            if (wordRnd > 0.97 && wordTriggerRnd > 0.5) {
-              const wordIndex = Math.floor(wordRnd * 1000) % WORDS.length;
-              const word = WORDS[wordIndex];
-              const charIndex = col - checkCol;
-              
-              if (charIndex >= 0 && charIndex < word.text.length) {
-                ch = word.text[charIndex];
-                ctx.fillStyle = word.color;
-                isWord = true;
-                break;
-              }
-            }
-          }
-          
-          if (!isWord) {
-            // Numbers (same as before)
-            if (density > 0.6 && rnd > 0.85) {
-              const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
-              const digits = prob.toString().padStart(2, '0');
-              ch = digits[Math.floor(rnd * 10) % 2];
-              ctx.fillStyle = getColor(opacity, true);
-            } else {
-              ctx.fillStyle = getColor(opacity, false);
-            }
+          if (rnd > 0.85) {
+            const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
+            const digits = prob.toString().padStart(2, '0');
+            ch = digits[Math.floor(rnd * 10) % 2];
+            ctx.fillStyle = getColor(opacity, true);
+          } else {
+            ctx.fillStyle = getColor(opacity, false);
           }
         } else {
           ctx.fillStyle = getColor(opacity, false);
         }
         ctx.fillText(ch, cx, cy);
+      }
+    }
+
+    // Draw 2-3 words at animated positions, 100% opacity
+    const numWords = COLS > 80 ? 3 : 2;
+    for (let i = 0; i < numWords; i++) {
+      // Cycle through words, each slot offset
+      const wordIndex = (Math.floor(t * 0.2) + i * 3) % WORDS.length;
+      const word = WORDS[wordIndex];
+      
+      // Animated position: moves across and follows wave
+      const phase = t * 0.3 + i * 2.5;
+      const colFloat = ((phase * 0.5 + i * 30) % (COLS - word.text.length - 4)) + 2;
+      const col = Math.floor(colFloat);
+      
+      // Row follows wave at this column
+      const normalizedX = col / COLS;
+      const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
+      const row = Math.floor(waveY * rowCount);
+      
+      // Draw each character at 100% opacity
+      ctx.fillStyle = word.color;
+      for (let c = 0; c < word.text.length; c++) {
+        const charCol = col + c;
+        if (charCol < COLS) {
+          const cx = charCol * cellW + cellW / 2;
+          const cy = row * cellH + cellH / 2;
+          ctx.fillText(word.text[c], cx, cy);
+        }
       }
     }
 
