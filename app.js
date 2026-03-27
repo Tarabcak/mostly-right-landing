@@ -106,8 +106,9 @@
         }
         
         // Gaussian density: how close is this row to wave center?
+        // Wide sigma (0.08) for gradual falloff across full char range
         const distFromCenter = normalizedY - (0.5 + amp);
-        const density = Math.exp(-(distFromCenter * distFromCenter) / 0.02);
+        const density = Math.exp(-(distFromCenter * distFromCenter) / 0.08);
         
         // Skip low density cells
         if (density < 0.05) continue;
