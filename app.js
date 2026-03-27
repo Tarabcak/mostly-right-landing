@@ -7,12 +7,9 @@
   const ctx = canvas.getContext('2d');
   const BG_COLOR = '#0a0a0a';
 
-  // Responsive column count: mobile 40, tablet 60, desktop 90
+  // Responsive column count: mobile 50, desktop 120 (original density)
   function getCols() {
-    const width = window.innerWidth;
-    if (width < 768) return 40;
-    if (width < 1200) return 60;
-    return 90;
+    return window.innerWidth < 768 ? 50 : 120;
   }
 
   const charSet = ' .,;:!|/\\-_~^';
