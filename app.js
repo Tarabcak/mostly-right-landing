@@ -13,20 +13,6 @@
   const COLS = 120;
   const waveChars = ' .,;:!|/\\-_~^`';  // space lowest, backtick highest
 
-  // Prediction market words with colors (green = sports/weather, blue = politics/econ)
-  const words = [
-    { text: 'TRUMP', color: '28, 87, 190' },      // #1C57BE
-    { text: 'NBA', color: '53, 190, 118' },       // #35BE76
-    { text: 'WEATHER', color: '53, 190, 118' },
-    { text: 'FED', color: '28, 87, 190' },
-    { text: 'BTC', color: '28, 87, 190' },
-    { text: 'F1', color: '53, 190, 118' },
-    { text: 'RAIN', color: '53, 190, 118' },
-    { text: 'AI', color: '28, 87, 190' },
-    { text: 'NFL', color: '53, 190, 118' },
-    { text: 'ELECTION', color: '28, 87, 190' },
-  ];
-
   let cellW, cellH, rows, w, h;
   let time = 0;
 
@@ -57,38 +43,6 @@
     resize();
   });
 
-  // ── Word overlay function ───────────────────────────────────────────────
-  function getWordOverlay(col, row, t) {
-    // Multiple word slots at different positions
-    const slots = [
-      { xOffset: 0.1, yOffset: -1, timeOffset: 0 },
-      { xOffset: 0.4, yOffset: 0, timeOffset: 1 },
-      { xOffset: 0.7, yOffset: 1, timeOffset: 2 },
-    ];
-    
-    for (let i = 0; i < slots.length; i++) {
-      const slot = slots[i];
-      // Faster word cycling (every ~0.8s)
-      const wordIdx = (Math.floor((t + slot.timeOffset) * 1.5) + i) % words.length;
-      const wordObj = words[wordIdx];
-      const word = wordObj.text;
-      
-      // Faster drift up/down
-      const baseRow = Math.floor(rows * 0.5);
-      const drift = (Math.floor(t * 0.8) % 5 - 2) * 3;
-      const wordRow = baseRow + drift + slot.yOffset * 3;
-      
-      // Horizontal drift too
-      const xDrift = Math.floor(Math.sin(t * 0.5 + i * 2) * 8);
-      const wordColStart = Math.floor(COLS * slot.xOffset) + xDrift;
-      
-      if (row === wordRow && col >= wordColStart && col < wordColStart + word.length) {
-        return { char: word[col - wordColStart], color: wordObj.color };
-      }
-    }
-    return null;
-  }
-
   // ── Draw frame ──────────────────────────────────────────────────────────
   function draw() {
     // Clear
@@ -115,29 +69,14 @@
         // Skip low density
         if (density < 0.05) continue;
         
-        let char = null;
-        let opacity = density * 0.6;
-        let color = CHAR_COLOR;
-        
-        // Word appears in dense areas (100% opacity, same color as chars)
-        if (density > 0.4) {
-          const wordOverlay = getWordOverlay(col, row, time);
-          if (wordOverlay) {
-            char = wordOverlay.char;
-            // Keep same color as wave characters
-            opacity = 1.0;  // 100% opacity for words
-          }
-        }
-        
-        // Default: wave character
-        if (!char) {
-          const charIdx = Math.floor(density * (waveChars.length - 1));
-          char = waveChars[Math.min(charIdx, waveChars.length - 1)];
-        }
+        // Wave character based on density
+        const charIdx = Math.floor(density * (waveChars.length - 1));
+        const char = waveChars[Math.min(charIdx, waveChars.length - 1)];
         
         if (char === ' ') continue;
         
-        ctx.fillStyle = `rgba(${color}, ${opacity.toFixed(2)})`;
+        const opacity = density * 0.6;
+        ctx.fillStyle = `rgba(${CHAR_COLOR}, ${opacity.toFixed(2)})`;
         ctx.fillText(char, px, py);
       }
     }
