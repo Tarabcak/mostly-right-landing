@@ -148,30 +148,29 @@
     const t = time;
     const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
 
-    // Place words that flow with the wave (only visible when density is high)
+    // Place words that flow with the wave — each character follows the wave at its column
     const wordCells = new Map(); // key: "row,col" -> { char, color }
-    const numSlots = Math.min(6, Math.floor(COLS / 18));
+    const numSlots = Math.max(3, Math.min(6, Math.floor(COLS / 15))); // at least 3 on mobile
     
     for (let i = 0; i < numSlots; i++) {
-      // Word changes every few seconds
-      const cycleIndex = Math.floor(t * 0.15 + i * 0.7);
+      // Word changes every few seconds (faster cycling)
+      const cycleIndex = Math.floor(t * 0.25 + i * 1.1);
       const wordIndex = (cycleIndex + i * 3) % WORDS.length;
       const word = WORDS[wordIndex];
       
-      // Spread words across columns
-      const slotWidth = COLS / numSlots;
-      const col = Math.floor(slotWidth * i + slotWidth * 0.2);
+      // Spread words across columns with some padding
+      const slotWidth = (COLS - 10) / numSlots;
+      const col = Math.floor(5 + slotWidth * i);
       
-      // Row follows the wave center
-      const normalizedX = col / COLS;
-      const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
-      const row = Math.floor(waveY * rowCount);
-      
-      // Register each character (will only render if density is high enough)
+      // Register each character — each follows wave at its own column
       for (let c = 0; c < word.text.length; c++) {
         const cellCol = col + c;
-        if (cellCol < COLS) {
-          wordCells.set(`${row},${cellCol}`, { char: word.text[c], color: word.color });
+        if (cellCol < COLS - 2) {
+          // Calculate wave position at this specific column
+          const normalizedX = cellCol / COLS;
+          const waveY = 0.5 + 0.15 * Math.sin(normalizedX * 5 + t) + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
+          const charRow = Math.floor(waveY * rowCount);
+          wordCells.set(`${charRow},${cellCol}`, { char: word.text[c], color: word.color });
         }
       }
     }
