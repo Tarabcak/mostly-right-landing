@@ -1,196 +1,98 @@
-// ── Wave Field — optimized ASCII wave with mouse interaction ──────────────
+// ── ASCII Wave Animation ──────────────────────────────────────────────────
+// Pure canvas + math, no libraries
 (function() {
+  // Respect reduced motion preference
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.getElementById('waveCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+
+  // Config
   const BG_COLOR = '#0a0a0a';
-
-  // Responsive column count: mobile 50, desktop 120 (original density)
-  function getCols() {
-    return window.innerWidth < 768 ? 50 : 120;
-  }
-
+  const CHAR_COLOR = 'rgba(200, 200, 195,';  // opacity appended
+  const COLS = 120;
   const charSet = ' .,;:!|/\\-_~^';
-  let COLS = getCols();
-  let cellW, cellH, rowCount, time = 0;
-  let w, h;
-  let animationId = null;
-  let isVisible = true;
-  let lastFrameTime = 0;
-  const TARGET_FPS = 30;
-  const FRAME_DURATION = 1000 / TARGET_FPS;
 
-  // Pre-compute opacity colors (avoid string allocation in loop)
-  const colorCache = new Map();
-  function getColor(opacity, bright) {
-    const key = `${Math.round(opacity * 100)}-${bright ? 1 : 0}`;
-    if (!colorCache.has(key)) {
-      const a = bright ? Math.min(opacity * 1.4, 0.85) : opacity;
-      colorCache.set(key, `rgba(200, 200, 195, ${a.toFixed(2)})`);
-    }
-    return colorCache.get(key);
-  }
+  let cellW, cellH, rows, w, h;
+  let time = 0;
 
-  // Mouse state
-  let mouse = { x: -1, y: -1 };
-  let smooth = { x: -1, y: -1 };
-  let mouseDecay = 0;
-  let mouseActive = false;
-
+  // ── Resize ──────────────────────────────────────────────────────────────
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x
-    const parent = canvas.parentElement;
-    w = parent.offsetWidth || window.innerWidth;
-    h = parent.offsetHeight || window.innerHeight;
-    COLS = getCols();
+    const dpr = window.devicePixelRatio || 1;
+    w = canvas.parentElement?.offsetWidth || window.innerWidth;
+    h = canvas.parentElement?.offsetHeight || window.innerHeight;
+    
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    
     cellW = w / COLS;
     cellH = cellW * 1.6;
-    rowCount = Math.ceil(h / cellH);
+    rows = Math.ceil(h / cellH);
     
-    // Set font once on resize (not every frame)
-    const fontSize = Math.max(8, cellW * 0.85);
+    // Set font once
+    const fontSize = Math.max(8, cellH * 0.6);
     ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
   }
 
   resize();
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  });
+  window.addEventListener('resize', resize);
 
-  // Mouse events
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    mouseActive = true;
-    mouseDecay = 1.0;
-  });
-  window.addEventListener('mouseleave', () => { mouseActive = false; });
-  window.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    mouse.x = t.clientX;
-    mouse.y = t.clientY;
-    mouseActive = true;
-    mouseDecay = 1.0;
-  }, { passive: true });
-  window.addEventListener('touchend', () => { mouseActive = false; });
+  // ── Wave amplitude function ─────────────────────────────────────────────
+  function waveAmp(col, band, t) {
+    const nx = col / COLS;  // normalized 0–1
+    return 0.15 * Math.sin(nx * 5 + t + band) + 
+           0.1 * Math.cos(nx * 10 - t * 0.5);
+  }
 
-  // Pause when tab hidden
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      isVisible = false;
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-    } else {
-      isVisible = true;
-      lastFrameTime = 0;
-      if (!animationId) animationId = requestAnimationFrame(draw);
-    }
-  });
-
-  // Pause when scrolled out of view
-  const observer = new IntersectionObserver((entries) => {
-    isVisible = entries[0].isIntersecting;
-    if (isVisible && !animationId) {
-      lastFrameTime = 0;
-      animationId = requestAnimationFrame(draw);
-    }
-  }, { threshold: 0.1 });
-  observer.observe(canvas);
-
-  function draw(timestamp) {
-    if (!isVisible) {
-      animationId = null;
-      return;
-    }
-
-    // Throttle to target FPS
-    if (timestamp - lastFrameTime < FRAME_DURATION) {
-      animationId = requestAnimationFrame(draw);
-      return;
-    }
-    lastFrameTime = timestamp;
-
+  // ── Draw frame ──────────────────────────────────────────────────────────
+  function draw() {
+    // Clear
     ctx.fillStyle = BG_COLOR;
     ctx.fillRect(0, 0, w, h);
 
-    // Smooth mouse
-    if (smooth.x < 0) { smooth.x = mouse.x; smooth.y = mouse.y; }
-    smooth.x += (mouse.x - smooth.x) * 0.08;
-    smooth.y += (mouse.y - smooth.y) * 0.08;
-    if (!mouseActive) mouseDecay *= 0.99;
-
-    const t = time;
-    const doMouse = mouseDecay > 0.01 && smooth.x >= 0;
-
-    for (let row = 0; row < rowCount; row++) {
-      const band = Math.floor(row / 4);
+    // Draw each cell
+    for (let row = 0; row < rows; row++) {
+      const band = Math.floor(row / 4);  // horizontal striations
       const cy = row * cellH + cellH / 2;
-      const normalizedY = row / rowCount;
+      const normalizedY = row / rows;
 
       for (let col = 0; col < COLS; col++) {
         const cx = col * cellW + cellW / 2;
-        const normalizedX = col / COLS;
-
-        // Wave amplitude
-        let waveAmp = 0.15 * Math.sin(normalizedX * 5 + t + band)
-                    + 0.1 * Math.cos(normalizedX * 10 - t * 0.5);
-
-        // Mouse wave displacement
-        if (doMouse) {
-          const dx = (cx - smooth.x) / w;
-          const dy = (cy - smooth.y) / h;
-          const distSq = dx * dx + dy * dy;
-          const pull = Math.exp(-distSq / 0.015) * mouseDecay;
-          const mouseNormY = smooth.y / h;
-          waveAmp += (mouseNormY - 0.5 - waveAmp) * pull * 0.6;
-        }
-
-        const distFromCenter = normalizedY - (0.5 + waveAmp);
+        
+        // Get wave amplitude at this column
+        const amp = waveAmp(col, band, time);
+        
+        // Gaussian density: how close is this row to wave center?
+        const distFromCenter = normalizedY - (0.5 + amp);
         const density = Math.exp(-(distFromCenter * distFromCenter) / 0.02);
-
+        
+        // Skip low density cells
         if (density < 0.05) continue;
-
-        const ci = Math.floor(density * (charSet.length - 1));
-        let ch = charSet[ci];
+        
+        // Map density to character
+        const charIndex = Math.floor(density * (charSet.length - 1));
+        const ch = charSet[charIndex];
         if (ch === ' ') continue;
-
-        const opacity = density * 0.6;
-
-        // Scatter probability numbers in dense zones
-        const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
-        const rnd = hash - Math.floor(hash);
-        if (density > 0.6 && rnd > 0.85) {
-          const prob = Math.floor(((Math.sin(col * 0.7 + row * 0.3 + t * 0.5) + 1) / 2) * 100);
-          const digits = prob.toString().padStart(2, '0');
-          ch = digits[Math.floor(rnd * 10) % 2];
-          ctx.fillStyle = getColor(opacity, true);
-        } else {
-          ctx.fillStyle = getColor(opacity, false);
-        }
+        
+        // Draw with opacity proportional to density
+        const opacity = (density * 0.6).toFixed(2);
+        ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
         ctx.fillText(ch, cx, cy);
       }
     }
 
-    // Heartbeat timing
-    const beat = Math.sin(time * 0.15);
-    const eased = beat * beat * beat * beat;
-    time += 0.003 + 0.005 * eased;
+    // Advance time
+    time += 0.02;
     
-    animationId = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
   }
 
-  animationId = requestAnimationFrame(draw);
+  // Start animation
+  requestAnimationFrame(draw);
 })();
 
 // ── Supabase Waitlist ──────────────────────────────────────────────────────
@@ -201,14 +103,12 @@
   var DEFAULT_NOTE = 'No spam. Early users get free API access.';
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Cache DOM elements first — listener must attach even if Supabase fails
   var form = document.querySelector('.cta-form');
   if (!form) return;
   var inputEl = form.querySelector('.cta-input');
   var btnEl = form.querySelector('.cta-btn');
   var noteEl = document.querySelector('.cta-note');
 
-  // Init client — wrapped in try-catch so a bad key/version never kills the listener
   var sb = null;
   try {
     if (typeof window.supabase !== 'undefined') {
@@ -228,10 +128,9 @@
   }
 
   function triggerShake() {
-    // Remove and re-add to restart animation
     form.classList.remove('error');
     inputEl.classList.remove('error');
-    void form.offsetWidth; // Force reflow
+    void form.offsetWidth;
     form.classList.add('error');
     inputEl.classList.add('error');
   }
@@ -258,7 +157,6 @@
         noteEl.className = 'cta-note success';
         break;
       case 'duplicate':
-        // Show same success state to prevent email enumeration
         setFormState('success');
         break;
       case 'validation-error':
@@ -303,7 +201,6 @@
 
     var email = inputEl.value.trim();
     
-    // Custom validation
     if (!email) {
       setFormState('validation-error', 'Please enter your email.');
       return;
