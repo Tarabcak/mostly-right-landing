@@ -126,40 +126,46 @@
         // Skip low density cells
         if (density < 0.05) continue;
         
-        // Map density to character
-        const charIndex = Math.floor(density * (charSet.length - 1));
-        const ch = charSet[charIndex];
-        if (ch === ' ') continue;
+        // Check if this cell should be part of a word
+        const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5453;
+        const rnd = hash - Math.floor(hash);
         
-        // Draw with opacity proportional to density
-        const opacity = (density * 0.6).toFixed(2);
-        ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
-        ctx.fillText(ch, cx, cy);
-      }
-    }
-
-    // Draw 2 subtle words at 100% opacity
-    const numWords = 2;
-    for (let i = 0; i < numWords; i++) {
-      // Slowly cycle through words
-      const wordIndex = (Math.floor(time * 0.3) + i * 4) % WORDS.length;
-      const word = WORDS[wordIndex];
-      
-      // Drift position slowly across screen
-      const drift = (time * 0.1 + i * 50) % (COLS - word.text.length - 4);
-      const col = Math.floor(drift + 2);
-      
-      // Follow wave at this column
-      const nx = col / COLS;
-      const waveY = 0.5 + 0.15 * Math.sin(nx * 5 + time) + 0.1 * Math.cos(nx * 10 - time * 0.5);
-      const row = Math.floor(waveY * rows);
-      const cy = row * cellH + cellH / 2;
-      
-      // Draw word at 100% opacity
-      ctx.fillStyle = word.color;
-      for (let c = 0; c < word.text.length; c++) {
-        const cx = (col + c) * cellW + cellW / 2;
-        ctx.fillText(word.text[c], cx, cy);
+        // Word spawning: check if a word starts nearby
+        let wordChar = null;
+        let wordColor = null;
+        if (density > 0.5) {
+          for (let checkCol = Math.max(0, col - 8); checkCol <= col; checkCol++) {
+            const wordHash = Math.sin(checkCol * 89.3 + row * 157.9 + Math.floor(time * 0.5)) * 43758.5453;
+            const wordRnd = wordHash - Math.floor(wordHash);
+            
+            if (wordRnd > 0.992) {  // rare spawn
+              const wordIndex = Math.floor(wordRnd * 1000) % WORDS.length;
+              const word = WORDS[wordIndex];
+              const charIdx = col - checkCol;
+              
+              if (charIdx >= 0 && charIdx < word.text.length) {
+                wordChar = word.text[charIdx];
+                wordColor = word.color;
+                break;
+              }
+            }
+          }
+        }
+        
+        if (wordChar) {
+          // Draw word character at 100% opacity
+          ctx.fillStyle = wordColor;
+          ctx.fillText(wordChar, cx, cy);
+        } else {
+          // Normal character with density-based opacity
+          const charIndex = Math.floor(density * (charSet.length - 1));
+          const ch = charSet[charIndex];
+          if (ch === ' ') continue;
+          
+          const opacity = (density * 0.6).toFixed(2);
+          ctx.fillStyle = `${CHAR_COLOR}${opacity})`;
+          ctx.fillText(ch, cx, cy);
+        }
       }
     }
 
