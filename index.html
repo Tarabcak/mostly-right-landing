@@ -61,6 +61,21 @@
       from { transform: scaleX(0); }
       to { transform: scaleX(1); }
     }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+      20%, 40%, 60%, 80% { transform: translateX(4px); }
+    }
+    @keyframes successPulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+    @keyframes checkIn {
+      0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(-45deg); }
+      100% { transform: scale(1) rotate(-45deg); opacity: 1; }
+    }
 
     nav {
       opacity: 0;
@@ -118,7 +133,14 @@
       margin: 0 auto;
       padding: 32px 48px;
     }
-    .logo { height: 28px; width: auto; opacity: .8; }
+    .logo { 
+      height: 28px; 
+      width: auto; 
+      opacity: .8; 
+      transition: opacity 0.3s ease, transform 0.15s ease-out;
+    }
+    .logo:hover { opacity: 1; }
+    .logo:active { transform: scale(0.94); }
     .nav-link {
       display: inline-block;
       font-family: 'JetBrains Mono', monospace;
@@ -352,20 +374,44 @@
       transform: none;
       opacity: 1;
       cursor: default;
+      animation: successPulse 0.6s ease-out;
     }
+    .cta-btn-form.success::before { display: none; }
     .cta-btn-form.success:hover {
       opacity: 1;
       transform: none;
+      color: #fff;
+    }
+    .cta-btn-form.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .cta-input.error {
+      border-color: #f87171;
+      animation: shake 0.4s ease-out;
+    }
+    .cta-input.success {
+      border-color: #4ade80;
+    }
+    .cta-form.error {
+      animation: shake 0.4s ease-out;
     }
     .cta-note {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: var(--text-subtle);
-      transition: color 0.3s;
+      transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+      opacity: 1;
     }
-    .cta-note.success { color: #4ade80; }
+    .cta-note.success { 
+      color: #4ade80; 
+      transform: translateY(-2px);
+    }
     .cta-note.info { color: var(--text-body); }
-    .cta-note.error { color: #f87171; }
+    .cta-note.error { 
+      color: #f87171;
+      animation: shake 0.4s ease-out;
+    }
 
     /* ─── NAV RIGHT ─── */
     .nav-right {
@@ -487,7 +533,29 @@
       justify-content: space-between;
       align-items: center;
     }
-    .footer-logo { height: 14px; opacity: .35; }
+    .footer-logo { 
+      height: 22px; 
+      opacity: .5; 
+      transition: opacity 0.3s ease, transform 0.15s ease-out;
+    }
+    .footer-logo:hover { opacity: .8; }
+    .footer-logo:active { transform: scale(0.94); }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      text-decoration: none;
+      letter-spacing: .06em;
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover { color: var(--text-primary); }
     footer p {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
@@ -521,9 +589,11 @@
       .modal-title { font-size: 28px; }
       .modal-body p { font-size: 13px; }
       .modal-body { }
-      footer { padding: 24px 24px; flex-direction: column; gap: 8px; }
+      footer { padding: 24px 24px; flex-direction: column; gap: 16px; }
       footer p { text-align: center; font-size: 11px; }
-      .footer-logo { height: 16px; }
+      .footer-logo { height: 18px; }
+      .footer-right { gap: 16px; }
+      .footer-link { font-size: 10px; }
     }
 
     /* ─── REDUCED MOTION ─── */
@@ -589,7 +659,10 @@
 
   <hr class="divider">
   <footer>
-    <img src="logo-white.svg" alt="Mostly Right" class="footer-logo">
+    <a href="/"><img src="logo-white.svg" alt="Mostly Right" class="footer-logo"></a>
+    <div class="footer-right">
+      <a href="#" class="footer-link" id="footer-mission">Our Mission</a>
+    </div>
   </footer>
 
   <!-- Principles Modal -->
@@ -620,8 +693,11 @@
       // Principles modal
       const modal = document.getElementById('principles-modal');
       const openBtn = document.getElementById('principles-open');
+      const footerMission = document.getElementById('footer-mission');
       const closeBtn = document.getElementById('principles-close');
-      openBtn.addEventListener('click', e => { e.preventDefault(); modal.classList.add('active'); });
+      const openModal = e => { e.preventDefault(); modal.classList.add('active'); };
+      openBtn.addEventListener('click', openModal);
+      footerMission.addEventListener('click', openModal);
       closeBtn.addEventListener('click', () => modal.classList.remove('active'));
       modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
       document.querySelectorAll('a[href^="#"]').forEach(link => {
