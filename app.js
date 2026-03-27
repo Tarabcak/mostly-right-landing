@@ -119,12 +119,12 @@
         let opacity = density * 0.6;
         let color = CHAR_COLOR;
         
-        // Word appears in dense areas (100% opacity)
+        // Word appears in dense areas (100% opacity, same color as chars)
         if (density > 0.4) {
           const wordOverlay = getWordOverlay(col, row, time);
           if (wordOverlay) {
             char = wordOverlay.char;
-            color = wordOverlay.color;
+            // Keep same color as wave characters
             opacity = 1.0;  // 100% opacity for words
           }
         }
