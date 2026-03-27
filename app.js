@@ -161,17 +161,37 @@
   var submitting = false;
   var resetTimer = null;
 
+  function clearErrorState() {
+    inputEl.classList.remove('error');
+    form.classList.remove('error');
+    noteEl.classList.remove('error');
+  }
+
+  function triggerShake() {
+    // Remove and re-add to restart animation
+    form.classList.remove('error');
+    inputEl.classList.remove('error');
+    void form.offsetWidth; // Force reflow
+    form.classList.add('error');
+    inputEl.classList.add('error');
+  }
+
   function setFormState(state, message) {
     switch (state) {
       case 'submitting':
+        clearErrorState();
         inputEl.disabled = true;
         btnEl.disabled = true;
+        btnEl.classList.add('loading');
         btnEl.textContent = 'Submitting\u2026';
         break;
       case 'success':
         submitting = false;
+        clearErrorState();
         inputEl.disabled = true;
+        inputEl.classList.add('success');
         btnEl.disabled = true;
+        btnEl.classList.remove('loading');
         btnEl.textContent = "You're on the list";
         btnEl.classList.add('success');
         noteEl.textContent = "We'll be in touch.";
@@ -179,12 +199,29 @@
         break;
       case 'duplicate':
         submitting = false;
+        btnEl.classList.remove('loading');
+        btnEl.disabled = false;
+        btnEl.textContent = 'Get Early Access';
+        inputEl.disabled = false;
         noteEl.textContent = "You're already signed up!";
         noteEl.className = 'cta-note info';
         scheduleReset();
         break;
+      case 'validation-error':
+        submitting = false;
+        triggerShake();
+        noteEl.textContent = message || 'Please enter a valid email.';
+        noteEl.className = 'cta-note error';
+        inputEl.focus();
+        scheduleReset();
+        break;
       case 'error':
         submitting = false;
+        btnEl.classList.remove('loading');
+        btnEl.disabled = false;
+        btnEl.textContent = 'Get Early Access';
+        inputEl.disabled = false;
+        triggerShake();
         noteEl.textContent = message || 'Something went wrong. Try again.';
         noteEl.className = 'cta-note error';
         scheduleReset();
@@ -195,11 +232,12 @@
   function scheduleReset() {
     clearTimeout(resetTimer);
     resetTimer = setTimeout(function() {
+      clearErrorState();
       inputEl.disabled = false;
+      inputEl.classList.remove('success');
       btnEl.disabled = false;
+      btnEl.classList.remove('loading', 'success');
       btnEl.textContent = 'Get Early Access';
-      inputEl.value = '';
-      inputEl.focus();
       noteEl.textContent = DEFAULT_NOTE;
       noteEl.className = 'cta-note';
     }, FORM_RESET_DELAY_MS);
@@ -210,7 +248,16 @@
     if (submitting) return;
 
     var email = inputEl.value.trim();
-    if (!email || !EMAIL_RE.test(email)) return;
+    
+    // Custom validation
+    if (!email) {
+      setFormState('validation-error', 'Please enter your email.');
+      return;
+    }
+    if (!EMAIL_RE.test(email)) {
+      setFormState('validation-error', 'Please enter a valid email.');
+      return;
+    }
 
     if (!sb) {
       setFormState('error', 'Still loading. Try again.');
