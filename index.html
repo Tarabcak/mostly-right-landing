@@ -575,6 +575,7 @@
       h1 { font-size: 38px; line-height: 1.1; margin-bottom: 16px; }
       .hero { padding: 0 24px 40px; min-height: calc(100vh - 50px); min-height: calc(100dvh - 50px); }
       .hero-sub { font-size: 13px; line-height: 1.7; margin-bottom: 28px; max-width: 100%; }
+      .desktop-br { display: none; }
       .cta-btn { font-size: 12px; padding: 14px 28px; }
       .features { padding: 80px 0; }
       .features-grid { grid-template-columns: 1fr; gap: 36px; padding: 0 24px; }
@@ -597,6 +598,9 @@
       .footer-right { gap: 16px; }
       .footer-link { font-size: 10px; }
     }
+
+    /* ─── LINE BREAK CONTROL ─── */
+    .desktop-br { display: inline; }
 
     /* ─── REDUCED MOTION ─── */
     @media (prefers-reduced-motion: reduce) {
@@ -623,7 +627,7 @@
 
   <div class="hero">
     <h1>The AI-native stack for prediction markets.</h1>
-    <p class="hero-sub">One API for prediction market data and the real-world data that drives it. Built for AI agents, LLMs, and quants.</p>
+    <p class="hero-sub">One API for prediction market data and the real-world<br class="desktop-br"> data that drives it. Built for AI agents, LLMs, and&nbsp;quants.</p>
     <a href="#early-access" class="cta-btn">Get Early Access</a>
   </div>
   </div>
@@ -632,19 +636,19 @@
     <div class="features-grid">
       <div class="feature-card">
         <h3>Unified market data</h3>
-        <p>Kalshi and Polymarket in one consistent schema. Historical prices, settlements, and limit order book data. Every response includes resolution criteria and settlement logic.</p>
+        <p>Kalshi and Polymarket in one consistent schema. Historical prices, settlements, and limit order book data. Every response includes resolution criteria and&nbsp;settlement&nbsp;logic.</p>
       </div>
       <div class="feature-card">
         <h3>Real-world source data</h3>
-        <p>Weather forecasts, sports stats, economic indicators. Each data point paired with the market it drives — an agent gets the forecast alongside the market it resolves against.</p>
+        <p>Weather forecasts, sports stats, economic indicators. Each data point paired with the market it drives&nbsp;— an agent gets the forecast alongside the market it resolves&nbsp;against.</p>
       </div>
       <div class="feature-card">
         <h3>Proprietary data</h3>
-        <p>Most data comes from APIs and public feeds. Where it's genuinely messy — FOMC minutes, injury reports, earnings calls — we extract, structure, and annotate it so machines can reason about it directly.</p>
+        <p>Most data comes from APIs and public feeds. Where it's genuinely messy&nbsp;— FOMC minutes, injury reports, earnings calls&nbsp;— we extract, structure, and annotate it so machines can reason about it&nbsp;directly.</p>
       </div>
       <div class="feature-card">
         <h3>Backtesting & live deployment</h3>
-        <p>Test strategies against historical data with realistic fills. Connect your exchange account and deploy. We handle hosting and monitoring.</p>
+        <p>Test strategies against historical data with realistic fills. Connect your exchange account and deploy. We handle hosting and&nbsp;monitoring.</p>
       </div>
     </div>
   </section>
