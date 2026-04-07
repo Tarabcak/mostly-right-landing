@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostly Right — Pitch</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pitch/pitch.css">
+</head>
+<body>
+
+  <div class="slide">
+    <h1 class="slide-headline">But getting here wasn't easy. We had to build the whole stack ourselves.</h1>
+
+    <div class="cards-row">
+      <div class="card">
+        <p class="card-label">Market data is fragmented</p>
+        <p class="slide-body-small">Kalshi and Polymarket use different schemas. Neither stores order book history. You normalize them yourself and capture order book data in real time, forever.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Source data wasn't built for trading</p>
+        <p class="slide-body-small">Weather lives in GRIB files, macro in PDFs, sports across a dozen APIs. None map to contract resolution windows. You write the joins yourself, per vertical.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Agents pay for it twice</p>
+        <p class="slide-body-small">10+ API calls to reason about one contract. Bloated JSON the model didn't ask for. Every call is tokens, every token is money. By the time context is assembled, the market moved.</p>
+      </div>
+    </div>
+
+    <p class="slide-body-small" style="margin-top: 40px; color: var(--text-body);">We spent <strong style="color: var(--text-primary);">4 months</strong> on plumbing before we could test a single idea.</p>
+  </div>
+
+  <nav class="slide-nav">
+    <a href="/pitch/traction/" class="slide-nav-btn">← Prev</a>
+    <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo"></a>
+    <a href="/pitch/problem/" class="slide-nav-btn">Next →</a>
+  </nav>
+
+  <script src="/pitch/pitch.js"></script>
+</body>
+</html>

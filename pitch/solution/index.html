@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostly Right — Pitch</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pitch/pitch.css">
+</head>
+<body>
+
+  <div class="slide">
+    <h1 class="slide-headline">So we shipped the API we wished existed.</h1>
+
+    <p class="slide-body-small" style="margin-bottom: 32px; color: var(--text-muted);">We use it ourselves to trade daily. Launching soon as the most comprehensive SDK for researching weather markets on prediction exchanges.</p>
+
+    <div class="code-split">
+      <div class="code-block">
+        <p class="code-header">Without Mostly Right — 4 APIs and a pile of glue code</p>
+<pre><span class="comment"># Market prices</span>
+kalshi = requests.<span class="func">get</span>(<span class="string">"api.kalshi.com/..."</span>, auth=...)
+contracts = <span class="func">parse_kalshi</span>(kalshi.<span class="func">json</span>())
+
+<span class="comment"># Forecasts</span>
+nws = requests.<span class="func">get</span>(<span class="string">"api.weather.gov/..."</span>)
+forecast = <span class="func">parse_nws_grib</span>(nws.content)
+
+<span class="comment"># Climatology baseline</span>
+noaa = requests.<span class="func">get</span>(<span class="string">"ncdc.noaa.gov/..."</span>)
+climo = <span class="func">parse_noaa_csv</span>(noaa.text)
+
+<span class="comment"># observations, normalization, joins,</span>
+<span class="comment"># backfills... and the code to keep</span>
+<span class="comment"># it all consistent over time</span></pre>
+      </div>
+      <div class="code-block">
+        <p class="code-header">With Mostly Right <span class="code-tag">Public Beta</span></p>
+<pre><span class="keyword">from</span> mostlyright <span class="keyword">import</span> contracts
+
+ctx = contracts.<span class="func">weather</span>(<span class="string">"KNYC-HIGH-2026-04-15"</span>)
+
+ctx.price          <span class="comment"># market price</span>
+ctx.forecast       <span class="comment"># NWS forecast</span>
+ctx.ensemble       <span class="comment"># ensemble guidance</span>
+ctx.climatology    <span class="comment"># historical baseline</span>
+ctx.observations   <span class="comment"># recent actuals</span>
+ctx.resolution     <span class="comment"># settlement criteria</span></pre>
+      </div>
+    </div>
+
+    <p class="slide-body-small" style="margin-top: 32px; color: var(--text-body);"><strong style="color: var(--text-heading);">Unified market data.</strong> Kalshi + Polymarket in one schema, with order book history. <strong style="color: var(--text-heading);">Source data paired to every contract.</strong> Cleaned, validated, outliers flagged. <strong style="color: var(--text-heading);">AI agent optimized.</strong> TOON format cuts tokens by up to 60% vs JSON.</p>
+
+  </div>
+
+  <nav class="slide-nav">
+    <a href="/pitch/problem/" class="slide-nav-btn">← Prev</a>
+    <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo"></a>
+    <a href="/pitch/competitive/" class="slide-nav-btn">Next →</a>
+  </nav>
+
+  <script src="/pitch/pitch.js"></script>
+</body>
+</html>
