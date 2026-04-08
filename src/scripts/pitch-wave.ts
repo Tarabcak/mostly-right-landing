@@ -41,8 +41,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     });
 
     function draw() {
-      ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w, h);
 
       for (let row = 0; row < rows; row++) {
         const py = row * cellH + cellH / 2;

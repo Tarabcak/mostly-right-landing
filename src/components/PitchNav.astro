@@ -8,6 +8,7 @@ interface Props {
 const { slug } = Astro.props;
 const index = slides.findIndex(s => s.slug === slug);
 const slide = slides[index];
+const total = slides.length;
 function slideUrl(slug: string) {
   return slug === 'intro' ? '/pitch/' : `/pitch/${slug}/`;
 }
@@ -15,16 +16,19 @@ const prevUrl = slide?.prev ? slideUrl(slide.prev) : null;
 const nextUrl = slide?.next ? slideUrl(slide.next) : null;
 ---
 
-<nav class="slide-nav">
-  {prevUrl ? (
-    <a href={prevUrl} class="slide-nav-btn">&larr; Prev</a>
-  ) : (
-    <span></span>
-  )}
+<nav class="slide-nav-top">
   <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo" /></a>
-  {nextUrl ? (
-    <a href={nextUrl} class="slide-nav-btn">Next &rarr;</a>
-  ) : (
-    <a href="/pitch/" class="slide-nav-btn">&#8634; Start</a>
-  )}
+  <div class="slide-nav-center">
+    {prevUrl ? (
+      <a href={prevUrl} class="slide-nav-btn-sm">&larr;</a>
+    ) : (
+      <span class="slide-nav-btn-sm disabled">&larr;</span>
+    )}
+    {nextUrl ? (
+      <a href={nextUrl} class="slide-nav-btn-sm">&rarr;</a>
+    ) : (
+      <a href="/pitch/" class="slide-nav-btn-sm">&#8634;</a>
+    )}
+  </div>
+  <span class="slide-nav-counter">{index + 1}/{total}</span>
 </nav>
