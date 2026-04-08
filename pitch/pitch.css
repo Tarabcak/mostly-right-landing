@@ -57,7 +57,7 @@ html, body {
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--text-primary);
-  margin-bottom: 56px;
+  margin-bottom: 32px;
 }
 
 .slide-body {

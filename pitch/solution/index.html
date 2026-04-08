@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mostly Right — The API we wished existed</title>
-  <meta name="description" content="One SDK for prediction market data and the real-world data that drives it.">
+  <meta name="description" content="We use it to trade every day. Weather first, then sports, economics, and more.">
   <meta property="og:title" content="Mostly Right — The API we wished existed">
-  <meta property="og:description" content="One SDK for prediction market data and the real-world data that drives it.">
+  <meta property="og:description" content="We use it to trade every day. Weather first, then sports, economics, and more.">
   <meta property="og:type" content="website">  <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -14,32 +14,23 @@
 </head>
 <body>
 
-  <div class="slide">
-    <h1 class="slide-headline">So we shipped the API we wished existed.</h1>
+  <div class="slide" style="padding: 48px 64px 32px;">
+    <h1 class="slide-headline" style="margin-bottom: 20px;">So we're shipping the API we wished existed.</h1>
 
-    <p class="slide-body-small" style="margin-bottom: 32px; color: var(--text-muted);">We use it ourselves to trade daily. Launching soon as the most comprehensive SDK for researching weather markets on prediction exchanges.</p>
+    <p class="slide-body-small" style="margin-bottom: 24px; color: var(--text-muted);">We use it to trade every day. We started with weather because that's what we needed. Sports, economics and other categories are coming soon with the same&nbsp;depth.</p>
 
-    <div class="code-split">
-      <div class="code-block">
-        <p class="code-header">Without Mostly Right — 4 APIs and a pile of glue code</p>
-<pre><span class="comment"># Market prices</span>
-kalshi = requests.<span class="func">get</span>(<span class="string">"api.kalshi.com/..."</span>, auth=...)
-contracts = <span class="func">parse_kalshi</span>(kalshi.<span class="func">json</span>())
+    <div class="code-split" style="margin-top: 24px;">
+      <div class="code-block" style="color: var(--text-subtle);">
+        <p class="code-header">Without Mostly Right — 4 APIs and glue code</p>
+<pre style="color: var(--text-subtle);">kalshi = requests.get("api.kalshi.com/...", auth=...)
+nws   = requests.get("api.weather.gov/...")
+noaa  = requests.get("ncdc.noaa.gov/...")
 
-<span class="comment"># Forecasts</span>
-nws = requests.<span class="func">get</span>(<span class="string">"api.weather.gov/..."</span>)
-forecast = <span class="func">parse_nws_grib</span>(nws.content)
-
-<span class="comment"># Climatology baseline</span>
-noaa = requests.<span class="func">get</span>(<span class="string">"ncdc.noaa.gov/..."</span>)
-climo = <span class="func">parse_noaa_csv</span>(noaa.text)
-
-<span class="comment"># observations, normalization, joins,</span>
-<span class="comment"># backfills... and the code to keep</span>
-<span class="comment"># it all consistent over time</span></pre>
+# parse each format, normalize, join,
+# backfill, and keep it consistent...</pre>
       </div>
-      <div class="code-block">
-        <p class="code-header">With Mostly Right <span class="code-tag">Public Beta</span></p>
+      <div class="code-block" style="border-color: rgba(255,255,255,.25);">
+        <p class="code-header">With Mostly Right <span class="code-tag">Private Beta</span></p>
 <pre><span class="keyword">from</span> mostlyright <span class="keyword">import</span> contracts
 
 ctx = contracts.<span class="func">weather</span>(<span class="string">"KNYC-HIGH-2026-04-15"</span>)
@@ -53,7 +44,20 @@ ctx.resolution     <span class="comment"># settlement criteria</span></pre>
       </div>
     </div>
 
-    <p class="slide-body-small" style="margin-top: 32px; color: var(--text-body);"><strong style="color: var(--text-heading);">Unified market data.</strong> Kalshi + Polymarket in one schema, with order book history. <strong style="color: var(--text-heading);">Source data paired to every contract.</strong> Cleaned, validated, outliers flagged. <strong style="color: var(--text-heading);">AI agent optimized.</strong> TOON format cuts tokens by up to 60% vs JSON.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-default);">
+      <div>
+        <p class="slide-label">Clean market and real-world data</p>
+        <p class="slide-body-small">Market prices and real-world feeds in one schema, paired to the contracts they resolve. We handle the mess so you don't have&nbsp;to.</p>
+      </div>
+      <div>
+        <p class="slide-label">Built for agents</p>
+        <p class="slide-body-small">Every response ships in TOON format, saving your agent up to 60% on tokens vs JSON. Everything it needs in one&nbsp;call.</p>
+      </div>
+      <div>
+        <p class="slide-label">Live matches historical</p>
+        <p class="slide-body-small">Live endpoints return the same shape as historical data. Models you trained on backtests just work in&nbsp;production.</p>
+      </div>
+    </div>
 
   </div>
 
