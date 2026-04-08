@@ -339,10 +339,7 @@ h1 {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 32px;
-}
-.nav-right .nav-link {
-  margin-left: 8px;
+  gap: 16px;
 }
 .nav-text-link {
   font-family: 'JetBrains Mono', monospace;
