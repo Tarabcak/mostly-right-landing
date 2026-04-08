@@ -16,7 +16,6 @@ const prevUrl = slide?.prev ? slideUrl(slide.prev) : null;
 const nextUrl = slide?.next ? slideUrl(slide.next) : null;
 ---
 
-<!-- Top bar -->
 <nav class="slide-nav-top">
   <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo" /></a>
   <div class="slide-nav-right">
@@ -33,19 +32,3 @@ const nextUrl = slide?.next ? slideUrl(slide.next) : null;
     )}
   </div>
 </nav>
-
-<!-- Side navigation zones -->
-{prevUrl && (
-  <a href={prevUrl} class="slide-side-nav slide-side-prev" aria-label="Previous slide">
-    <span class="slide-side-arrow">&larr;</span>
-  </a>
-)}
-{nextUrl ? (
-  <a href={nextUrl} class="slide-side-nav slide-side-next" aria-label="Next slide">
-    <span class="slide-side-arrow">&rarr;</span>
-  </a>
-) : (
-  <a href="/pitch/" class="slide-side-nav slide-side-next" aria-label="Restart">
-    <span class="slide-side-arrow">&#8634;</span>
-  </a>
-)}

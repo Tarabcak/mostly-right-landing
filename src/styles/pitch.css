@@ -629,42 +629,13 @@ pre .builtin { color: #f78c6c; }
 }
 .slide-nav-logo:hover { opacity: .7; }
 
-/* ─── SIDE NAVIGATION ZONES ─── */
-@keyframes nudgeRight {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(6px); }
+/* ─── NAV NUDGE ANIMATION ─── */
+@keyframes navNudge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
-@keyframes nudgeLeft {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-6px); }
-}
-
-.slide-side-nav {
-  position: fixed;
-  top: 76px;
-  bottom: 0;
-  width: 48px;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  opacity: 0.3;
-  transition: opacity 0.3s;
-}
-.slide-side-nav:hover { opacity: 0.8; }
-.slide-side-prev { left: 8px; }
-.slide-side-next { right: 8px; }
-.slide-side-arrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 20px;
-  color: var(--text-subtle);
-}
-.slide-side-next .slide-side-arrow.nudge {
-  animation: nudgeRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.slide-side-prev .slide-side-arrow.nudge {
-  animation: nudgeLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+.slide-nav-btn-sm.nudge {
+  animation: navNudge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ─── BRIDGE LAYOUT (cards + symbol) ─── */
@@ -704,7 +675,6 @@ pre .builtin { color: #f78c6c; }
 /* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
   .slide { padding: 80px 20px 40px; min-height: auto; }
-  .slide-side-nav { display: none; }
   .slide-headline { font-size: 26px; margin-bottom: 24px; }
   .split { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
   .split-bridge { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }

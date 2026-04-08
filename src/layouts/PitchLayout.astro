@@ -20,20 +20,20 @@ if (!slide) throw new Error(`Unknown slide: ${slug}`);
   <PitchNav slug={slug} />
   <script src="../scripts/pitch-nav.ts"></script>
   <script is:inline>
-    // Nudge side arrows after 30s idle
+    // Nudge nav arrows after 10s idle
     (function() {
       var timer;
       function startTimer() {
         clearTimeout(timer);
         timer = setTimeout(function nudge() {
-          var arrows = document.querySelectorAll('.slide-side-arrow');
-          arrows.forEach(function(el) {
+          var btns = document.querySelectorAll('.slide-nav-btn-sm:not(.disabled)');
+          btns.forEach(function(el) {
             el.classList.remove('nudge');
             void el.offsetWidth;
             el.classList.add('nudge');
           });
-          timer = setTimeout(nudge, 30000);
-        }, 30000);
+          timer = setTimeout(nudge, 10000);
+        }, 10000);
       }
       startTimer();
       document.addEventListener('mousemove', startTimer);

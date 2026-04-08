@@ -59,7 +59,8 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
         document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
 
         function draw() {
-          ctx.clearRect(0, 0, w, h);
+          ctx.fillStyle = '#0A0A0A';
+          ctx.fillRect(0, 0, w, h);
           for (var row = 0; row < rows; row++) {
             var py = row * cellH + cellH / 2;
             for (var col = 0; col < COLS; col++) {
@@ -95,5 +96,11 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
   #pitchWaveCanvas.loaded {
     opacity: 1;
     transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  body:has(#pitchWaveCanvas) {
+    background: transparent;
+  }
+  body:has(#pitchWaveCanvas) .slide {
+    background: transparent;
   }
 </style>
