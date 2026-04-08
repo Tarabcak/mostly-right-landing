@@ -3,7 +3,7 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
 ---
 
 <PitchLayout slug="intro">
-  <canvas id="pitchWaveCanvas" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; opacity: 0; pointer-events: none;"></canvas>
+  <canvas id="pitchWaveCanvas" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
 
   <div style="position: relative; z-index: 1;">
     <h1 class="slide-headline">Prediction markets just exploded. Anyone with Claude Code can now trade like a&nbsp;hedge&nbsp;fund.</h1>
@@ -93,6 +93,9 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
 </PitchLayout>
 
 <style is:global>
+  #pitchWaveCanvas {
+    opacity: 0;
+  }
   #pitchWaveCanvas.loaded {
     opacity: 1;
     transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
