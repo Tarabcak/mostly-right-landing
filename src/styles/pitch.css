@@ -595,11 +595,11 @@ pre .builtin { color: #f78c6c; }
 .slide-nav-btn-sm::before {
   content: '';
   position: absolute;
-  top: 0; left: -5%; right: -5%;
-  height: 120%;
+  bottom: 0; left: -5%; right: -5%;
+  height: 100%;
   background: var(--surface-white);
   z-index: -1;
-  transform: translateY(-100%);
+  transform: translateY(100%);
   transform-origin: bottom left;
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
