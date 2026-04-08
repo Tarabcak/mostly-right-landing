@@ -36,6 +36,25 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── ENTRANCE ANIMATIONS ─── */
+.slide-headline {
+  opacity: 0;
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+.slide .slide-body-small:first-of-type {
+  opacity: 0;
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+}
+.slide .split,
+.slide .cards-row,
+.slide .code-split,
+.slide .flywheel-grid,
+.slide .solution-features,
+.slide .split-bridge {
+  opacity: 0;
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
 /* ─── SLIDE CONTAINER ─── */
 .slide {
   min-height: 100vh;
