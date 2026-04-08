@@ -3,107 +3,22 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
 ---
 
 <PitchLayout slug="intro">
-  <canvas id="pitchWaveCanvas" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
+  <h1 class="slide-headline">Prediction markets just exploded. Anyone with Claude Code can now trade like a&nbsp;hedge&nbsp;fund.</h1>
 
-  <div style="position: relative; z-index: 1;">
-    <h1 class="slide-headline">Prediction markets just exploded. Anyone with Claude Code can now trade like a&nbsp;hedge&nbsp;fund.</h1>
-
-    <div class="split">
-      <div class="split-block">
-        <p class="slide-label">Markets</p>
-        <p class="stat-number">$2B &rarr; $23B</p>
-        <p class="stat-unit">Monthly volume, Aug '25 &rarr; Feb '26</p>
-        <p class="stat-detail">Kalshi and Polymarket 10x'd their volume in six months. And it's not stopping.</p>
-        <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://news.bitcoin.com/prediction-market-boom-continues-with-polymarket-and-kalshi-leading-25-7b-month/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">Bitcoin.com</a> · <a href="https://techcrunch.com/2025/10/10/kalshi-hits-5b-valuation-days-after-rival-polymarket-gets-2b-nyse-backing-at-8b/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">TechCrunch</a></p>
-      </div>
-      <div class="split-block">
-        <p class="slide-label">Builders</p>
-        <p class="stat-number">300K &rarr; ?</p>
-        <p class="stat-unit">Indie quants today</p>
-        <p class="stat-detail">Robinhood made millions of people traders. GitHub commits are on pace to 14x this year thanks to Claude Code. What used to require an engineering team, one quant with Claude Code can now do alone.</p>
-        <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://www.quantconnect.com/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">QuantConnect</a> · <a href="https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">GitHub Octoverse</a></p>
-      </div>
+  <div class="split">
+    <div class="split-block">
+      <p class="slide-label">Markets</p>
+      <p class="stat-number">$2B &rarr; $23B</p>
+      <p class="stat-unit">Monthly volume, Aug '25 &rarr; Feb '26</p>
+      <p class="stat-detail">Kalshi and Polymarket 10x'd their volume in six months. And it's not stopping.</p>
+      <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://news.bitcoin.com/prediction-market-boom-continues-with-polymarket-and-kalshi-leading-25-7b-month/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">Bitcoin.com</a> · <a href="https://techcrunch.com/2025/10/10/kalshi-hits-5b-valuation-days-after-rival-polymarket-gets-2b-nyse-backing-at-8b/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">TechCrunch</a></p>
+    </div>
+    <div class="split-block">
+      <p class="slide-label">Builders</p>
+      <p class="stat-number">300K &rarr; ?</p>
+      <p class="stat-unit">Indie quants today</p>
+      <p class="stat-detail">Robinhood made millions of people traders. GitHub commits are on pace to 14x this year thanks to Claude Code. What used to require an engineering team, one quant with Claude Code can now do alone.</p>
+      <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://www.quantconnect.com/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">QuantConnect</a> · <a href="https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">GitHub Octoverse</a></p>
     </div>
   </div>
-
-  <script is:inline>
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      var canvas = document.getElementById('pitchWaveCanvas');
-      if (canvas) {
-        var ctx = canvas.getContext('2d');
-        var CHAR_COLOR = '232, 230, 224';
-        var waveChars = ' .,;:!|/\\-_~^`';
-        var COLS = 100;
-        var cellW, cellH, rows, w, h;
-        var time = 0;
-        var mouseX = -1000, mouseY = -1000;
-
-        function resize() {
-          var dpr = window.devicePixelRatio || 1;
-          w = window.innerWidth;
-          h = window.innerHeight;
-          canvas.width = w * dpr;
-          canvas.height = h * dpr;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          cellW = w / COLS;
-          cellH = cellW * 1.6;
-          rows = Math.ceil(h / cellH);
-          var fontSize = Math.max(8, cellH * 0.6);
-          ctx.font = fontSize + 'px "JetBrains Mono", monospace';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-        }
-
-        resize();
-        window.addEventListener('resize', function() { ctx.setTransform(1,0,0,1,0,0); resize(); });
-        document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
-
-        function draw() {
-          ctx.fillStyle = '#0A0A0A';
-          ctx.fillRect(0, 0, w, h);
-          for (var row = 0; row < rows; row++) {
-            var py = row * cellH + cellH / 2;
-            for (var col = 0; col < COLS; col++) {
-              var px = col * cellW + cellW / 2;
-              var noise = Math.sin(col * 0.1 + time) * Math.cos(row * 0.15 - time * 0.5);
-              var wave = Math.sin(col * 0.05 + row * 0.05 + time);
-              var val = (noise + wave + 2) / 4;
-              var dx = px - mouseX, dy = py - mouseY;
-              var dist = Math.sqrt(dx * dx + dy * dy);
-              var mouseInf = dist < 300 ? (1 - dist / 300) : 0;
-              var opacity = Math.min(val * 0.15 + mouseInf * 0.4, 0.6);
-              if (opacity < 0.03) continue;
-              var charIdx = Math.floor(val * (waveChars.length - 1));
-              var char = waveChars[Math.min(charIdx, waveChars.length - 1)];
-              if (char === ' ') continue;
-              var offsetX = mouseInf > 0 ? (dx / dist) * mouseInf * 2 : 0;
-              ctx.fillStyle = 'rgba(' + CHAR_COLOR + ', ' + opacity.toFixed(2) + ')';
-              ctx.fillText(char, px + offsetX, py);
-            }
-          }
-          time += 0.008;
-          requestAnimationFrame(draw);
-        }
-
-        requestAnimationFrame(draw);
-        canvas.classList.add('loaded');
-      }
-    }
-  </script>
 </PitchLayout>
-
-<style is:global>
-  #pitchWaveCanvas {
-    opacity: 0;
-  }
-  #pitchWaveCanvas.loaded {
-    opacity: 1;
-    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  body:has(#pitchWaveCanvas) {
-    background: transparent;
-  }
-  body:has(#pitchWaveCanvas) .slide {
-    background: transparent;
-  }
-</style>
