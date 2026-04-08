@@ -1,5 +1,5 @@
 const slides: string[] = [
-  '/pitch/intro/',
+  '/pitch/',
   '/pitch/traction/',
   '/pitch/origin/',
   '/pitch/solution/',
