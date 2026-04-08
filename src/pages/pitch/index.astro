@@ -3,22 +3,35 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
 ---
 
 <PitchLayout slug="intro">
-  <h1 class="slide-headline">Prediction markets just exploded. Anyone with Claude Code can now trade like a&nbsp;hedge&nbsp;fund.</h1>
+  <canvas id="pitchWaveCanvas" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0; pointer-events: auto;"></canvas>
 
-  <div class="split">
-    <div class="split-block">
-      <p class="slide-label">Markets</p>
-      <p class="stat-number">$2B &rarr; $23B</p>
-      <p class="stat-unit">Monthly volume, Aug '25 &rarr; Feb '26</p>
-      <p class="stat-detail">Kalshi and Polymarket 10x'd their volume in six months. And it's not stopping.</p>
-      <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://news.bitcoin.com/prediction-market-boom-continues-with-polymarket-and-kalshi-leading-25-7b-month/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">Bitcoin.com</a> · <a href="https://techcrunch.com/2025/10/10/kalshi-hits-5b-valuation-days-after-rival-polymarket-gets-2b-nyse-backing-at-8b/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">TechCrunch</a></p>
-    </div>
-    <div class="split-block">
-      <p class="slide-label">Builders</p>
-      <p class="stat-number">300K &rarr; ?</p>
-      <p class="stat-unit">Indie quants today</p>
-      <p class="stat-detail">Robinhood made millions of people traders. GitHub commits are on pace to 14x this year thanks to Claude Code. What used to require an engineering team, one quant with Claude Code can now do alone.</p>
-      <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://www.quantconnect.com/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">QuantConnect</a> · <a href="https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">GitHub Octoverse</a></p>
+  <div style="position: relative; z-index: 1;">
+    <h1 class="slide-headline">Prediction markets just exploded. Anyone with Claude Code can now trade like a&nbsp;hedge&nbsp;fund.</h1>
+
+    <div class="split">
+      <div class="split-block">
+        <p class="slide-label">Markets</p>
+        <p class="stat-number">$2B &rarr; $23B</p>
+        <p class="stat-unit">Monthly volume, Aug '25 &rarr; Feb '26</p>
+        <p class="stat-detail">Kalshi and Polymarket 10x'd their volume in six months. And it's not stopping.</p>
+        <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://news.bitcoin.com/prediction-market-boom-continues-with-polymarket-and-kalshi-leading-25-7b-month/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">Bitcoin.com</a> · <a href="https://techcrunch.com/2025/10/10/kalshi-hits-5b-valuation-days-after-rival-polymarket-gets-2b-nyse-backing-at-8b/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">TechCrunch</a></p>
+      </div>
+      <div class="split-block">
+        <p class="slide-label">Builders</p>
+        <p class="stat-number">300K &rarr; ?</p>
+        <p class="stat-unit">Indie quants today</p>
+        <p class="stat-detail">Robinhood made millions of people traders. GitHub commits are on pace to 14x this year thanks to Claude Code. What used to require an engineering team, one quant with Claude Code can now do alone.</p>
+        <p style="margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);"><a href="https://www.quantconnect.com/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">QuantConnect</a> · <a href="https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/" style="color: var(--text-faint); text-decoration: underline; text-underline-offset: 3px;" target="_blank">GitHub Octoverse</a></p>
+      </div>
     </div>
   </div>
+
+  <script src="../../scripts/pitch-wave.ts"></script>
 </PitchLayout>
+
+<style>
+  #pitchWaveCanvas.loaded {
+    opacity: 0.5;
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
