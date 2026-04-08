@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import FeaturesSection from '../components/FeaturesSection.astro';
+import CtaSection from '../components/CtaSection.astro';
+import Footer from '../components/Footer.astro';
+import MissionModal from '../components/MissionModal.astro';
+import '../styles/homepage.css';
+---
+
+<BaseLayout
+  title="Mostly Right — The AI-Native Stack for Prediction Markets"
+  description="One API for prediction market data and the real-world data that drives it. Built for AI agents, LLMs, and quants."
+>
+  <HeroSection />
+
+  <FeaturesSection />
+
+  <CtaSection />
+
+  <hr class="divider" />
+  <Footer />
+
+  <MissionModal />
+
+  <script src="../scripts/wave-animation.ts"></script>
+  <script src="../scripts/waitlist.ts"></script>
+  <script src="../scripts/modal.ts"></script>
+</BaseLayout>

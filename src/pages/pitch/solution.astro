@@ -1,0 +1,49 @@
+---
+import PitchLayout from '../../layouts/PitchLayout.astro';
+---
+
+<PitchLayout slug="solution">
+  <h1 class="slide-headline" style="margin-bottom: 20px;">So we're shipping the API we wished existed.</h1>
+
+  <p class="slide-body-small" style="margin-bottom: 24px; color: var(--text-muted);">We use it to trade every day. We started with weather because that's what we needed. Sports, economics and other categories are coming soon with the same&nbsp;depth.</p>
+
+  <div class="code-split" style="margin-top: 24px;">
+    <div class="code-block" style="color: var(--text-subtle);">
+      <p class="code-header">Without Mostly Right — 4 APIs and glue code</p>
+<pre style="color: var(--text-subtle);">kalshi = requests.get("api.kalshi.com/...", auth=...)
+nws   = requests.get("api.weather.gov/...")
+noaa  = requests.get("ncdc.noaa.gov/...")
+
+# parse each format, normalize, join,
+# backfill, and keep it consistent...</pre>
+    </div>
+    <div class="code-block" style="border-color: rgba(255,255,255,.25);">
+      <p class="code-header">With Mostly Right <span class="code-tag">Private Beta</span></p>
+<pre><span class="keyword">from</span> mostlyright <span class="keyword">import</span> contracts
+
+ctx = contracts.<span class="func">weather</span>(<span class="string">"KNYC-HIGH-2026-04-15"</span>)
+
+ctx.price          <span class="comment"># market price</span>
+ctx.forecast       <span class="comment"># NWS forecast</span>
+ctx.ensemble       <span class="comment"># ensemble guidance</span>
+ctx.climatology    <span class="comment"># historical baseline</span>
+ctx.observations   <span class="comment"># recent actuals</span>
+ctx.resolution     <span class="comment"># settlement criteria</span></pre>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-default);">
+    <div>
+      <p class="slide-label">Clean market and real-world data</p>
+      <p class="slide-body-small">Market prices and real-world feeds in one schema, paired to the contracts they resolve. We handle the mess so you don't have&nbsp;to.</p>
+    </div>
+    <div>
+      <p class="slide-label">Built for agents</p>
+      <p class="slide-body-small">Every response ships in TOON format, saving your agent up to 60% on tokens vs JSON. Everything it needs in one&nbsp;call.</p>
+    </div>
+    <div>
+      <p class="slide-label">Live matches historical</p>
+      <p class="slide-body-small">Live endpoints return the same shape as historical data. Models you trained on backtests just work in&nbsp;production.</p>
+    </div>
+  </div>
+</PitchLayout>

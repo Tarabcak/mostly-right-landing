@@ -1,0 +1,78 @@
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-section: #0d0d0d;
+  --text-primary: #fff;
+  --text-heading: rgba(255,255,255,.9);
+  --text-body: rgba(255,255,255,.55);
+  --text-muted: rgba(255,255,255,.5);
+  --text-subtle: rgba(255,255,255,.35);
+  --text-faint: rgba(255,255,255,.25);
+  --border-default: rgba(255,255,255,.1);
+  --border-input: rgba(255,255,255,.2);
+  --border-focus: rgba(255,255,255,.5);
+  --surface-white: #fff;
+  --surface-dark: #0a0a0a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes clipReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0% 0 0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes lineGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+@keyframes successPulse {
+  0% { box-shadow: 0 0 0 0 rgba(53, 190, 118, 0.4); }
+  70% { box-shadow: 0 0 0 12px rgba(53, 190, 118, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(53, 190, 118, 0); }
+}
+@keyframes checkIn {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(-45deg); }
+  100% { transform: scale(1) rotate(-45deg); opacity: 1; }
+}
+
+/* ─── LINE BREAK CONTROL ─── */
+.desktop-br { display: inline; }
+
+/* ─── REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  canvas { display: none; }
+}

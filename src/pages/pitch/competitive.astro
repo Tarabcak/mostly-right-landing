@@ -1,0 +1,22 @@
+---
+import PitchLayout from '../../layouts/PitchLayout.astro';
+---
+
+<PitchLayout slug="competitive">
+  <h1 class="slide-headline">Everyone else aggregates prices. We go deep where the edge actually&nbsp;is.</h1>
+
+  <p class="slide-body-small" style="margin-bottom: 32px; color: var(--text-muted);">Everyone scrapes prices. We also bring in the data that tells you when prices are wrong. For weather that's forecasts, station data, satellite. Each vertical needs its own stack, and that's the part nobody else is&nbsp;building.</p>
+
+  <div class="cards-row" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="card">
+      <div class="card-icon">...</div>
+      <p class="card-label">Oddpool, Predexon, pmxt</p>
+      <p class="slide-body-small">They scrape prices from Kalshi and Polymarket. Whale tracking, cross-exchange search, odds normalization. Good for browsing markets. But no source data, no backtesting, no way to actually build a&nbsp;strategy.</p>
+    </div>
+    <div class="card" style="border-color: rgba(255,255,255,.25);">
+      <div class="card-icon">-&gt;</div>
+      <p class="card-label">Mostly Right</p>
+      <p class="slide-body-small">Same market data, but we also pair every contract with the real-world data it resolves against. You can backtest with realistic fills and deploy live. Your agent gets structured context, not just&nbsp;prices.</p>
+    </div>
+  </div>
+</PitchLayout>

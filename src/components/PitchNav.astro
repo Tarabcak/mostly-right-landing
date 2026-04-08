@@ -1,0 +1,27 @@
+---
+import { slides } from '../data/pitch-slides';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const index = slides.findIndex(s => s.slug === slug);
+const slide = slides[index];
+const prevUrl = slide?.prev ? `/pitch/${slide.prev}/` : null;
+const nextUrl = slide?.next ? `/pitch/${slide.next}/` : null;
+---
+
+<nav class="slide-nav">
+  {prevUrl ? (
+    <a href={prevUrl} class="slide-nav-btn">&larr; Prev</a>
+  ) : (
+    <span></span>
+  )}
+  <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo" /></a>
+  {nextUrl ? (
+    <a href={nextUrl} class="slide-nav-btn">Next &rarr;</a>
+  ) : (
+    <a href="/pitch/intro/" class="slide-nav-btn">&#8634; Start</a>
+  )}
+</nav>

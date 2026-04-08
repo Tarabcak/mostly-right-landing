@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import PitchLayout from '../../layouts/PitchLayout.astro';
+import vuPhoto from '../../assets/team/vu.jpg';
+import robPhoto from '../../assets/team/rob.jpg';
+import vojtaPhoto from '../../assets/team/vojta.png';
+---
+
+<PitchLayout slug="team">
+  <h1 class="slide-headline">Built by three founders who already trade with&nbsp;it.</h1>
+
+  <p class="slide-body-small" style="margin-bottom: 32px; color: var(--text-muted);">Vu and Vojta, friends for 20 years. Vu and Rob, 12 months at Marinade. All three, building Mostly Right since early&nbsp;2026.</p>
+
+  <div class="cards-row">
+    <div class="card">
+      <Image src={vuPhoto} alt="Vu Hoang Anh" width={56} height={56} style="border-radius: 0; object-fit: cover; margin-bottom: 20px; filter: grayscale(100%);" />
+      <p class="card-label"><a href="https://www.linkedin.com/in/helloiamvu/" target="_blank" style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Vu Hoang Anh</a>, CEO</p>
+      <p class="slide-body-small">Built Avocode to $2M ARR and acquisition. 13 dev tools shipped. One year at Marinade Finance. Handles business, positioning, and&nbsp;distribution.</p>
+    </div>
+    <div class="card">
+      <Image src={robPhoto} alt="Rob Tarabcak" width={56} height={56} style="border-radius: 0; object-fit: cover; margin-bottom: 20px; filter: grayscale(100%);" />
+      <p class="card-label"><a href="https://www.linkedin.com/in/tarabcak" target="_blank" style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Rob Tarabcak</a>, CTO</p>
+      <p class="slide-body-small">Founded Cinnamon ($3.9M seed, Forbes 30 Under 30). Two years building real-time infra at Marinade. Built the platform, API, and data&nbsp;pipelines.</p>
+    </div>
+    <div class="card">
+      <Image src={vojtaPhoto} alt="Vojta Havlicek" width={56} height={56} style="border-radius: 0; object-fit: cover; margin-bottom: 20px; filter: grayscale(100%);" />
+      <p class="card-label"><a href="https://www.linkedin.com/in/vojt%C4%9Bch-havl%C3%AD%C4%8Dek-29408855" target="_blank" style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Vojta Havlicek</a>, Research</p>
+      <p class="slide-body-small">IBM quantum computing researcher. Oxford PhD. First-author Nature cover (2,000+ citations). Built a live trading system on high-frequency order book data. Knows which signals matter and which sources to&nbsp;trust.</p>
+    </div>
+  </div>
+
+  <p class="slide-body-small" style="margin-top: 32px; color: var(--text-body);">Talk to us: <a href="mailto:vuhcze@gmail.com" style="color: var(--text-heading); text-decoration: underline; text-underline-offset: 3px;">vuhcze@gmail.com</a></p>
+</PitchLayout>

@@ -1,0 +1,22 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PitchNav from '../components/PitchNav.astro';
+import '../styles/pitch.css';
+import { getSlideBySlug } from '../data/pitch-slides';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const slide = getSlideBySlug(slug);
+if (!slide) throw new Error(`Unknown slide: ${slug}`);
+---
+
+<BaseLayout title={slide.title} description={slide.description}>
+  <div class="slide">
+    <slot />
+  </div>
+  <PitchNav slug={slug} />
+  <script src="../scripts/pitch-nav.ts"></script>
+</BaseLayout>
