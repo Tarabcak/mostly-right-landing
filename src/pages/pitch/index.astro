@@ -29,7 +29,7 @@ import PitchLayout from '../../layouts/PitchLayout.astro';
   <script src="../../scripts/pitch-wave.ts"></script>
 </PitchLayout>
 
-<style>
+<style is:global>
   #pitchWaveCanvas.loaded {
     opacity: 0.5;
     transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
