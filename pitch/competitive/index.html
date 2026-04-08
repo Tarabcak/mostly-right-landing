@@ -15,58 +15,22 @@
 <body>
 
   <div class="slide">
-    <h1 class="slide-headline">Everyone else aggregates prices. We go deep where the edge actually is.</h1>
+    <h1 class="slide-headline">Everyone else aggregates prices. We go deep where the edge actually&nbsp;is.</h1>
 
     <p class="slide-body-small" style="margin-bottom: 40px; color: var(--text-muted);">Scraping prices is table stakes. Anyone can do that. The edge is in the source data that tells you when prices are wrong.</p>
 
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Oddpool</th>
-          <th>Predexon</th>
-          <th>pmxt</th>
-          <th>Mostly Right</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Kalshi + Polymarket</td>
-          <td class="check">✓</td>
-          <td class="check">✓</td>
-          <td>partial</td>
-          <td class="check">✓</td>
-        </tr>
-        <tr>
-          <td>LOB history</td>
-          <td>from '26</td>
-          <td>from '26</td>
-          <td class="dash">—</td>
-          <td>from '26</td>
-        </tr>
-        <tr>
-          <td>Real-world source data</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="check">✓</td>
-        </tr>
-        <tr>
-          <td>Backtesting</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="check">✓</td>
-        </tr>
-        <tr>
-          <td>AI agent optimized</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="dash">—</td>
-          <td class="check">✓</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="cards-row" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="card">
+        <div class="card-icon">...</div>
+        <p class="card-label">Oddpool, Predexon</p>
+        <p class="slide-body-small">Kalshi + Polymarket data. Cross-exchange search, whale tracking, odds normalization. LOB history from '26. No source data, no backtesting, no agent support.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,255,255,.25);">
+        <div class="card-icon">-&gt;</div>
+        <p class="card-label">Mostly Right</p>
+        <p class="slide-body-small">Kalshi + Polymarket data. LOB history from '26. Real-world source data paired to every contract. Backtesting with realistic fills. AI agent optimized.</p>
+      </div>
+    </div>
 
     <p class="slide-body-small" style="margin-top: 40px; color: var(--text-body);">Each new vertical we add widens the gap.</p>
   </div>

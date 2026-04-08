@@ -4,7 +4,6 @@
     '/pitch/intro/',
     '/pitch/traction/',
     '/pitch/origin/',
-    '/pitch/problem/',
     '/pitch/solution/',
     '/pitch/competitive/',
     '/pitch/distribution/',
