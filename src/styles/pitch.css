@@ -565,7 +565,6 @@ pre .builtin { color: #f78c6c; }
   padding: 20px 48px;
   background: rgba(10,10,10,.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-default);
 }
 
 .slide-nav-right {
