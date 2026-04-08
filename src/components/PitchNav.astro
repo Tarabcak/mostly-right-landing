@@ -18,17 +18,17 @@ const nextUrl = slide?.next ? slideUrl(slide.next) : null;
 
 <nav class="slide-nav-top">
   <a href="/" style="text-decoration: none;"><img src="/logo-white.svg" alt="Mostly Right" class="slide-nav-logo" /></a>
-  <div class="slide-nav-center">
+  <div class="slide-nav-right">
     {prevUrl ? (
       <a href={prevUrl} class="slide-nav-btn-sm">&larr;</a>
     ) : (
       <span class="slide-nav-btn-sm disabled">&larr;</span>
     )}
+    <span class="slide-nav-counter">{index + 1}/{total}</span>
     {nextUrl ? (
       <a href={nextUrl} class="slide-nav-btn-sm">&rarr;</a>
     ) : (
       <a href="/pitch/" class="slide-nav-btn-sm">&#8634;</a>
     )}
   </div>
-  <span class="slide-nav-counter">{index + 1}/{total}</span>
 </nav>
