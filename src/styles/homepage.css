@@ -339,7 +339,10 @@ h1 {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
+}
+.nav-right .nav-link {
+  margin-left: 8px;
 }
 .nav-text-link {
   font-family: 'JetBrains Mono', monospace;
@@ -492,7 +495,8 @@ footer p {
   nav { padding: 16px 24px; }
   .logo { height: 22px; }
   .nav-link { display: none; }
-  .nav-text-link { font-size: 12px; }
+  .nav-text-link { font-size: 10px; padding: 8px 8px; }
+  .nav-right .nav-link { margin-left: 0; }
   .hero-wrapper { min-height: 100vh; min-height: 100dvh; }
   h1 { font-size: 38px; line-height: 1.1; margin-bottom: 16px; }
   .hero { padding: 0 24px 40px; min-height: calc(100vh - 50px); min-height: calc(100dvh - 50px); }

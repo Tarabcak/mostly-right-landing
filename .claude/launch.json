@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "astro",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--prefix", "/Users/helloiamvu/Documents/GitHub/mostly-right-landing", "astro", "dev", "--port", "4321", "--root", "/Users/helloiamvu/Documents/GitHub/mostly-right-landing"],
+      "port": 4321
+    },
+    {
       "name": "pitch",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8081", "--directory", "/Users/helloiamvu/Documents/GitHub/mostly-right-landing"],
