@@ -15,8 +15,8 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 
     function resize() {
       const dpr = window.devicePixelRatio || 1;
-      w = canvas.parentElement?.offsetWidth || window.innerWidth;
-      h = canvas.parentElement?.offsetHeight || window.innerHeight;
+      w = window.innerWidth;
+      h = window.innerHeight;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.scale(dpr, dpr);
@@ -35,15 +35,9 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       resize();
     });
 
-    canvas.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    });
-
-    canvas.addEventListener('mouseleave', () => {
-      mouseX = -1000;
-      mouseY = -1000;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     });
 
     function draw() {
