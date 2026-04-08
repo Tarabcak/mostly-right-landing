@@ -58,8 +58,6 @@ html, body {
   letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: 56px;
-  opacity: 0;
-  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
 }
 
 .slide-body {
@@ -126,11 +124,7 @@ html, body {
 .split-block {
   padding: 40px;
   border: 1px solid var(--border-default);
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.split-block:nth-child(1) { animation-delay: 0.3s; }
-.split-block:nth-child(2) { animation-delay: 0.45s; }
 
 /* ─── CARDS ─── */
 .cards-row {
@@ -143,12 +137,7 @@ html, body {
 .card {
   padding: 40px 36px;
   border: 1px solid var(--border-default);
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.card:nth-child(1) { animation-delay: 0.3s; }
-.card:nth-child(2) { animation-delay: 0.4s; }
-.card:nth-child(3) { animation-delay: 0.5s; }
 
 .card-icon {
   font-family: 'JetBrains Mono', monospace;
@@ -188,8 +177,6 @@ html, body {
   border: 1px solid var(--border-default);
   padding: 32px 28px;
   overflow-x: auto;
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .code-block:nth-child(1) { animation-delay: 0.3s; }
 .code-block:nth-child(2) { animation-delay: 0.45s; }
@@ -241,8 +228,6 @@ pre .builtin { color: #f78c6c; }
   margin-top: 32px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
 }
 
 .comparison-table th {
@@ -284,8 +269,6 @@ pre .builtin { color: #f78c6c; }
   justify-content: center;
   gap: 0;
   margin: 48px 0;
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
 }
 
 .flywheel-node {
@@ -344,8 +327,6 @@ pre .builtin { color: #f78c6c; }
   margin: 48px 0;
   padding: 48px;
   border: 1px solid var(--border-default);
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
 }
 
 /* ─── BULLET POINTS ─── */
@@ -376,8 +357,6 @@ pre .builtin { color: #f78c6c; }
   margin: 32px 0;
   padding: 32px;
   border: 1px solid var(--border-default);
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
 }
 
 .pull-stat-number {
@@ -419,8 +398,6 @@ pre .builtin { color: #f78c6c; }
 .team-card {
   padding: 36px 32px;
   border: 1px solid var(--border-default);
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .team-card:nth-child(1) { animation-delay: 0.3s; }
 .team-card:nth-child(2) { animation-delay: 0.4s; }
@@ -479,8 +456,6 @@ pre .builtin { color: #f78c6c; }
   align-items: flex-end;
   gap: 32px;
   margin-top: 40px;
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
 }
 
 .depth-bar {
@@ -523,8 +498,6 @@ pre .builtin { color: #f78c6c; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .chaos-side:nth-child(1) { animation-delay: 0.3s; }
 .chaos-side:nth-child(2) { animation-delay: 0.45s; }
@@ -583,8 +556,6 @@ pre .builtin { color: #f78c6c; }
   background: rgba(10,10,10,.92);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-default);
-  opacity: 0;
-  animation: fadeIn 0.5s ease 0.5s forwards;
 }
 
 .slide-nav-btn {
@@ -674,39 +645,42 @@ pre .builtin { color: #f78c6c; }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
-  .slide { padding: 60px 24px 100px; }
-  .slide-headline { font-size: 28px; margin-bottom: 36px; }
-  .split { grid-template-columns: 1fr; gap: 24px; }
-  .split-bridge { grid-template-columns: 1fr; gap: 24px; }
+  .slide { padding: 40px 20px 80px; min-height: auto; }
+  .slide-headline { font-size: 26px; margin-bottom: 24px; }
+  .split { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .split-bridge { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .split-block { padding: 24px 20px; }
   .bridge-symbol { display: none; }
-  .flywheel-grid { grid-template-columns: 1fr; gap: 20px; }
+  .flywheel-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
   .flywheel-grid-arrow { display: none; }
-  .cards-row { grid-template-columns: 1fr; gap: 20px; }
-  .code-split { grid-template-columns: 1fr; }
-  .team-row { grid-template-columns: 1fr; gap: 20px; }
-  .flywheel { flex-direction: column; gap: 16px; }
+  .cards-row { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+  .code-split { grid-template-columns: 1fr; gap: 12px; }
+  .team-row { grid-template-columns: 1fr; gap: 12px; }
+  .flywheel { flex-direction: column; gap: 12px; }
   .flywheel-arrow { transform: rotate(90deg); }
   .flywheel-node:not(:last-child)::after { display: none; }
   .flywheel-node { max-width: 100%; }
   .chaos-grid { grid-template-columns: 1fr; }
   .depth-visual { flex-direction: row; align-items: flex-end; }
-  .slide-nav { padding: 12px 24px; }
-  .slide-nav-btn { font-size: 11px; padding: 8px 14px; }
-  .equation { font-size: 18px; padding: 32px 20px; }
-  .comparison-table { font-size: 11px; }
+  .slide-nav { padding: 10px 20px; }
+  .slide-nav-btn { font-size: 10px; padding: 6px 12px; }
+  .slide-nav-logo { height: 14px; }
+  .equation { font-size: 16px; padding: 24px 16px; }
+  .comparison-table { font-size: 10px; }
   .comparison-table { display: block; overflow-x: auto; }
-  .comparison-table th, .comparison-table td { padding: 10px 8px; white-space: nowrap; }
+  .comparison-table th, .comparison-table td { padding: 8px 6px; white-space: nowrap; }
   .pull-stat { flex-direction: column; gap: 8px; }
-  .stat-number { font-size: 36px; }
-  .slide-body { font-size: 16px; }
-  .slide-body-small { font-size: 14px; }
-  .card { padding: 28px 24px; }
-  .card-label { font-size: 11px; }
-  .code-block { padding: 24px 16px; }
-  pre { font-size: 11px; }
-  .code-header { font-size: 10px; }
-  .stat-unit { font-size: 13px; }
-  .stat-detail { font-size: 12px; }
+  .stat-number { font-size: 28px; }
+  .slide-body { font-size: 14px; }
+  .slide-body-small { font-size: 13px; }
+  .card { padding: 20px 16px; }
+  .card-label { font-size: 10px; margin-bottom: 8px; }
+  .code-block { padding: 16px 12px; }
+  pre { font-size: 10px; }
+  .code-header { font-size: 9px; }
+  .stat-unit { font-size: 12px; }
+  .stat-detail { font-size: 11px; }
+  .slide-label { font-size: 10px; margin-bottom: 8px; }
 }
 
 /* ─── REDUCED MOTION ─── */
