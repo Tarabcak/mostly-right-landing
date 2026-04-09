@@ -721,6 +721,7 @@ pre .builtin { color: #f78c6c; }
   .stat-unit { font-size: 12px; }
   .stat-detail { font-size: 11px; }
   .slide-label { font-size: 10px; margin-bottom: 8px; }
+  .slide-nav-btn-sm { display: none; }
 }
 
 /* ─── REDUCED MOTION ─── */
