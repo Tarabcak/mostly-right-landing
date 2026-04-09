@@ -701,11 +701,9 @@ pre .builtin { color: #f78c6c; }
   .flywheel-node { max-width: 100%; }
   .chaos-grid { grid-template-columns: 1fr; }
   .depth-visual { flex-direction: row; align-items: flex-end; }
-  .slide-nav-top { padding: 12px 20px; }
-  .slide-nav-btn-sm { width: 32px; height: 32px; font-size: 12px; }
-  .slide-nav-logo { height: 10px; }
-  .slide-nav-counter { font-size: 10px; }
-  .equation { font-size: 16px; padding: 24px 16px; }
+  .slide-nav-btn-sm { width: 24px; height: 24px; font-size: 10px; }
+  .slide-nav-logo { height: 8px; }
+  .slide-nav-top { padding: 12px 20px; flex-wrap: nowrap; gap: 8px; align-items: center; }
   .comparison-table { font-size: 10px; }
   .comparison-table { display: block; overflow-x: auto; }
   .comparison-table th, .comparison-table td { padding: 8px 6px; white-space: nowrap; }
@@ -721,7 +719,6 @@ pre .builtin { color: #f78c6c; }
   .stat-unit { font-size: 12px; }
   .stat-detail { font-size: 11px; }
   .slide-label { font-size: 10px; margin-bottom: 8px; }
-  .slide-nav-btn-sm { display: none; }
 }
 
 /* ─── REDUCED MOTION ─── */
