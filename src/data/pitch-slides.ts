@@ -13,7 +13,7 @@ export const slides: SlideData[] = [
   { slug: 'solution', title: 'Mostly Right — The API we wished existed', description: 'We use it to trade every day. Weather first, then sports, economics, and more.', prev: 'origin', next: 'competitive' },
   { slug: 'competitive', title: 'Mostly Right — Is anyone else doing this?', description: 'A few give you prices. But nobody goes deeper. Each vertical needs its own stack.', prev: 'solution', next: 'distribution' },
   { slug: 'distribution', title: 'Mostly Right — How do we get users?', description: 'AI coding tools made strategy building accessible. Free tools are how builders find us.', prev: 'competitive', next: 'business-model' },
-  { slug: 'business-model', title: 'Mostly Right — What about revenue?', description: 'The more they trade, the more we earn. Usage-based pricing that grows with the market.', prev: 'distribution', next: 'team' },
+  { slug: 'business-model', title: 'Mostly Right — How do we make money?', description: 'The more they trade, the more we earn. Usage-based pricing that grows with the market.', prev: 'distribution', next: 'team' },
   { slug: 'team', title: 'Mostly Right — The founders', description: 'Vu, Rob, and Vojta. Friends and former colleagues, building Mostly Right since early 2026.', prev: 'business-model', next: null },
 ];
 
