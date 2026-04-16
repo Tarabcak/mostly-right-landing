@@ -2,25 +2,48 @@
 interface Props {
   title: string;
   description: string;
+  keywords?: string;
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
   jsonLd?: boolean;
+  softwareApp?: boolean;
 }
 
-const { title, description, ogTitle, ogDescription, ogImage = '/og-image.png', jsonLd = false } = Astro.props;
+const {
+  title,
+  description,
+  keywords,
+  ogTitle,
+  ogDescription,
+  ogImage = '/og-image.png',
+  jsonLd = false,
+  softwareApp = false,
+} = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
 ---
 
 <title>{title}</title>
 <meta name="description" content={description} />
+{keywords && <meta name="keywords" content={keywords} />}
+<meta name="robots" content="index, follow" />
 <link rel="canonical" href={canonicalUrl.toString()} />
+
+<!-- Open Graph -->
 <meta property="og:title" content={ogTitle || title} />
 <meta property="og:description" content={ogDescription || description} />
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Mostly Right" />
 <meta property="og:image" content={new URL(ogImage, Astro.site).toString()} />
 <meta property="og:url" content={canonicalUrl.toString()} />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={ogTitle || title} />
+<meta name="twitter:description" content={ogDescription || description} />
+<meta name="twitter:image" content={new URL(ogImage, Astro.site).toString()} />
+
 {jsonLd && (
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -36,7 +59,25 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
         "name": "Mostly Right",
         "url": siteUrl,
         "description": description
-      }
+      },
+      ...(softwareApp ? [{
+        "@type": "SoftwareApplication",
+        "name": "Mostly Right SDK",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any (Python 3.10+)",
+        "description": "Python SDK and API for Kalshi and Polymarket weather markets. Observations, forecasts, satellite, and settlement data.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/PreOrder"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Mostly Right",
+          "url": siteUrl
+        }
+      }] : [])
     ]
   })} />
 )}

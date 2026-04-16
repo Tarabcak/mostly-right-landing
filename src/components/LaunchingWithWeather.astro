@@ -1,0 +1,91 @@
+---
+---
+
+<section class="launching-section">
+  <div class="launching-inner">
+    <p class="launching-eyebrow reveal">Launching with Weather</p>
+    <h2 class="launching-h2 reveal" data-stagger="2">Settlement-grade weather data,&nbsp;first.</h2>
+    <p class="launching-body reveal" data-stagger="3">Kalshi and Polymarket weather contracts resolve on official station data published in formats designed for meteorologists, not traders. We built the truth layer. Observations, forecasts, satellite, and settlement records for every market. Sports, economics, and more verticals follow on the same&nbsp;SDK.</p>
+    <a href="/weather/" class="launching-cta reveal" data-stagger="4">See the weather SDK →</a>
+  </div>
+</section>
+
+<style>
+  .launching-section {
+    background: var(--bg-primary);
+    padding: 100px 0;
+  }
+  .launching-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+  .launching-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--text-faint);
+    margin-bottom: 24px;
+  }
+  .launching-h2 {
+    font-family: 'Funnel Display', sans-serif;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-heading);
+    margin-bottom: 24px;
+  }
+  .launching-body {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin-bottom: 36px;
+  }
+  .launching-cta {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--surface-white);
+    border: 2px solid rgba(255,255,255,.3);
+    padding: 16px 32px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.3s cubic-bezier(0.33, 1, 0.68, 1), transform 0.15s ease-out;
+  }
+  .launching-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -5%; right: -5%;
+    height: 120%;
+    background: var(--surface-white);
+    z-index: -1;
+    transform: translateY(-100%);
+    transform-origin: bottom left;
+    transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .launching-cta:hover { color: var(--surface-dark); }
+  .launching-cta:hover::before { transform: translateY(0); }
+  .launching-cta:active { transform: scale(0.96); }
+  .launching-cta:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .launching-section { padding: 60px 0; }
+    .launching-inner { padding: 0 24px; }
+    .launching-h2 { font-size: 26px; }
+    .launching-body { font-size: 13px; line-height: 1.7; max-width: 100%; }
+    .launching-cta { font-size: 12px; padding: 14px 24px; width: 100%; text-align: center; }
+  }
+</style>

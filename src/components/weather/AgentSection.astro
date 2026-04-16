@@ -1,0 +1,29 @@
+---
+---
+
+<section class="w-section">
+  <div class="w-inner">
+    <p class="w-eyebrow reveal">Agent-Native</p>
+    <h2 class="w-h2 reveal" data-stagger="2">Designed for the agent doing the work.<br />Not the human writing&nbsp;glue.</h2>
+    <p class="w-lead reveal" data-stagger="3">Most data APIs are designed for analysts. <span style="font-family: 'JetBrains Mono', monospace;">mostlyright</span> is designed for the agent the analyst hands the keyboard to. Every surface is built around two questions an agent has to answer correctly or lose money: what would I have known at time T, and what does this number actually&nbsp;mean?</p>
+
+    <div class="w-pillar-grid">
+      <div class="w-pillar reveal">
+        <h3>TOON serialization</h3>
+        <p>A compact tabular encoding that costs 40-60% fewer tokens than JSON for the same row data. One year of daily settlement pairs fits in 24K tokens. Pass it straight into the model&nbsp;context.</p>
+      </div>
+      <div class="w-pillar reveal" data-stagger="2">
+        <h3>Tool-use export</h3>
+        <p><span style="font-family: 'JetBrains Mono', monospace;">client.as_tools()</span> returns Anthropic-compatible tool definitions for every method on the SDK. Drop them into <span style="font-family: 'JetBrains Mono', monospace;">messages.create(tools=...)</span> and your agent&nbsp;self-orients.</p>
+      </div>
+      <div class="w-pillar reveal">
+        <h3>Temporal honesty</h3>
+        <p>Every query takes an <span style="font-family: 'JetBrains Mono', monospace;">as_of</span> parameter. <span style="font-family: 'JetBrains Mono', monospace;">snapshot(as_of=...)</span> returns exactly what would have been knowable at that UTC instant. Climate withheld until the publication threshold has passed. No look-ahead bias by&nbsp;construction.</p>
+      </div>
+      <div class="w-pillar reveal" data-stagger="2">
+        <h3>Reproducibility tokens</h3>
+        <p>Every response carries a <span style="font-family: 'JetBrains Mono', monospace;">data_version</span> hash that pins the exact state of the underlying data. Tag your training runs with it. Replay any backtest exactly as it would have looked at decision&nbsp;time.</p>
+      </div>
+    </div>
+  </div>
+</section>
