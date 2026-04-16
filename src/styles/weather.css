@@ -341,6 +341,9 @@
   color: var(--text-faint);
   opacity: .6;
 }
+.w-source-line .src {
+  white-space: nowrap;
+}
 
 /* ─── ASCII TREE (Markets section) ─── */
 .w-tree-block {
@@ -650,8 +653,18 @@
   .w-callout { font-size: 14px; padding: 20px 24px; }
   .w-stat-ribbon { font-size: 10px; padding: 16px 0; margin: 32px 0 32px; letter-spacing: .12em; }
   .w-stat-ribbon span { padding: 4px 6px; }
-  .w-source-line { font-size: 11px; gap: 4px 10px; padding: 16px 12px; margin-top: 28px; justify-content: flex-start; }
-  .w-source-line .label { margin-right: 4px; font-size: 10px; }
+  .w-source-line {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 18px 16px;
+    font-size: 11px;
+    margin-top: 28px;
+  }
+  .w-source-line .label { margin-right: 0; margin-bottom: 2px; font-size: 10px; }
+  .w-source-line .src { display: inline; }
   .w-tree-block { font-size: 11px; padding: 16px 14px; margin-top: 32px; line-height: 1.7; }
 
   .w-pillar-grid { grid-template-columns: 1fr; gap: 36px; margin-top: 36px; }
@@ -663,8 +676,8 @@
   .w-agent-tile .k { font-size: 12px; }
   .w-agent-tile .v { font-size: 11px; line-height: 1.65; }
 
-  .w-stat-row { grid-template-columns: repeat(2, 1fr); gap: 24px 16px; padding-top: 36px; margin-top: 40px; }
-  .w-stat-num { font-size: 48px; }
+  .w-stat-row { grid-template-columns: 1fr; gap: 28px; padding-top: 36px; margin-top: 40px; }
+  .w-stat-num { font-size: 56px; }
   .w-stat-label { font-size: 11px; }
 
   .w-proof-stats { grid-template-columns: 1fr; gap: 32px; padding: 36px 0; margin: 36px 0 40px; }
