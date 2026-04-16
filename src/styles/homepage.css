@@ -87,7 +87,7 @@ nav {
   height: 120%;
   background: var(--surface-dark);
   z-index: -1;
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - 1px));
   transform-origin: bottom left;
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -155,7 +155,7 @@ h1 {
   height: 120%;
   background: var(--surface-dark);
   z-index: -1;
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - 1px));
   transform-origin: bottom left;
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -278,7 +278,7 @@ h1 {
   height: 120%;
   background: var(--surface-dark);
   z-index: -1;
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - 1px));
   transform-origin: bottom left;
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
