@@ -76,8 +76,4 @@ function init(): void {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+document.addEventListener('astro:page-load', init);

@@ -1,5 +1,5 @@
 function init(): void {
-  const els = document.querySelectorAll<HTMLElement>('.reveal');
+  const els = document.querySelectorAll<HTMLElement>('.reveal:not(.revealed)');
   if (!els.length) return;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -20,7 +20,6 @@ function init(): void {
       if (!sections.has(section)) sections.set(section, []);
       sections.get(section)!.push(el);
     } else {
-      // No section parent — observe individually
       if (!sections.has(el)) sections.set(el, [el]);
     }
   });
@@ -46,8 +45,4 @@ function init(): void {
   sections.forEach((_, section) => observer.observe(section));
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+document.addEventListener('astro:page-load', init);

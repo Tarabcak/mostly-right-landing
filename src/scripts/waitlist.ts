@@ -12,18 +12,20 @@ const FORM_RESET_DELAY_MS = 4000;
 const DEFAULT_NOTE = 'No spam. Early users get free API access.';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const form = document.querySelector<HTMLFormElement>('.cta-form');
-if (form) {
+let sb: ReturnType<typeof createClient> | null = null;
+try {
+  sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (err) {
+  console.error('[waitlist] Supabase init failed:', err);
+}
+
+function init(): void {
+  const form = document.querySelector<HTMLFormElement>('.cta-form');
+  if (!form) return;
+
   const inputEl = form.querySelector<HTMLInputElement>('.cta-input');
   const btnEl = form.querySelector<HTMLButtonElement>('.cta-btn');
   const noteEl = document.querySelector<HTMLElement>('.cta-note');
-
-  let sb: ReturnType<typeof createClient> | null = null;
-  try {
-    sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-  } catch (err) {
-    console.error('[waitlist] Supabase init failed:', err);
-  }
 
   let submitting = false;
   let resetTimer: ReturnType<typeof setTimeout> | null = null;
@@ -38,7 +40,6 @@ if (form) {
   function triggerShake(): void {
     if (!form) return;
     form.classList.remove('shake');
-    // Force reflow to restart the animation
     void form.offsetWidth;
     form.classList.add('shake');
   }
@@ -146,3 +147,5 @@ if (form) {
     scheduleReset();
   });
 }
+
+document.addEventListener('astro:page-load', init);
