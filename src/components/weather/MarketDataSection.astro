@@ -7,7 +7,7 @@
     <h2 class="w-h2 reveal" data-stagger="2">Query Kalshi and Polymarket like one&nbsp;exchange.</h2>
 
     <div class="w-body reveal" data-stagger="3">
-      <p>We normalize Kalshi and Polymarket into one consistent schema. Query tables directly for raw data, or call <code>context()</code> and get everything an agent needs in a single&nbsp;response.</p>
+      <p>We normalize Kalshi and Polymarket into one consistent schema. Query tables directly for raw data, or call <code>snapshot()</code> and get everything an agent needs in a single&nbsp;response.</p>
     </div>
 
     <div class="w-agent-tiles reveal" data-stagger="4">
@@ -20,8 +20,8 @@
         <span class="v">Returns the Level-2 order book at any point in&nbsp;time.</span>
       </div>
       <div class="w-agent-tile">
-        <span class="k">resolution_criteria</span>
-        <span class="v">Delivers settlement rules as structured data your code can&nbsp;parse.</span>
+        <span class="k">pairs</span>
+        <span class="v">Links each contract to the weather station and settlement window that resolves&nbsp;it.</span>
       </div>
       <div class="w-agent-tile">
         <span class="k">cli_record</span>
@@ -32,8 +32,8 @@
         <span class="v">Unifies Kalshi and Polymarket. One contract ID works across both&nbsp;platforms.</span>
       </div>
       <div class="w-agent-tile">
-        <span class="k">context()</span>
-        <span class="v">Returns market state, criteria, and weather record in one call as a single TOON&nbsp;blob.</span>
+        <span class="k">snapshot()</span>
+        <span class="v">Returns observations, climate, and settlement data for a city in one call as a single&nbsp;response.</span>
       </div>
     </div>
   </div>
