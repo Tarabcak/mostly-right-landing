@@ -1,0 +1,58 @@
+---
+---
+
+<section class="w-section">
+  <div class="w-inner">
+    <p class="w-eyebrow reveal"><span class="w-glyph" aria-hidden="true">▸</span> Built for agents</p>
+    <h2 class="w-h2 w-h2-small reveal" data-stagger="2">What your agent&nbsp;writes.</h2>
+    <p class="w-lead reveal" data-stagger="3">Designed around two questions an agent has to answer correctly or lose money: <em style="font-style: normal; color: var(--text-heading);">what would I have known at time T</em>, and <em style="font-style: normal; color: var(--text-heading);">what does this number actually mean?</em></p>
+
+    <div class="w-code-split">
+      <div class="w-code-block dim reveal">
+        <p class="w-code-header">Without Mostly Right</p>
+<pre><span class="comment"># scrape AWC METAR text, parse manually
+# pull IEM CSV for gap-fill, dedup somehow
+# pull NCEI GHCNh for historical backfill
+# parse NWS CLI for settlement records
+# stream GOES NetCDF from S3, project per pixel
+# wire it to Kalshi and Polymarket
+# convert units, handle nulls and sentinels
+# hope the live data matches the historical
+# discover at trade time that it doesn't</span></pre>
+      </div>
+      <div class="w-code-block reveal" data-stagger="2">
+        <p class="w-code-header">With Mostly Right</p>
+<pre><span class="keyword">from</span> mostlyright <span class="keyword">import</span> MostlyRightClient
+client = <span class="func">MostlyRightClient</span>()
+
+<span class="comment"># Temporally-honest query</span>
+snap = client.<span class="func">snapshot</span>(<span class="string">"NYC"</span>, as_of=<span class="string">"2024-07-04T18:00:00Z"</span>)
+
+snap.observations        <span class="comment"># filtered to LST window</span>
+snap.climate             <span class="comment"># CLI record, or None</span>
+snap.version             <span class="comment"># reproducibility token</span>
+
+<span class="comment"># Agent-native context</span>
+<span class="comment"># Anthropic-compatible tool definitions</span>
+tools = client.<span class="func">as_tools</span>()
+<span class="comment"># ~60% fewer tokens than JSON</span>
+toon = client.<span class="func">snapshot</span>(<span class="string">"NYC"</span>, format=<span class="string">"toon"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="w-agent-tiles">
+      <div class="w-agent-tile reveal">
+        <span class="k">TOON</span>
+        <span class="v">Compress a year of daily pairs into 24K tokens. ~60% smaller than&nbsp;JSON.</span>
+      </div>
+      <div class="w-agent-tile reveal" data-stagger="2">
+        <span class="k">as_tools()</span>
+        <span class="v">Drop SDK methods into any Anthropic tool-use call. Zero glue&nbsp;code.</span>
+      </div>
+      <div class="w-agent-tile reveal" data-stagger="3">
+        <span class="k">as_of</span>
+        <span class="v">Pin every query to a timestamp. Replay any backtest&nbsp;exactly.</span>
+      </div>
+    </div>
+  </div>
+</section>

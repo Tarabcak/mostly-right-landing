@@ -228,10 +228,10 @@ h1 {
 .cta-tagline {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
-  font-size: clamp(24px, 3vw, 34px);
+  font-size: clamp(32px, 4vw, 44px);
   color: var(--text-heading);
   margin-bottom: 36px;
-  line-height: 1.25;
+  line-height: 1.15;
 }
 .cta-form {
   display: flex;
@@ -346,13 +346,13 @@ h1 {
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-subtle);
+  color: var(--text-primary);
   text-decoration: none;
   letter-spacing: .06em;
   padding: 12px 16px;
   transition: color 0.3s ease, transform 0.15s ease-out;
 }
-.nav-text-link:hover { color: var(--text-primary); }
+.nav-text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
 .nav-text-link:active { transform: scale(0.94); }
 
 /* ─── MODAL ─── */
@@ -493,7 +493,7 @@ footer p {
   .logo { height: 22px; }
   .nav-link { display: none; }
   .nav-text-link { font-size: 10px; padding: 8px 8px; }
-  .nav-right .nav-link { margin-left: 0; }
+  .nav-right { gap: 4px; }
   .hero-wrapper { min-height: 100vh; min-height: 100dvh; }
   h1 { font-size: 38px; line-height: 1.1; margin-bottom: 16px; }
   .hero { padding: 0 24px 40px; min-height: calc(100vh - 50px); min-height: calc(100dvh - 50px); }
@@ -505,12 +505,11 @@ footer p {
   .feature-card h3 { font-size: 20px; }
   .feature-card p { font-size: 13px; }
   .cta-section { padding: 60px 24px 60px; max-width: 100%; }
-  .cta-tagline { font-size: 22px; }
+  .cta-tagline { font-size: 28px; }
   .cta-form { flex-direction: column; }
   .cta-input { border-right: 1px solid var(--border-input); border-bottom: none; font-size: 16px; }
   .cta-btn-form { width: 100%; font-size: 12px; min-height: 48px; }
   .divider { margin: 0 24px; }
-  .nav-right { gap: 16px; }
   .modal { padding: 40px 24px 24px; }
   .modal-title { font-size: 28px; }
   .modal-body p { font-size: 13px; }

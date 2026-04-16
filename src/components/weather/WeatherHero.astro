@@ -1,0 +1,43 @@
+---
+import Nav from '../Nav.astro';
+---
+
+<div class="w-hero-wrapper">
+  <canvas id="waveCanvas" aria-hidden="true"></canvas>
+  <Nav />
+  <div class="w-hero">
+    <div class="w-hero-grid">
+      <div class="w-hero-left">
+        <p class="w-hero-eyebrow"><span class="w-glyph" aria-hidden="true">◇</span> Coming Soon</p>
+        <h1>The complete weather SDK for prediction markets.</h1>
+        <p class="w-hero-sub">Observations, forecasts, satellite, and settlement. All the data behind every Kalshi and Polymarket weather contract. Built for AI agents and&nbsp;quants.</p>
+        <div class="w-hero-ctas">
+          <a href="#early-access" class="w-btn">Join the waitlist</a>
+        </div>
+      </div>
+
+      <div class="w-terminal">
+        <div class="w-terminal-bar">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="w-terminal-title">MOSTLY RIGHT SDK · PREVIEW</span>
+        </div>
+        <pre class="w-terminal-body">$ pip install mostlyright
+
+<span class="w-term-muted">mostlyright 0.1.0 · ready</span>
+
+Cities............<span class="w-term-num">60+</span>
+History...........<span class="w-term-num">1948</span> → <span class="w-term-live">live</span>
+Forecasts.........NBM · GFS · HRRR · ECMWF
+Satellite.........GOES-16 + 19
+Markets...........Kalshi · Polymarket
+Market data.......candles · L2 books (full depth)
+Settlement........NWS CLI (LST-aware)
+Reconciliation....source-priority dedup
+Precision.........T-group (sub-minute)
+Output............TOON · pandas · polars · json
+
+<span class="w-term-muted">$ _</span></pre>
+      </div>
+    </div>
+  </div>
+</div>

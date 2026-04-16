@@ -29,6 +29,9 @@
   --border-focus: rgba(255,255,255,.5);
   --surface-white: #fff;
   --surface-dark: #0a0a0a;
+  --surface-card: rgba(255,255,255,.06);
+  /* Accent: reserved for LIVE/status indicators only. Never on buttons, links, borders, or decoration. */
+  --accent-live: #4ade80;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,6 +44,8 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* Prevent default blue link color from leaking on image-wrapped anchors */
+a { color: inherit; }
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -80,6 +85,20 @@ html, body {
   0% { transform: scale(0) rotate(-45deg); opacity: 0; }
   50% { transform: scale(1.2) rotate(-45deg); }
   100% { transform: scale(1) rotate(-45deg); opacity: 1; }
+}
+/* Live pulse: signature motion primitive. Reserved for status indicators. */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--accent-live);
+  animation: livePulse 2s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 
 /* ─── LINE BREAK CONTROL ─── */

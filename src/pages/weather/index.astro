@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WeatherHero from '../../components/weather/WeatherHero.astro';
+import PainSection from '../../components/weather/PainSection.astro';
+import WeatherDataSection from '../../components/weather/WeatherDataSection.astro';
+import MarketDataSection from '../../components/weather/MarketDataSection.astro';
+import CodePreview from '../../components/weather/CodePreview.astro';
+import WhatsNextSection from '../../components/weather/WhatsNextSection.astro';
+import WeatherCta from '../../components/weather/WeatherCta.astro';
+import Footer from '../../components/Footer.astro';
+import MissionModal from '../../components/MissionModal.astro';
+import '../../styles/homepage.css';
+import '../../styles/weather.css';
+---
+
+<BaseLayout
+  title="Weather Data SDK for Kalshi & Polymarket | Mostly Right"
+  description="Python SDK for Kalshi and Polymarket weather markets. Observations, forecasts, GOES satellite, and NWS CLI settlement data for every weather contract. Coming soon."
+  keywords="Kalshi API, Polymarket API, weather prediction market data, Kalshi weather SDK, NWS CLI data, GOES satellite trading, prediction market Python SDK, Kalshi Polymarket data, weather contract data, settlement data API"
+  ogImage="/og/weather.png"
+  jsonLd={true}
+  softwareApp={true}
+>
+  <div class="weather-page">
+    <WeatherHero />
+    <PainSection />
+    <hr class="w-divider" />
+    <WeatherDataSection />
+    <hr class="w-divider" />
+    <MarketDataSection />
+    <hr class="w-divider" />
+    <CodePreview />
+    <hr class="w-divider" />
+    <WhatsNextSection />
+    <WeatherCta />
+  </div>
+
+  <hr class="divider" />
+  <Footer />
+
+  <MissionModal />
+
+  <script src="../../scripts/weather-wave-animation.ts"></script>
+  <script src="../../scripts/waitlist.ts"></script>
+  <script src="../../scripts/modal.ts"></script>
+  <script src="../../scripts/reveal-on-scroll.ts"></script>
+</BaseLayout>

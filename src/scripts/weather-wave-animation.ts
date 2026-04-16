@@ -11,7 +11,6 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     function getCols(): number {
       return window.innerWidth < 768 ? 80 : 200;
     }
-
     let COLS = getCols();
     let cellW: number;
     let cellH: number;
@@ -20,6 +19,8 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let h: number;
     let time = 0;
     let firstFrame = true;
+    let mouseX = -1000;
+    let mouseY = -1000;
 
     function resize(): void {
       const dpr = window.devicePixelRatio || 1;
@@ -44,36 +45,53 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       resize();
     });
 
+    document.addEventListener('mousemove', (e: MouseEvent) => {
+      const rect = canvas!.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      mouseX = -1000;
+      mouseY = -1000;
+    });
+
     function draw(): void {
       ctx.fillStyle = BG_COLOR;
       ctx.fillRect(0, 0, w, h);
 
       for (let row = 0; row < rows; row++) {
-        const band = Math.floor(row / 4);
         const py = row * cellH + cellH / 2;
 
         for (let col = 0; col < COLS; col++) {
           const px = col * cellW + cellW / 2;
-          const nx = col / COLS;
-          const amp =
-            0.15 * Math.sin(nx * 5 + time + band) +
-            0.1 * Math.cos(nx * 10 - time * 0.5);
-          const dist = row / rows - (0.5 + amp);
-          const density = Math.exp(-(dist * dist) / 0.02);
 
-          if (density < 0.05) continue;
+          const noise = Math.sin(col * 0.1 + time) * Math.cos(row * 0.1 - time * 0.5);
+          const wave = Math.sin(col * 0.05 + row * 0.05 + time);
+          let intensity = (noise + wave + 1) / 2;
 
-          const charIdx = Math.floor(density * (waveChars.length - 1));
+          const dx = px - mouseX;
+          const dy = py - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            intensity += (1 - dist / 150) * 0.5;
+          }
+
+          intensity = Math.min(intensity, 1);
+
+          if (intensity < 0.05) continue;
+
+          const charIdx = Math.floor(intensity * (waveChars.length - 1));
           const char = waveChars[Math.min(charIdx, waveChars.length - 1)];
           if (char === ' ') continue;
 
-          const opacity = density * 0.8;
+          const opacity = intensity * 0.8;
           ctx.fillStyle = `rgba(${CHAR_COLOR}, ${opacity.toFixed(2)})`;
           ctx.fillText(char, px, py);
         }
       }
 
-      time += 0.008;
+      time += 0.003;
 
       if (firstFrame) {
         canvas!.classList.add('loaded');

@@ -2,20 +2,31 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/HeroSection.astro';
 import FeaturesSection from '../components/FeaturesSection.astro';
+import LaunchingWithWeather from '../components/LaunchingWithWeather.astro';
+import WhatsNextSection from '../components/weather/WhatsNextSection.astro';
 import CtaSection from '../components/CtaSection.astro';
 import Footer from '../components/Footer.astro';
 import MissionModal from '../components/MissionModal.astro';
 import '../styles/homepage.css';
+import '../styles/weather.css';
 ---
 
 <BaseLayout
   title="Mostly Right — The AI-Native Stack for Prediction Markets"
-  description="One API for prediction market data and the real-world data that drives it. Built for AI agents, LLMs, and quants."
+  description="Python SDK and API for Kalshi and Polymarket. Market data and the real-world data that drives it. Cleaned, reconciled, and built for AI agents and quants."
+  keywords="Kalshi API, Polymarket API, prediction market data, prediction market SDK, AI agent trading, Kalshi data Python, Polymarket data Python, Kalshi weather, Kalshi sports, trading AI agents"
+  ogImage="/og/home.png"
   jsonLd={true}
 >
   <HeroSection />
 
   <FeaturesSection />
+
+  <hr class="divider" />
+  <LaunchingWithWeather />
+
+  <hr class="divider" />
+  <WhatsNextSection />
 
   <CtaSection />
 
@@ -27,4 +38,5 @@ import '../styles/homepage.css';
   <script src="../scripts/wave-animation.ts"></script>
   <script src="../scripts/waitlist.ts"></script>
   <script src="../scripts/modal.ts"></script>
+  <script src="../scripts/reveal-on-scroll.ts"></script>
 </BaseLayout>
