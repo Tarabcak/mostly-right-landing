@@ -21,7 +21,7 @@ function init(): void {
   const waveChars = ' .,;:!|/\\-_~^`';
 
   function getCols(): number {
-    return window.innerWidth < 768 ? 80 : 200;
+    return window.innerWidth < 768 ? 65 : 200;
   }
   let COLS = getCols();
   let cellW: number;

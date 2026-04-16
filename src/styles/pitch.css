@@ -702,7 +702,7 @@ pre .builtin { color: #f78c6c; }
   .chaos-grid { grid-template-columns: 1fr; }
   .depth-visual { flex-direction: row; align-items: flex-end; }
   .slide-nav-btn-sm { width: 24px; height: 24px; font-size: 10px; }
-  .slide-nav-logo { height: 8px; }
+  .slide-nav-logo { height: 20px; }
   .slide-nav-top { padding: 12px 20px; flex-wrap: nowrap; gap: 8px; align-items: center; }
   .comparison-table { font-size: 10px; }
   .comparison-table { display: block; overflow-x: auto; }

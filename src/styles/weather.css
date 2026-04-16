@@ -54,6 +54,7 @@
   letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: 32px;
+  text-wrap: balance;
 }
 .w-h2-large {
   font-size: clamp(36px, 5.5vw, 60px);

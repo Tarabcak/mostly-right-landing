@@ -21,7 +21,7 @@ const logoBase64 = `data:image/svg+xml;base64,${readFileSync(logoPath).toString(
 const funnelDisplayFont = readFileSync(join(process.cwd(), 'src', 'assets', 'funnel-display.ttf'));
 const jetbrainsMonoFont = readFileSync(join(process.cwd(), 'src', 'assets', 'jetbrains-mono.ttf'));
 
-export async function generateOgImage(title: string, description?: string): Promise<Buffer> {
+export async function generateOgImage(title: string): Promise<Buffer> {
 
   const children: unknown[] = [];
 
@@ -97,24 +97,7 @@ export async function generateOgImage(title: string, description?: string): Prom
                   children: title,
                 },
               },
-              description
-                ? {
-                    type: 'p',
-                    props: {
-                      style: {
-                        fontFamily: 'JetBrains Mono',
-                        fontSize: '16px',
-                        fontWeight: 400,
-                        lineHeight: 1.7,
-                        color: 'rgba(255,255,255,0.55)',
-                        margin: 0,
-                        maxWidth: '600px',
-                      },
-                      children: description,
-                    },
-                  }
-                : null,
-            ].filter(Boolean),
+            ],
           },
         },
       ],
