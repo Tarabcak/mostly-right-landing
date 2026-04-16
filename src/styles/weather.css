@@ -49,13 +49,13 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: var(--text-faint);
+  color: var(--text-primary);
   margin-bottom: 24px;
 }
 /* Subtle monospace glyph markers (brand-true "icons" — type-only) */
 .w-glyph {
   display: inline-block;
-  color: var(--text-subtle);
+  color: var(--text-primary);
   font-weight: 400;
   margin-right: 8px;
   transform: translateY(-1px);
@@ -63,7 +63,7 @@
 .w-h2 {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
-  font-size: clamp(30px, 4vw, 44px);
+  font-size: clamp(32px, 4vw, 44px);
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -112,7 +112,7 @@
   pointer-events: none;
   transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.w-hero-wrapper > canvas.loaded { opacity: 0.18; }
+.w-hero-wrapper > canvas.loaded { opacity: 0.35; }
 @media (prefers-reduced-motion: reduce) {
   .w-hero-wrapper > canvas { display: none; }
 }
@@ -144,7 +144,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .14em;
-  color: var(--text-subtle);
+  color: var(--text-primary);
   margin-bottom: 32px;
   opacity: 0;
   animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
@@ -152,7 +152,7 @@
 .w-hero h1 {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
-  font-size: clamp(40px, 5.5vw, 72px);
+  font-size: clamp(36px, 4.5vw, 56px);
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -317,13 +317,14 @@
 /* ─── CALLOUT (closing statement under pain cards) ─── */
 .w-callout {
   margin: 0;
-  padding: 32px 0 0;
-  border-top: 1px solid var(--border-default);
+  padding: 28px 32px;
+  border-left: 2px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.04);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-style: italic;
+  font-size: 15px;
   line-height: 1.85;
   color: var(--text-body);
-  max-width: 620px;
 }
 .w-callout p { margin: 0; }
 
@@ -659,7 +660,7 @@
   .w-pain-block p { font-size: 13px; }
   .w-pain-closer { font-size: 13px; margin-top: 56px; padding-top: 28px; }
   .w-pain-grid { grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
-  .w-callout { font-size: 13px; padding: 24px 0 0; max-width: 100%; }
+  .w-callout { font-size: 14px; padding: 20px 24px; }
   .w-stat-ribbon { font-size: 10px; padding: 16px 0; margin: 32px 0 32px; letter-spacing: .12em; }
   .w-stat-ribbon span { padding: 4px 6px; }
   .w-source-line { font-size: 11px; gap: 4px 10px; padding: 16px 12px; margin-top: 28px; justify-content: flex-start; }

@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
+declare global {
+  interface Window {
+    posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void };
+  }
+}
+
 const SUPABASE_URL = 'https://jdwyfaswivyyawuoxbty.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I6GYExqvcHFK4Rk-7cHrAQ_YqCGMIid';
 const FORM_RESET_DELAY_MS = 4000;
@@ -123,12 +129,14 @@ if (form) {
       if (error) {
         if (error.code === '23505') {
           setFormState('success', 'You\'re already on the list!');
+          window.posthog?.capture('waitlist_signup', { status: 'duplicate', page: window.location.pathname });
         } else {
           console.error('[waitlist] Insert error:', error);
           setFormState('error', 'Something went wrong. Try again.');
         }
       } else {
         setFormState('success');
+        window.posthog?.capture('waitlist_signup', { status: 'new', page: window.location.pathname });
       }
     } catch (err) {
       console.error('[waitlist] Network error:', err);

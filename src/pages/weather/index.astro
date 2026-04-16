@@ -17,15 +17,20 @@ import '../../styles/weather.css';
   title="Weather Data SDK for Kalshi & Polymarket | Mostly Right"
   description="Python SDK for Kalshi and Polymarket weather markets. Observations, forecasts, GOES satellite, and NWS CLI settlement data for every weather contract. Coming soon."
   keywords="Kalshi API, Polymarket API, weather prediction market data, Kalshi weather SDK, NWS CLI data, GOES satellite trading, prediction market Python SDK, Kalshi Polymarket data, weather contract data, settlement data API"
+  ogImage="/og/weather.png"
   jsonLd={true}
   softwareApp={true}
 >
   <div class="weather-page">
     <WeatherHero />
     <PainSection />
+    <hr class="w-divider" />
     <WeatherDataSection />
+    <hr class="w-divider" />
     <MarketDataSection />
+    <hr class="w-divider" />
     <CodePreview />
+    <hr class="w-divider" />
     <WhatsNextSection />
     <WeatherCta />
   </div>
@@ -35,7 +40,7 @@ import '../../styles/weather.css';
 
   <MissionModal />
 
-  <script src="../../scripts/wave-animation.ts"></script>
+  <script src="../../scripts/weather-wave-animation.ts"></script>
   <script src="../../scripts/waitlist.ts"></script>
   <script src="../../scripts/modal.ts"></script>
   <script src="../../scripts/reveal-on-scroll.ts"></script>

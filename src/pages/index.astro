@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/HeroSection.astro';
 import FeaturesSection from '../components/FeaturesSection.astro';
 import LaunchingWithWeather from '../components/LaunchingWithWeather.astro';
+import WhatsNextSection from '../components/weather/WhatsNextSection.astro';
 import CtaSection from '../components/CtaSection.astro';
 import Footer from '../components/Footer.astro';
 import MissionModal from '../components/MissionModal.astro';
@@ -14,13 +15,18 @@ import '../styles/weather.css';
   title="Mostly Right — The AI-Native Stack for Prediction Markets"
   description="Python SDK and API for Kalshi and Polymarket. Market data and the real-world data that drives it. Cleaned, reconciled, and built for AI agents and quants."
   keywords="Kalshi API, Polymarket API, prediction market data, prediction market SDK, AI agent trading, Kalshi data Python, Polymarket data Python, Kalshi weather, Kalshi sports, trading AI agents"
+  ogImage="/og/home.png"
   jsonLd={true}
 >
   <HeroSection />
 
   <FeaturesSection />
 
+  <hr class="divider" />
   <LaunchingWithWeather />
+
+  <hr class="divider" />
+  <WhatsNextSection />
 
   <CtaSection />
 

@@ -2,35 +2,48 @@ function init(): void {
   const els = document.querySelectorAll<HTMLElement>('.reveal');
   if (!els.length) return;
 
-  // Reduced-motion users: reveal everything immediately, no observer.
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     els.forEach((el) => el.classList.add('revealed'));
     return;
   }
 
   if (!('IntersectionObserver' in window)) {
-    // Fallback: just reveal all (no animation) so content isn't stuck invisible.
     els.forEach((el) => el.classList.add('revealed'));
     return;
   }
+
+  // Group reveal elements by their closest section parent
+  const sections = new Map<Element, HTMLElement[]>();
+  els.forEach((el) => {
+    const section = el.closest('section, .hero-wrapper, .launching-section, .cta-section');
+    if (section) {
+      if (!sections.has(section)) sections.set(section, []);
+      sections.get(section)!.push(el);
+    } else {
+      // No section parent — observe individually
+      if (!sections.has(el)) sections.set(el, [el]);
+    }
+  });
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
+          const children = sections.get(entry.target);
+          if (children) {
+            children.forEach((el) => el.classList.add('revealed'));
+          }
           observer.unobserve(entry.target);
         }
       });
     },
     {
-      // Trigger when the top of the element is ~15% above the bottom of viewport
-      rootMargin: '0px 0px -15% 0px',
+      rootMargin: '0px 0px -10% 0px',
       threshold: 0.01,
     }
   );
 
-  els.forEach((el) => observer.observe(el));
+  sections.forEach((_, section) => observer.observe(section));
 }
 
 if (document.readyState === 'loading') {
