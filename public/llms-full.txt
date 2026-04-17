@@ -1,0 +1,260 @@
+# Mostly Right — Full Site Content
+
+> This file exists so AI agents can understand Mostly Right in one request. It is the plain-text version of every meaningful page on https://mostlyright.md, maintained by hand and kept close to the live site. If something looks stale, the HTML pages are the source of truth.
+
+---
+
+## About
+
+Mostly Right is the AI-native data stack for prediction markets. We sell one Python SDK that returns both the market prices on Kalshi and Polymarket and the real-world data those contracts settle on. Cleaned, reconciled, reproducible, and shaped for AI agents.
+
+We trade these markets ourselves. We built this because we needed it. Weather ships first because weather is what we trade.
+
+- Install: `pip install mostlyright`
+- Status: private beta
+- Waitlist: https://mostlyright.md/#early-access
+- Founders: Vu Hoang Anh (CEO), Rob Tarabcak (CTO), Vojta (co-founder)
+
+---
+
+## Home — https://mostlyright.md/
+
+**The AI-native stack for prediction markets.**
+
+One API for prediction market data and the real-world data that drives it. Built for AI agents, LLMs, and quants.
+
+### Why it exists
+
+- **Prices and the data that settles them.** Market prices from Kalshi and Polymarket. The weather, economic, and source data their contracts settle on. One SDK, one schema.
+- **Clean, ML-ready data.** Every reading is validated, deduplicated, and matched to the correct source before it reaches your model. Bad data, zeros, and NaNs get caught at ingest, not in your backtest.
+- **Built natively for AI agents.** Responses ship in TOON format, saving 40 to 60% on tokens. Your agent calls `as_tools()`, discovers every method, and builds a strategy without you writing glue code.
+- **Seamlessly from research to live.** Live endpoints return the same schema, units, and format as historical data. Train your model on backtests and deploy it without rewriting a single query.
+
+### Launching with Weather
+
+Observations, forecasts, satellite, and settlement records for every Kalshi and Polymarket weather contract. Cleaned, reconciled, and ready to query.
+
+### What is next
+
+One SDK, every prediction market vertical.
+
+- **Sports.** Game results, player stats, injury reports from official league feeds. NFL, NBA, MLB, NHL, soccer. Every resolution traces back to its primary source.
+- **Economics.** FOMC decisions, jobs reports, CPI, GDP. We parse original filings and PDFs so your agent gets structured data, not documents. Every release pinned to its publication time.
+- **Esports.** CS2, League of Legends, Dota 2, Valorant. Brackets, match results, and broadcast feeds turned into flat, queryable tables.
+- **Commodities.** Oil, gas, metals, agriculture. EIA, USDA, CME normalized into the same schema your agent already uses for weather.
+
+We built this SDK because we trade these markets ourselves. Every vertical that follows gets the same depth: the same source discipline, the same settlement-grade accuracy, the same agent-ready schemas.
+
+### Call to action
+
+You find the edge. We handle everything else. Waitlist gets first SDK access and a free API tier.
+
+---
+
+## Weather SDK — https://mostlyright.md/weather/
+
+**The complete weather SDK for prediction markets.**
+
+Observations, forecasts, satellite, and settlement. All the data behind every Kalshi and Polymarket weather contract. Built for AI agents and quants.
+
+### Terminal preview
+
+```
+$ pip install mostlyright
+
+mostlyright 0.11.0 · ready
+
+Cities............60+
+History...........1948 → live
+Forecasts.........NBM · GFS · HRRR · ECMWF
+Satellite.........GOES-16 + 19
+Markets...........Kalshi · Polymarket
+Market data.......candles · L2 books (full depth)
+Settlement........NWS CLI (LST-aware)
+Reconciliation....source-priority dedup
+Precision.........T-group (decimal)
+Output............TOON · pandas · polars · json
+```
+
+### The problem — Public data is free. The engineering isn't.
+
+- **Six APIs. Zero trades.** Market prices live in one API, weather sits in another. Satellites publish NetCDF, forecasts arrive as GRIB. You spend months on engineering before you make a single trade.
+- **One reading. Four formats.** ASOS sensors record in Fahrenheit. Live APIs serve Celsius. Historical archives round to tenths of Celsius. Satellite reports in Kelvin. You reconcile four units for every single reading.
+- **Same city. Different truth.** Kalshi's NYC high-temp settles on Central Park ASOS. Polymarket settles on Wunderground LaGuardia. They cover the same city but use different data. Every new market takes days of research.
+
+NOAA publishes satellite data for free. It arrives as 3.7 million NetCDF files across two GOES satellites. A new scan every five minutes, each one a binary blob designed for climate researchers, not traders. You reproject the grid, deduplicate overlapping scans, validate against ground stations, and reconcile units. All of that before you get one clean number.
+
+We handle that entire pipeline.
+
+### Weather data — Every signal that drives a weather market.
+
+Cleaned, reconciled, and settlement-grade.
+
+Kalshi and Polymarket run weather contracts across 60+ cities. Both settle on official station data. We pull every source into one API, reconcile the units automatically, and match each reading to the right settlement station.
+
+Source-priority dedup removes duplicates before they reach your model. Live data returns the same shape as historical, so backtests just work in production.
+
+Settlement windows follow Local Standard Time. Climate records stay held until the NWS publishes. Every reading passes validation before it ships. Bad data, zeros, and NaNs get caught at ingest, not in your backtest.
+
+**Ingest sources:** AWC, IEM, NCEI GHCNh, NWS CLI, IEM MOS, Open-Meteo, GOES-16, GOES-19.
+
+**Scale:**
+- 60+ cities across Kalshi and Polymarket
+- 78 years of history since 1948
+- 4 forecast models: NBM, GFS, HRRR, ECMWF
+
+### Markets — Query Kalshi and Polymarket like one exchange.
+
+We normalize Kalshi and Polymarket into one consistent schema. Query tables directly for raw data, or call `snapshot()` and get everything an agent needs in a single response.
+
+- `candles` — full history at native cadence, same schema on both platforms.
+- `book_snapshot` — Level-2 order book at any point in time.
+- `pairs` — links each contract to the weather station and settlement window that resolves it.
+- `cli_record` — the NWS record that settled the contract.
+- `markets` — unifies Kalshi and Polymarket. One contract ID works across both platforms.
+- `snapshot()` — observations, climate, and settlement data for a city in one call.
+
+### Built for agents — Your agent already knows how to use this.
+
+`as_tools()` exports every SDK method as an Anthropic-compatible tool definition. Your agent discovers what is available, pulls market and weather context in one call, and backtests against point-in-time snapshots. TOON encoding compresses a full year of daily data small enough to fit in a single prompt.
+
+**Without Mostly Right:**
+```
+# scrape AWC METAR text, parse manually
+# pull IEM CSV for gap-fill, dedup somehow
+# pull NCEI GHCNh for historical backfill
+# parse NWS CLI for settlement records
+# stream GOES NetCDF from S3, project per pixel
+# wire it to Kalshi and Polymarket
+# convert units, handle nulls and sentinels
+# hope the live data matches the historical
+# discover at trade time that it doesn't
+```
+
+**With Mostly Right:**
+```python
+from mostlyright import MostlyRightClient
+client = MostlyRightClient()
+
+# Temporally-honest query
+snap = client.snapshot("NYC", as_of="2024-07-04T18:00:00Z")
+
+snap.observations        # filtered to LST window
+snap.climate             # CLI record, or None
+snap.version             # reproducibility token
+
+# Agent-native context
+# Anthropic-compatible tool definitions
+tools = client.as_tools()
+# ~60% fewer tokens than JSON
+toon = client.snapshot("NYC", format="toon")
+```
+
+**Agent primitives:**
+- **TOON.** Compress a year of daily pairs into 24K tokens. Roughly 60% smaller than JSON.
+- **`as_tools()`.** Drop SDK methods into any Anthropic tool-use call. Zero glue code.
+- **`as_of`.** Pin every query to a timestamp. Replay any backtest exactly.
+
+---
+
+## Pitch deck summary — https://mostlyright.md/pitch/
+
+### Prediction markets just exploded
+
+Anyone with Claude Code can now trade like a hedge fund.
+
+- Markets: $2B to $23B monthly volume, August 2025 to February 2026. Kalshi and Polymarket 10x'd their volume in six months.
+- Builders: 300K indie quants today and rising. Robinhood made millions of people traders. GitHub commits are on pace to 14x this year thanks to Claude Code. What used to require an engineering team, one quant with Claude Code can now do alone.
+
+### The wall everyone hits
+
+Every dev, quant, and agent hits the same wall. The infrastructure doesn't exist yet. You clean up data, build your own backtesting engine, and write execution from scratch.
+
+- **Market data is fragmented.** Kalshi and Polymarket use different schemas. Neither stores order book history. You normalize them yourself and capture order book data in real time, forever.
+- **Source data isn't built for trading.** Weather lives in GRIB files, macro in PDFs, sports across a dozen APIs. None map to contract resolution windows. You write the joins yourself, per vertical.
+- **Agents pay for it twice.** 10+ API calls to reason about one contract. Bloated JSON the model didn't ask for. Every call is tokens, every token is money. By the time context is assembled, the market moved.
+
+### The product
+
+So we're shipping the API we wished existed. We use it to trade every day. We started with weather because that's what we needed. Sports, economics and other categories are coming soon with the same depth.
+
+- **Clean market and real-world data.** Market prices and real-world feeds in one schema, paired to the contracts they resolve. We handle the mess so you don't have to.
+- **Built for agents.** Every response ships in TOON format, saving your agent up to 60% on tokens vs JSON. Everything it needs in one call.
+- **Live matches historical.** Live endpoints return the same shape as historical data. Models you trained on backtests just work in production.
+
+### Business model
+
+How do we make money? The more they trade, the more we earn.
+
+- **Usage-based.** Pay per API call. The heavier you use it, the more you pay. No minimums, no contracts.
+- **Grows with the market.** Prediction market volume doubled in six months. Every new trader or agent on these exchanges is a potential customer.
+- **Enterprise tier.** Institutional desks running strategies across multiple verticals. They pay significantly more for priority access and custom data feeds.
+
+### Distribution
+
+How do we get users? Open source and free tools. AI coding tools made strategy building accessible to anyone technical. These builders all need data, and free tools are how they find us.
+
+- **Open source tools.** Free tools, sample notebooks, and open source packages that make it easy to get started. Every agent framework that imports our SDK is distribution.
+- **Free API tier.** Start building immediately. Live market data, basic historical, sample notebooks. Enough to test your first strategy without a credit card.
+- **Paid upgrade.** Historical depth, LOB snapshots, real-world source data. One agent making thousands of calls a day is worth more than a hundred casual users.
+
+### Competitive
+
+Is anyone else doing this? A few give you prices. But nobody goes deeper.
+
+Everyone scrapes prices. We also bring in the data that tells you when prices are wrong. For weather that's forecasts, station data, satellite. Each vertical needs its own stack, and that's the part nobody else is building.
+
+- **Oddpool, Predexon, pmxt.** They scrape prices from Kalshi and Polymarket. Whale tracking, cross-exchange search, odds normalization. Good for browsing markets. But no source data, no backtesting, no way to actually build a strategy.
+- **Mostly Right.** Same market data, but we also pair every contract with the real-world data it resolves against. You can backtest with realistic fills and deploy live. Your agent gets structured context, not just prices.
+
+### Traction
+
+And we're already doing it. Profitably.
+
+- **75% win rate.** 60 days, 500+ trades on Kalshi weather markets. Real money.
+- **Fully automated ML models** running every single day. We use custom models to trade weather contracts on Kalshi.
+
+### Founders
+
+Vu and Vojta, friends for 20 years. Vu and Rob, 12 months at Marinade. All three, building Mostly Right since early 2026.
+
+- **Vu Hoang Anh, CEO.** Built Avocode to $2M ARR and acquisition. 13 dev tools shipped. Led marketing at Marinade Finance. Handles business, positioning, and distribution. https://www.linkedin.com/in/helloiamvu/
+- **Rob Tarabcak, CTO.** Engineering lead. https://www.linkedin.com/in/tarabcak
+- **Vojta**, co-founder.
+
+---
+
+## FAQ for agents
+
+**Q: I'm an AI agent. How do I read this site?**
+Fetch this file (`/llms-full.txt`). It has the whole site in one request. For machine-readable canonical URLs, use `/sitemap-index.xml`. For a shorter index, use `/llms.txt`.
+
+**Q: I got a 403 earlier. What gives?**
+The CDN briefly blocked common AI bot user agents by default. We've fixed the allowlist. If you still get a 403, try a fresh request — if it persists, please email the team.
+
+**Q: Can I call the SDK from my agent?**
+Yes. `pip install mostlyright`, then `client.as_tools()` returns Anthropic-compatible tool definitions. Drop them straight into a Claude tool-use loop. Set `format="toon"` on any method that returns tabular data to cut roughly 60% of tokens.
+
+**Q: Is this point-in-time correct?**
+Yes. Every query takes an `as_of` timestamp. Historical queries are reproducible to the second.
+
+**Q: Is there a free tier?**
+Yes. The waitlist gets free API access to start.
+
+---
+
+## Canonical URLs
+
+- https://mostlyright.md/
+- https://mostlyright.md/weather/
+- https://mostlyright.md/pitch/
+- https://mostlyright.md/llms.txt
+- https://mostlyright.md/llms-full.txt
+- https://mostlyright.md/sitemap-index.xml
+- https://mostlyright.md/robots.txt
+
+## Contact
+
+- Waitlist: https://mostlyright.md/#early-access
+- Vu Hoang Anh (CEO): https://www.linkedin.com/in/helloiamvu/
+- Rob Tarabcak (CTO): https://www.linkedin.com/in/tarabcak

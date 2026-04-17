@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Tarabcak/mostly-right-landing#readme",
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.102.1",
     "astro": "^6.1.4",
