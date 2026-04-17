@@ -1,5 +1,0 @@
-{
-  "redirects": [
-    { "source": "/pitch/intro", "destination": "/pitch/", "permanent": true }
-  ]
-}
