@@ -96,9 +96,8 @@ a { color: inherit; }
   width: 7px;
   height: 7px;
   background: var(--accent-live);
+  transform: translateY(-1px);
   animation: livePulse 2s ease-in-out infinite;
-  vertical-align: middle;
-  margin-right: 8px;
 }
 
 /* ─── LINE BREAK CONTROL ─── */
