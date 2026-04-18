@@ -18,27 +18,29 @@ import Nav from '../Nav.astro';
 
       <div class="w-terminal">
         <div class="w-terminal-bar">
-          <span class="w-terminal-title">CHI &middot; HIGH &middot; 2026-04-18 &middot; 18:00Z</span>
+          <span class="w-terminal-title">CHICAGO &middot; HIGH &middot; 2026-04-18 &middot; 18:00 UTC</span>
           <span class="w-terminal-live">
             <span class="live-dot" aria-hidden="true"></span>LIVE
           </span>
         </div>
-        <pre class="w-terminal-body"><span class="w-term-muted">$ mostlyright snapshot("CHI", as_of="2026-04-18T18:00:00Z")</span>
+        <pre class="w-terminal-body"><span class="w-term-muted">$ mostlyright.snapshot("Chicago")
+# "Will Chicago hit 68&deg;F today?"</span>
 
-kalshi       <span class="w-term-num">0.62</span>       <span class="w-term-muted"># KMDW &middot; bid .61 ask .63 &middot; vol 412k</span>
-polymarket   <span class="w-term-num">0.59</span>       <span class="w-term-muted"># KORD &middot; diff station, same schema</span>
+<span class="w-term-muted"># THE MARKETS</span>
+Kalshi        <span class="w-term-num">0.62</span>     62% yes    settles at Midway
+Polymarket    <span class="w-term-num">0.59</span>     59% yes    settles at O'Hare
 
-NBM          <span class="w-term-num">68&deg;F</span>       <span class="w-term-muted"># 06Z &middot; ensemble blend</span>
-GFS          <span class="w-term-num">66&deg;F</span>       <span class="w-term-muted"># 00Z &middot; global</span>
-HRRR         <span class="w-term-num">69&deg;F</span>       <span class="w-term-muted"># 17Z &middot; hourly convective</span>
-ECMWF        <span class="w-term-num">67&deg;F</span>       <span class="w-term-muted"># 00Z &middot; european</span>
+<span class="w-term-muted"># THE FORECAST &mdash; 4-model ensemble</span>
+NBM  <span class="w-term-num">68&deg;F</span>     GFS  <span class="w-term-num">66&deg;F</span>     HRRR  <span class="w-term-num">69&deg;F</span>     ECMWF  <span class="w-term-num">67&deg;F</span>
 
-KMDW         <span class="w-term-num">66.2&deg;F</span>     <span class="w-term-muted"># dewpoint 54.1&deg;F &middot; RH 65% &middot; T-group</span>
-KORD         <span class="w-term-num">65.8&deg;F</span>     <span class="w-term-muted"># dewpoint 53.9&deg;F &middot; RH 66% &middot; T-group</span>
+<span class="w-term-muted"># LIVE AT BOTH SETTLEMENT STATIONS</span>
+Midway (KMDW)   <span class="w-term-num">66.2&deg;F</span>   dewpoint <span class="w-term-num">54&deg;F</span>   humidity <span class="w-term-num">65%</span>
+O'Hare (KORD)   <span class="w-term-num">65.8&deg;F</span>   dewpoint <span class="w-term-num">54&deg;F</span>   humidity <span class="w-term-num">66%</span>
 
-window       <span class="w-term-num">2026-04-18</span> <span class="w-term-muted"># LST (CST) &middot; midnight&rarr;midnight</span>
-settles_on   <span class="w-term-num">NWS CLI</span>    <span class="w-term-muted"># pending 04-19 10:00 CT</span>
-version      <span class="w-term-num">v0.4.2</span>     <span class="w-term-muted"># 78y history &middot; reproducible</span></pre>
+<span class="w-term-muted"># HOW IT SETTLES</span>
+Window        tonight, midnight &rarr; midnight CT
+Source        NWS Climate Daily (~10 AM CT tomorrow)
+Reproducible  every query pinned to <span class="w-term-num">v0.4.2</span></pre>
       </div>
     </div>
   </div>
