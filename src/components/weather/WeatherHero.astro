@@ -23,13 +23,15 @@ import Nav from '../Nav.astro';
             <span class="live-dot" aria-hidden="true"></span>LIVE
           </span>
         </div>
-        <pre class="w-terminal-body"><span class="w-term-muted">$ mostlyright snapshot KNYC-HIGH-2026-04-18</span>
+        <pre class="w-terminal-body"><span class="w-term-muted">$ mostlyright snapshot("NYC", as_of="2026-04-18T18:00:00Z")</span>
 
-price       <span class="w-term-num">0.62</span>    <span class="w-term-muted"># mid, bid=.61 ask=.63</span>
-forecast    <span class="w-term-num">71&deg;F</span>    <span class="w-term-muted"># NBM &middot; 06Z</span>
-observed    <span class="w-term-num">69.3&deg;F</span>  <span class="w-term-muted"># IEM &middot; T-group</span>
-resolution  <span class="w-term-num">NWS CLI</span> <span class="w-term-muted"># LST-aware</span>
-version     <span class="w-term-num">v0.4.2</span>  <span class="w-term-muted"># reproducibility token</span></pre>
+kalshi       <span class="w-term-num">0.62</span>         <span class="w-term-muted"># bid .61 ask .63 &middot; vol 412k</span>
+polymarket   <span class="w-term-num">0.59</span>         <span class="w-term-muted"># same contract &middot; unified pair</span>
+forecast     <span class="w-term-num">71&deg;F</span>         <span class="w-term-muted"># NBM 06Z &middot; +GFS/HRRR/ECMWF</span>
+observed     <span class="w-term-num">69.3&deg;F</span>       <span class="w-term-muted"># IEM T-group &middot; as_of=18Z</span>
+history      <span class="w-term-num">1948 &rarr; live</span>  <span class="w-term-muted"># 78y &middot; same schema backtest = live</span>
+settles_on   <span class="w-term-num">NWS CLI</span>      <span class="w-term-muted"># LST-aware &middot; pending 04-19 10:00 ET</span>
+version      <span class="w-term-num">v0.4.2</span>       <span class="w-term-muted"># reproducibility token</span></pre>
       </div>
     </div>
   </div>
