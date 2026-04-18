@@ -58,7 +58,7 @@ nav {
 .logo {
   height: 28px;
   width: auto;
-  opacity: .8;
+  opacity: .9;
   transition: opacity 0.3s ease, transform 0.15s ease-out;
 }
 .logo:hover { opacity: 1; }
@@ -115,7 +115,7 @@ nav {
 h1 {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
-  font-size: clamp(48px, 7vw, 88px);
+  font-size: clamp(60px, 7vw, 80px);
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -235,25 +235,51 @@ h1 {
 }
 .cta-form {
   display: flex;
-  gap: 0;
+  align-items: stretch;
+  gap: 16px;
   margin-bottom: 14px;
+}
+.cta-field {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.cta-caret {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: rgba(255,255,255,.35);
+  transition: color 0.15s ease-out, transform 0.15s ease-out;
+  pointer-events: none;
+}
+.cta-field:focus-within .cta-caret {
+  color: var(--text-primary);
+  transform: translateY(-50%) translateX(2px);
 }
 .cta-input {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  padding: 14px;
+  font-size: 15px;
+  padding: 14px 0 14px 24px;
   background: transparent;
-  border: 1px solid var(--border-input);
-  border-right: none;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.25);
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  caret-color: var(--text-primary);
+  transition: border-bottom-color 0.15s ease-out, border-bottom-width 0.15s ease-out;
 }
 .cta-input::placeholder { color: rgba(255,255,255,.3); }
 .cta-input:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 13px;
 }
 .cta-btn-form {
   background: var(--surface-white);
@@ -309,11 +335,11 @@ h1 {
   opacity: 0.7;
 }
 .cta-input.error {
-  border-color: #BE3535;
+  border-bottom-color: #BE3535;
   animation: shake 0.4s ease-out;
 }
 .cta-input.success {
-  border-color: #35BE76;
+  border-bottom-color: #35BE76;
 }
 .cta-form.error {
   animation: shake 0.4s ease-out;
@@ -506,8 +532,9 @@ footer p {
   .feature-card p { font-size: 13px; }
   .cta-section { padding: 60px 24px 60px; max-width: 100%; }
   .cta-tagline { font-size: 28px; }
-  .cta-form { flex-direction: column; }
-  .cta-input { border-right: 1px solid var(--border-input); border-bottom: none; font-size: 16px; }
+  .cta-form { flex-direction: column; gap: 20px; }
+  .cta-input { font-size: 16px; padding: 14px 0 14px 24px; }
+  .cta-input:focus { padding-bottom: 13px; }
   .cta-btn-form { width: 100%; font-size: 12px; min-height: 48px; }
   .divider { margin: 0 24px; }
   .modal { padding: 40px 24px 24px; }
