@@ -540,11 +540,15 @@ h1.content-panel-title,
 }
 .expressive-code .frame > figcaption.header {
   background: rgba(255, 255, 255, 0.02) !important;
-  /* Separator moved from header border-bottom → pre border-top
-     (next rule). Same reason as Starlight Tabs: the folder-tab
-     language label uses margin-bottom: -1px + z-index: 1 to
-     overlap and hide the line directly under itself. */
-  border-bottom: 0 !important;
+  /* Frame already supplies 1px around all four sides. Expressive
+     Code's default styles add left/right/top borders on the
+     header that stack with the frame's outer borders, producing
+     the 2px appearance the user caught on 02 · Get an API key.
+     Reset every side to 0 so the header lives cleanly inside the
+     frame with no double borders. The chrome/code separator
+     lives on .frame > pre (border-top, next rule) so the ::after
+     language label can overlap it. */
+  border: 0 !important;
   min-height: 36px;
   display: flex !important;
   align-items: center !important;
@@ -1532,6 +1536,14 @@ starlight-theme-select {
   border: 0 !important;
   margin: 0;
   position: static !important;
+}
+/* Also zero out the border-top on the inner pre (inside tabs) —
+   the tabpanel already paints the chrome/code separator, so the
+   pre-level border-top from the single-frame rule double-stacks
+   and renders as 2px here. Kill it when nested in tabs. */
+.sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .frame > pre,
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .frame > pre {
+  border-top: 0 !important;
 }
 
 /* Copy button inside Tabs: re-anchor to the top-right of the outer
