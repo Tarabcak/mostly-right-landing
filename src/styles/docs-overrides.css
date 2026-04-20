@@ -277,11 +277,34 @@ h1.content-panel-title,
   margin-bottom: 12px;
 }
 
+/* Hide Starlight's auto anchor-link icons. Handoff README is
+   explicit: "No icon set — iconography is deliberately limited
+   to arrows, chevrons, bullets." The chain icon was overlapping
+   heading text (user-flagged — "Next steps link icon is broken").
+   Anchor targeting still works via fragment URLs, we just don't
+   render the visual affordance. */
+.sl-markdown-content .sl-anchor-link {
+  display: none !important;
+}
+.sl-markdown-content .sl-heading-wrapper > :first-child {
+  padding-inline-end: 0 !important;
+}
+
 /* Body — mono 14px / 1.75. The default, never drifts. */
 .sl-markdown-content {
   font-size: 14px;
   line-height: 1.75;
   color: var(--docs-fg-muted);
+}
+
+/* Breathing room when there is no lead paragraph between the H1
+   and the first body element. Handoff pages with <Lead> already
+   create this gap implicitly (H1 24px + lead 17px + lead 24px).
+   API-ref pages from starlight-openapi have no lead and the
+   endpoint block landed flush under the title. `:has()` lets us
+   conditionally add space only when the first child isn't a lead. */
+.sl-markdown-content:not(:has(> .docs-lead:first-child)) {
+  padding-top: 16px;
 }
 
 .sl-markdown-content p,
@@ -1384,12 +1407,16 @@ starlight-theme-select {
   background: transparent !important;
 }
 
-/* Drop the default expressive-code frame shadow on code blocks
-   nested inside a tab — the outer tabs container already supplies it. */
+/* Drop the default expressive-code frame shadow AND the frame's own
+   L/R/B borders on code blocks nested inside a tab — the outer
+   starlight-tabs container already supplies all four borders.
+   Without this, the inner frame's 1px borders stack with the outer
+   1px borders on left/right/bottom, producing the "doubled border"
+   look the user flagged. */
 .sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .frame,
 .sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .frame {
   box-shadow: none;
-  border-top: 0;
+  border: 0 !important;
   margin: 0;
 }
 /* And hide the nested code block's title row since the outer
