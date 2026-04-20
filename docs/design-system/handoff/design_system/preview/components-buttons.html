@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .row { display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
+  .btn { display:inline-block; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#0a0a0a; background:#fff; border:2px solid #fff; padding:14px 28px; text-decoration:none; position:relative; overflow:hidden; z-index:1; transition: color 0.3s cubic-bezier(0.33,1,0.68,1);}
+  .btn::before { content:''; position:absolute; inset:0 -5% 0 -5%; height:120%; background:#0a0a0a; z-index:-1; transform: translateY(calc(-100% - 1px)); transition: transform 0.3s cubic-bezier(0.33,1,0.68,1);}
+  .btn:hover { color:#fff;} .btn:hover::before { transform: translateY(0);}
+  .btn.ghost { background:transparent; color:#fff; border-color:#fff;}
+  .btn.ghost::before { background:#fff;} .btn.ghost:hover { color:#0a0a0a;}
+  .caption { font-size:10px; color: var(--text-faint); margin-top:10px;}
+</style></head>
+<body>
+  <div class="row">
+    <a class="btn" href="#">Get Early Access</a>
+    <a class="btn ghost" href="#">See Weather →</a>
+  </div>
+  <div class="caption">Primary · fill slides up from bottom on hover · scale(.96) on press · 2px solid border · 0 radius</div>
+</body></html>

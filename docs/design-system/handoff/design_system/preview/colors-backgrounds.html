@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; }
+  .row { display:flex; gap:0; border:1px solid var(--border-default); }
+  .sw { flex:1; padding:16px 14px; display:flex; flex-direction:column; justify-content:space-between; min-height:110px; border-right:1px solid var(--border-default); }
+  .sw:last-child { border-right:0; }
+  .sw .k { font-family: var(--font-mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color: var(--text-subtle); }
+  .sw .v { font-family: var(--font-mono); font-size:11px; color: var(--text-faint); }
+  .sw.bg-primary { background:#0a0a0a; }
+  .sw.bg-section { background:#0d0d0d; }
+  .sw.bg-card { background: rgba(255,255,255,.06); }
+  .sw.bg-white { background:#fff; color:#0a0a0a; }
+  .sw.bg-white .k, .sw.bg-white .v { color:#0a0a0a; opacity:.6; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="sw bg-primary"><div class="k">bg-primary</div><div class="v">#0a0a0a</div></div>
+    <div class="sw bg-section"><div class="k">bg-section</div><div class="v">#0d0d0d</div></div>
+    <div class="sw bg-card"><div class="k">surface-card</div><div class="v">#fff / 6%</div></div>
+    <div class="sw bg-white"><div class="k">surface-white</div><div class="v">#ffffff</div></div>
+  </div>
+</body></html>

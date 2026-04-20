@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-code-theme="mono" data-shell="tight">
+<head>
+<meta charset="utf-8" />
+<title>Mostly Right · Docs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* Syntax token colors — read from CSS variables */
+  .tk-c { color: var(--code-comment); font-style: italic; }
+  .tk-s { color: var(--code-string); }
+  .tk-k { color: var(--code-keyword); }
+  .tk-n { color: var(--code-number); font-variant-numeric: tabular-nums; }
+  .tk-f { color: var(--code-fn); }
+
+  [data-theme="light"] img[alt="Mostly Right"] { filter: invert(1); }
+
+  /* Tweaks panel */
+  .tweaks {
+    position: fixed; bottom: 20px; right: 20px; z-index: 80;
+    background: var(--docs-bg-elevated);
+    border: 1px solid var(--docs-border-strong);
+    padding: 14px 16px;
+    font-family: var(--mono); font-size: 11px;
+    min-width: 220px;
+    display: none;
+  }
+  .tweaks[data-on="true"] { display: block; }
+  .tweaks h4 { margin: 0 0 10px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--docs-fg-faint); font-weight: 700; }
+  .tweaks .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .tweaks label { color: var(--docs-fg-muted); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+  .tweaks .seg { display: inline-flex; border: 1px solid var(--docs-border-strong); }
+  .tweaks .seg button { padding: 4px 8px; font: inherit; font-size: 10px; background: transparent; color: var(--docs-fg-muted); border: 0; cursor: pointer; text-transform: uppercase; letter-spacing: .06em; }
+  .tweaks .seg button[aria-pressed="true"] { background: var(--docs-fg-heading); color: var(--docs-bg); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<aside class="tweaks" id="tweaks">
+  <h4>Tweaks</h4>
+  <div class="row">
+    <label>Variant</label>
+    <div class="seg" data-group="shell">
+      <button data-v="tight" aria-pressed="true">Tight</button>
+      <button data-v="airy">Airy</button>
+    </div>
+  </div>
+  <div class="row">
+    <label>Page</label>
+    <div class="seg" data-group="page">
+      <button data-v="quickstart" aria-pressed="true">Quickstart</button>
+      <button data-v="api">API Ref</button>
+    </div>
+  </div>
+  <div class="row">
+    <label>Theme</label>
+    <div class="seg" data-group="theme">
+      <button data-v="dark" aria-pressed="true">Dark</button>
+      <button data-v="light">Light</button>
+    </div>
+  </div>
+  <div class="row">
+    <label>Code</label>
+    <div class="seg" data-group="code">
+      <button data-v="mono" aria-pressed="true">Mono</button>
+      <button data-v="contrast">Contrast</button>
+      <button data-v="dimmed">Dimmed</button>
+    </div>
+  </div>
+</aside>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="Shell.jsx"></script>
+<script type="text/babel" src="Modules.jsx"></script>
+<script type="text/babel" src="Pages.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "shell": "tight",
+  "page": "quickstart",
+  "theme": "dark",
+  "code": "mono"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [shell, setShell] = React.useState(TWEAK_DEFAULTS.shell);
+  const [page, setPage] = React.useState(TWEAK_DEFAULTS.page);
+  const [theme, setTheme] = React.useState(TWEAK_DEFAULTS.theme);
+  const [codeTheme, setCodeTheme] = React.useState(TWEAK_DEFAULTS.code);
+  const [cmdOpen, setCmdOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-shell', shell);
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-code-theme', codeTheme);
+  }, [shell, theme, codeTheme]);
+
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // wire tweak panel
+  React.useEffect(() => {
+    const setters = { shell: setShell, page: setPage, theme: setTheme, code: setCodeTheme };
+    const handler = (ev) => {
+      const btn = ev.target.closest('.tweaks .seg button');
+      if (!btn) return;
+      const grp = btn.parentElement.dataset.group;
+      const v = btn.dataset.v;
+      [...btn.parentElement.children].forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      setters[grp] && setters[grp](v);
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [grp]: v } }, '*');
+    };
+    document.getElementById('tweaks').addEventListener('click', handler);
+  }, []);
+
+  // edit-mode host protocol
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data) return;
+      if (e.data.type === '__activate_edit_mode') document.getElementById('tweaks').setAttribute('data-on', 'true');
+      if (e.data.type === '__deactivate_edit_mode') document.getElementById('tweaks').setAttribute('data-on', 'false');
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const maxContent = shell === 'airy' ? 720 : 680;
+
+  return (
+    <>
+      <TopBar shell={shell} onSearch={() => setCmdOpen(true)} />
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 48px)' }}>
+        <Sidebar shell={shell} />
+        <main style={{
+          flex: 1, display: 'flex', justifyContent: 'center',
+          padding: shell === 'airy' ? '72px 56px 96px' : '56px 48px 96px',
+        }}>
+          <div style={{ width: '100%', maxWidth: maxContent, minWidth: 0 }}>
+            {page === 'quickstart' ? <QuickstartPage /> : <ApiRefPage />}
+            <footer style={{ display: 'flex', justifyContent: 'space-between', marginTop: 96, padding: '24px 0', borderTop: '1px solid var(--docs-border)', fontSize: 12, color: 'var(--docs-fg-subtle)' }}>
+              <a href="#" style={{ border: 0, color: 'var(--docs-fg-muted)' }}>← Introduction</a>
+              <a href="#" style={{ border: 0, color: 'var(--docs-fg-muted)' }}>Authentication →</a>
+            </footer>
+          </div>
+        </main>
+      </div>
+      <CmdK open={cmdOpen} onClose={() => setCmdOpen(false)} />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .row { display:flex; flex-direction:column; gap:14px;}
+  .logo-row { display:flex; align-items:center; gap:40px; padding:14px 20px; border:1px solid var(--border-default);}
+  .logo-row img { height:24px;}
+  .lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color: var(--text-subtle); margin-left:auto;}
+  .white-on-dark { background:#0a0a0a;}
+  .dark-on-white { background:#fff;}
+</style></head>
+<body>
+  <div class="row">
+    <div class="logo-row white-on-dark"><img src="../assets/logo-white.svg?v=2" alt=""><span class="lbl">logo-white · default</span></div>
+    <div class="logo-row dark-on-white"><img src="../assets/logo-dark.svg?v=2" alt=""><span class="lbl" style="color:#555">logo-dark · light bg</span></div>
+  </div>
+</body></html>

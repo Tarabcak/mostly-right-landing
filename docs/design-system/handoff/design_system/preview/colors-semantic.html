@@ -1,0 +1,61 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .grid { display:grid; grid-template-columns: 1fr 1fr; border:1px solid var(--border-default); }
+  .cell { padding:18px 20px; border-right:1px solid var(--border-default); border-bottom:1px solid var(--border-default); display:flex; flex-direction:column; gap:14px; min-height:108px;}
+  .cell:nth-child(2n) { border-right:0; }
+  .cell:nth-last-child(-n+2) { border-bottom:0; }
+
+  .k { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color: var(--text-subtle);}
+  .v { font-size:11px; color: var(--text-faint); margin-top:auto;}
+
+  /* Live */
+  .live-row { display:inline-flex; align-items:center; gap:8px;}
+  .dot-live { width:8px; height:8px; background: var(--accent-live); transform: translateY(-1px); animation: livePulse 2s ease-in-out infinite;}
+  .live-lbl { color: var(--accent-live); font-weight:700; font-size:12px; letter-spacing:.12em;}
+
+  /* Focus demo — real input pattern */
+  .field { position:relative; display:flex; align-items:center;}
+  .caret { position:absolute; left:0; top:50%; transform: translateY(-50%); font-size:13px; color:#fff;}
+  input.demo {
+    flex:1; font-family: var(--font-mono); font-size:13px; font-weight:500;
+    padding:8px 0 8px 20px; background:transparent; color:#fff; outline:none;
+    border:none; border-bottom:2px solid #fff; caret-color:#fff;
+  }
+
+  /* Success / error — inline under a field */
+  .success-row, .error-row { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:500;}
+  .success-row { color: var(--success);}
+  .error-row { color: var(--error);}
+  .mark { font-size:14px; line-height:1;}
+</style></head>
+<body>
+  <div class="grid">
+
+    <div class="cell">
+      <div class="k">accent-live</div>
+      <div class="live-row"><span class="dot-live"></span><span class="live-lbl">LIVE</span></div>
+      <div class="v">#4ade80 · status dots only, never fills or text body</div>
+    </div>
+
+    <div class="cell">
+      <div class="k">border-focus</div>
+      <div class="field"><span class="caret">→</span><input class="demo" value="you@email.com" readonly></div>
+      <div class="v">#fff · 2px solid bottom border on :focus</div>
+    </div>
+
+    <div class="cell">
+      <div class="k">success</div>
+      <div class="success-row"><span class="mark">✓</span><span>you're on the waitlist</span></div>
+      <div class="v">#35BE76 · form confirmation only</div>
+    </div>
+
+    <div class="cell">
+      <div class="k">error</div>
+      <div class="error-row"><span class="mark">×</span><span>invalid email address</span></div>
+      <div class="v">#BE3535 · inline validation only</div>
+    </div>
+
+  </div>
+</body></html>

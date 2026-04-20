@@ -1,0 +1,134 @@
+/* Docs-specific tokens, layered on top of colors_and_type.css */
+
+:root {
+  /* Linear-leaning defaults */
+  --docs-bg: #0a0a0a;
+  --docs-bg-elevated: #0e0e0e;
+  --docs-bg-code: #080808;
+  --docs-bg-sidebar: #0a0a0a;
+
+  --docs-border: rgba(255,255,255,0.08);
+  --docs-border-strong: rgba(255,255,255,0.18);
+  --docs-border-focus: #ffffff;
+
+  --docs-fg: #e8e8e8;
+  --docs-fg-heading: #ffffff;
+  --docs-fg-muted: rgba(255,255,255,0.60);
+  --docs-fg-subtle: rgba(255,255,255,0.45);
+  --docs-fg-faint: rgba(255,255,255,0.28);
+  --docs-fg-link: #ffffff;
+
+  /* Semantic */
+  --docs-accent-live: #4ade80;
+  --docs-note: #60a5fa;
+  --docs-warn: #fbbf24;
+  --docs-caution: #f87171;
+  --docs-tip: #4ade80;
+
+  /* HTTP methods */
+  --docs-get: #4ade80;
+  --docs-post: #60a5fa;
+  --docs-patch: #fbbf24;
+  --docs-delete: #f87171;
+
+  /* Code syntax (default: monochrome) */
+  --code-fg: rgba(255,255,255,0.78);
+  --code-comment: rgba(255,255,255,0.30);
+  --code-string: rgba(255,255,255,0.95);
+  --code-keyword: rgba(255,255,255,0.55);
+  --code-number: #ffffff;
+  --code-fn: #ffffff;
+
+  /* Layout */
+  --sb-w: 260px;
+  --toc-w: 220px;
+  --content-max: 760px;
+
+  --radius: 0px;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --display: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Light theme override */
+[data-theme="light"] {
+  --docs-bg: #fafafa;
+  --docs-bg-elevated: #ffffff;
+  --docs-bg-code: #f4f4f4;
+  --docs-bg-sidebar: #ffffff;
+
+  --docs-border: rgba(0,0,0,0.08);
+  --docs-border-strong: rgba(0,0,0,0.18);
+  --docs-border-focus: #0a0a0a;
+
+  --docs-fg: #0a0a0a;
+  --docs-fg-heading: #000000;
+  --docs-fg-muted: rgba(0,0,0,0.66);
+  --docs-fg-subtle: rgba(0,0,0,0.48);
+  --docs-fg-faint: rgba(0,0,0,0.28);
+  --docs-fg-link: #0a0a0a;
+
+  --code-fg: rgba(0,0,0,0.78);
+  --code-comment: rgba(0,0,0,0.38);
+  --code-string: rgba(0,0,0,0.95);
+  --code-keyword: rgba(0,0,0,0.55);
+  --code-number: #000000;
+  --code-fn: #000000;
+}
+
+/* Code themes */
+[data-code-theme="contrast"] {
+  --code-keyword: #c084fc;
+  --code-string: #86efac;
+  --code-number: #fbbf24;
+  --code-fn: #60a5fa;
+  --code-comment: rgba(255,255,255,0.35);
+}
+[data-code-theme="dimmed"] {
+  --code-fg: rgba(255,255,255,0.58);
+  --code-comment: rgba(255,255,255,0.22);
+  --code-string: rgba(255,255,255,0.72);
+  --code-keyword: rgba(255,255,255,0.40);
+  --code-number: rgba(255,255,255,0.82);
+  --code-fn: rgba(255,255,255,0.82);
+}
+
+/* Airy (Vercel-leaning) */
+[data-shell="airy"] {
+  --sb-w: 280px;
+  --toc-w: 240px;
+  --content-max: 780px;
+}
+
+/* Base */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--docs-bg);
+  color: var(--docs-fg);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+a { color: var(--docs-fg-link); text-decoration: none; border-bottom: 1px solid var(--docs-border-strong); }
+a:hover { border-bottom-color: var(--docs-fg-link); }
+
+code { font-family: var(--mono); font-size: 0.92em; }
+:not(pre) > code {
+  background: var(--docs-bg-code);
+  border: 1px solid var(--docs-border);
+  padding: 1px 6px;
+  font-size: 0.86em;
+}
+
+pre { margin: 0; font-family: var(--mono); }
+
+::selection { background: #ffffff; color: #000; }
+[data-theme="light"] ::selection { background: #000; color: #fff; }
+
+/* Scrollbars — minimal */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--docs-border-strong); }

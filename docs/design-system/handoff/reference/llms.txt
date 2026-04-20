@@ -1,0 +1,58 @@
+# Mostly Right
+
+> The AI-native data stack for prediction markets. One Python SDK for Kalshi and Polymarket prices plus the real-world data that settles each contract. Cleaned, reconciled, reproducible, and built for agents.
+
+Mostly Right ships the API we wished existed when we started trading prediction markets ourselves. We pair every contract with the data that resolves it, normalize it across platforms, and return it in shapes agents can use without glue code. Weather ships first because that is what we use in production. Sports, economics, esports, and commodities follow.
+
+If you are an agent trying to understand the product, fetch `/llms-full.txt` for the whole site in one request. If you are looking to use the data, `pip install mostlyright` and call `client.as_tools()` to get Anthropic-compatible tool definitions back.
+
+## Core pages
+
+- [Home](https://mostlyright.md/): What the product is, who it is for, and what ships first.
+- [Weather SDK](https://mostlyright.md/weather/): Every signal that drives a weather market on Kalshi and Polymarket. 60+ cities, 78 years of history since 1948, eight ingest sources, four forecast models.
+- [Pitch deck](https://mostlyright.md/pitch/): Market size, product, business model, competitive landscape, team. Written for investors and collaborators.
+
+## Product facts
+
+- Install: `pip install mostlyright`
+- Status: private beta, waitlist open at https://mostlyright.md/#early-access
+- Languages: Python 3.10+
+- Output formats: pandas, polars, JSON, TOON (roughly 60% fewer tokens than JSON)
+- Agent integration: `client.as_tools()` returns Anthropic-compatible tool definitions. Drop straight into a Claude tool-use call with zero glue.
+- Reproducibility: every query takes an `as_of` timestamp. Point-in-time correct by default. Backtests replay exactly.
+- Markets covered: Kalshi, Polymarket
+- Unified schema: one contract ID works across both platforms. `candles`, `book_snapshot`, `pairs`, `cli_record`, `markets`, `snapshot()`.
+
+## Weather vertical
+
+- Sources ingested: AWC, IEM, NCEI GHCNh, NWS CLI, IEM MOS, Open-Meteo, GOES-16, GOES-19
+- Forecast models: NBM, GFS, HRRR, ECMWF
+- Settlement: NWS CLI, Local Standard Time aware, climate records held until NWS publishes
+- Reconciliation: source-priority dedup before the data reaches your model
+- Validation: bad data, zeros, NaNs caught at ingest, not in your backtest
+- Live-to-historical parity: same schema, same units, same shape. Deploy a backtested model without rewriting a query.
+
+## Roadmap
+
+- Weather: shipping now, in private beta
+- Sports: NFL, NBA, MLB, NHL, soccer. Game results, player stats, injuries from official league feeds
+- Economics: FOMC decisions, jobs, CPI, GDP. Parsed from original filings, release-time pinned
+- Esports: CS2, League of Legends, Dota 2, Valorant. Brackets, results, broadcast feeds
+- Commodities: oil, gas, metals, agriculture. EIA, USDA, CME, normalized into the same schema as weather.
+
+## Traction
+
+- 75% win rate on Kalshi weather markets. 60 days, 500+ trades, real money.
+- Fully automated ML models running every day in production. We use the same SDK we sell.
+
+## Founders
+
+- Vu Hoang Anh, CEO. Built Avocode to $2M ARR and acquisition. 13 dev tools shipped. Led marketing at Marinade Finance. https://www.linkedin.com/in/helloiamvu/
+- Rob Tarabcak, CTO. Engineering lead. https://www.linkedin.com/in/tarabcak
+- Vojta, co-founder. Vu and Vojta have been friends for 20 years.
+
+## Contact
+
+- Waitlist: https://mostlyright.md/#early-access
+- Full site as markdown: https://mostlyright.md/llms-full.txt
+- Sitemap: https://mostlyright.md/sitemap-index.xml

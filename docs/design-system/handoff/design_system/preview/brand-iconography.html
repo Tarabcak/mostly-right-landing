@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .wrap { display:grid; grid-template-columns: repeat(3,1fr); gap:0; border:1px solid var(--border-default);}
+  .cell { padding:14px; border-right:1px solid var(--border-default); display:flex; flex-direction:column; gap:10px; align-items:flex-start;}
+  .cell:last-child { border-right:0;}
+  .glyphs { font-size:22px; color: var(--text-primary); letter-spacing:.05em;}
+  .n { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color: var(--text-subtle);}
+  .v { font-size:11px; color: var(--text-faint);}
+</style></head>
+<body>
+  <div class="wrap">
+    <div class="cell"><div class="glyphs">├── └──</div><div class="n">Box-drawing</div><div class="v">Lists, trees, dividers</div></div>
+    <div class="cell"><div class="glyphs">→ ← · ×</div><div class="n">Flow arrows</div><div class="v">Transitions, separators</div></div>
+    <div class="cell"><div class="glyphs">01 02 03</div><div class="n">CSS counters</div><div class="v">decimal-leading-zero</div></div>
+  </div>
+</body></html>

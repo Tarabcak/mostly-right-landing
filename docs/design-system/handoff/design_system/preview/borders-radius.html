@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .stack { display:flex; flex-direction:column; gap:12px;}
+  .row { display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-default);}
+  .row:last-child { border-bottom:0;}
+  .lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color: var(--text-subtle); width:140px;}
+  .demo { flex:1; display:flex; align-items:center; justify-content:center; height:28px;}
+  .b1 { width:220px; height:28px; background:transparent; border:1px solid rgba(255,255,255,.1);}
+  .b2 { width:220px; height:28px; background:transparent; border:1px solid rgba(255,255,255,.2);}
+  .b3 { width:220px; height:28px; background:transparent; border:1px solid rgba(255,255,255,.5);}
+  .b4 { width:220px; height:28px; background:#fff;}
+  .note { font-size:10px; color: var(--text-faint); width:140px; text-align:right;}
+</style></head>
+<body>
+  <div class="stack">
+    <div class="row"><div class="lbl">border-default</div><div class="demo"><div class="b1"></div></div><div class="note">10% · hairline</div></div>
+    <div class="row"><div class="lbl">border-input</div><div class="demo"><div class="b2"></div></div><div class="note">20% · form</div></div>
+    <div class="row"><div class="lbl">border-focus</div><div class="demo"><div class="b3"></div></div><div class="note">50% · focus</div></div>
+    <div class="row"><div class="lbl">surface-white</div><div class="demo"><div class="b4"></div></div><div class="note">#fff · CTA</div></div>
+    <div class="row"><div class="lbl">radius</div><div class="demo" style="justify-content:flex-start"><span style="font-size:11px; color:var(--text-body)">0px everywhere. Brutalist. No exceptions.</span></div><div class="note">0 · always</div></div>
+  </div>
+</body></html>

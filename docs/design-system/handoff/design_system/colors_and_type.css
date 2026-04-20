@@ -1,0 +1,193 @@
+/* ============================================================
+   Mostly Right — Colors & Type
+   Monochrome + ONE accent. Type-only. No radius. No gradients.
+   ============================================================ */
+
+/* ─── SELF-HOSTED FONTS ─── */
+/* NOTE: .woff2 files not yet copied from original repo (/public/fonts/).
+   Google Fonts import below is the current fallback. */
+@font-face {
+  font-family: 'Funnel Display';
+  src: url('./fonts/funnel-display-latin.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('./fonts/jetbrains-mono-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback via Google Fonts — safe to remove once self-hosted .woff2 are in place. */
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* ─── BACKGROUNDS ─── */
+  --bg-primary:     #0a0a0a;   /* page */
+  --bg-section:     #0d0d0d;   /* alt section bg (rarely used — identity is flat black) */
+  --surface-card:   rgba(255,255,255,.06); /* code blocks, terminal cards, tree cards */
+  --surface-card-dim: rgba(255,255,255,.03);
+  --surface-white:  #fff;      /* CTAs */
+  --surface-dark:   #0a0a0a;   /* button hover fill */
+
+  /* ─── TEXT (always white + opacity) ─── */
+  --text-primary:   #fff;
+  --text-heading:   rgba(255,255,255,.9);
+  --text-body:      rgba(255,255,255,.55);
+  --text-muted:     rgba(255,255,255,.5);
+  --text-subtle:    rgba(255,255,255,.35);
+  --text-faint:     rgba(255,255,255,.25);
+
+  /* ─── BORDERS ─── */
+  --border-default: rgba(255,255,255,.1);
+  --border-input:   rgba(255,255,255,.2);
+  --border-focus:   rgba(255,255,255,.5);
+
+  /* ─── ACCENT ─── SCOPED TO LIVE/STATUS ONLY. */
+  --accent-live:    #4ade80;   /* Terminal Green. Never on buttons, links, borders, large type. */
+
+  /* ─── SEMANTIC (form states only — not design-system accents) ─── */
+  --success: #35BE76;
+  --error:   #BE3535;
+
+  /* ─── TYPE ─── */
+  --font-display: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'Menlo', 'Consolas', monospace;
+
+  /* ─── SIZE SCALE (strict 5-tier) ─── */
+  --fs-marquee:  clamp(60px, 7vw, 80px);
+  --fs-standard: clamp(32px, 4vw, 44px);
+  --fs-minor:    24px;   /* 22–26px cluster */
+  --fs-body:     14px;   /* 14–15px cluster */
+  --fs-label:    12px;   /* 11–13px cluster */
+
+  /* ─── LEADING & TRACKING ─── */
+  --lh-marquee: 1.05;
+  --lh-standard: 1.15;
+  --lh-minor: 1.3;
+  --lh-body: 1.85;
+  --lh-label: 1.4;
+  --tr-tight: -0.02em;
+  --tr-label: 0.06em;
+  --tr-eyebrow: 0.12em;
+
+  /* ─── SPACING (base 8) ─── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 16px;
+  --sp-4: 24px;
+  --sp-5: 32px;
+  --sp-6: 48px;
+  --sp-7: 64px;
+  --sp-8: 80px;
+  --sp-9: 112px;
+  --sp-10: 140px;
+  --pad-section: 80px;         /* standard */
+  --pad-section-anchor: 112px; /* anchor sections */
+  --pad-section-mobile: 56px;
+  --pad-inner: 48px;
+  --pad-inner-mobile: 24px;
+  --max-content: 1200px;
+
+  /* ─── RADIUS ─── */
+  --radius: 0;                 /* ALWAYS ZERO. BRUTALIST. */
+
+  /* ─── MOTION ─── */
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);      /* reveals, 0.5–0.8s */
+  --ease-button: cubic-bezier(0.33, 1, 0.68, 1);     /* button hovers */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);  /* CTA scale-in only */
+  --dur-reveal: 0.7s;
+  --dur-hover: 0.3s;
+  --dur-press: 0.15s;
+  --dur-pulse: 2s;
+
+  /* ─── FOCUS ─── */
+  --focus-ring: 2px solid var(--border-focus);
+  --focus-offset: 4px;
+}
+
+/* ─── SEMANTIC BASE ELEMENTS ─── */
+html, body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: inherit; }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-marquee);
+  line-height: var(--lh-marquee);
+  letter-spacing: var(--tr-tight);
+  color: var(--text-primary);
+}
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-standard);
+  line-height: var(--lh-standard);
+  letter-spacing: var(--tr-tight);
+  color: var(--text-heading);
+}
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-minor);
+  line-height: var(--lh-minor);
+  color: var(--text-heading);
+}
+p, li {
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-body);
+}
+code, pre, .mono, .data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.eyebrow, .label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tr-eyebrow);
+  color: var(--text-faint);
+}
+.interactive {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tr-label);
+}
+
+/* Signature motion primitive — reserved for status indicators. */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--accent-live);
+  animation: livePulse 2s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

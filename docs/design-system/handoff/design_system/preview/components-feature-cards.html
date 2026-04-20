@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap:24px 40px; counter-reset: feature;}
+  .card { counter-increment: feature;}
+  .card::before { content: counter(feature, decimal-leading-zero); display:block; font-size:11px; letter-spacing:.06em; color: var(--text-faint); margin-bottom:12px;}
+  .card h3 { font-family: var(--font-display); font-weight:400; font-size:20px; color: var(--text-heading); margin:0 0 10px;}
+  .card p { font-size:13px; line-height:1.75; color: var(--text-muted); margin:0;}
+</style></head>
+<body>
+  <div class="grid">
+    <div class="card"><h3>Unified market data</h3><p>Kalshi and Polymarket in one schema. Historical prices, settlements, limit order books.</p></div>
+    <div class="card"><h3>Real-world source data</h3><p>Weather, sports, economics. Paired with the market each point resolves.</p></div>
+  </div>
+</body></html>

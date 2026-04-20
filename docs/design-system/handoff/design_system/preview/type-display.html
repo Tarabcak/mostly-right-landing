@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff;}
+  .stack { display:flex; flex-direction:column; gap:20px; }
+  .row { display:grid; grid-template-columns: 120px 1fr auto; gap:16px; align-items:baseline; padding-bottom:16px; border-bottom:1px solid var(--border-default);}
+  .row:last-child { border-bottom:0; padding-bottom:0;}
+  .tag { font-family: var(--font-mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color: var(--text-subtle);}
+  .size { font-family: var(--font-mono); font-size:10px; color: var(--text-faint); text-align:right;}
+  .s-marquee { font-family: var(--font-display); font-weight:400; font-size:44px; line-height:1.05; letter-spacing:-0.02em; color:#fff;}
+  .s-standard { font-family: var(--font-display); font-weight:400; font-size:30px; line-height:1.15; letter-spacing:-0.02em; color: var(--text-heading);}
+  .s-minor { font-family: var(--font-display); font-weight:400; font-size:20px; line-height:1.3; color: var(--text-heading);}
+</style></head>
+<body>
+  <div class="stack">
+    <div class="row"><div class="tag">Marquee · Display</div><div class="s-marquee">Mostly Right.</div><div class="size">clamp(60–80)</div></div>
+    <div class="row"><div class="tag">Standard · Display</div><div class="s-standard">Starting with weather.</div><div class="size">clamp(32–44)</div></div>
+    <div class="row"><div class="tag">Minor · Display</div><div class="s-minor">Unified market data</div><div class="size">22–26</div></div>
+  </div>
+</body></html>

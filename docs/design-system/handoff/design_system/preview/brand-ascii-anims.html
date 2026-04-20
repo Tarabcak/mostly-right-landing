@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>ASCII animations · Mostly Right</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px;}
+  .card { border:1px solid var(--border-default); position:relative; overflow:hidden; aspect-ratio: 16/10; background:#0a0a0a;}
+  canvas { display:block; width:100%; height:100%;}
+  .bar {
+    position:absolute; top:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 14px; background: linear-gradient(to bottom, rgba(10,10,10,.85), transparent);
+    font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color: var(--text-subtle);
+    pointer-events:none;
+  }
+  .name { color:#fff;}
+  .note { font-size:11px; color: var(--text-faint); margin:4px 0 12px;}
+</style>
+</head>
+<body>
+<p class="note">Six drop-in ASCII animations. All full-bleed canvas, same API: <code>AsciiAnims.&lt;name&gt;(canvas)</code> → <code>{ stop }</code>.</p>
+
+<div class="grid">
+  <div class="card"><canvas id="c1"></canvas><div class="bar"><span class="name">wave</span><span>sine field · default bg</span></div></div>
+  <div class="card"><canvas id="c2"></canvas><div class="bar"><span class="name">rain</span><span>matrix cascade · hero behind</span></div></div>
+  <div class="card"><canvas id="c3"></canvas><div class="bar"><span class="name">ticker</span><span>horizontal tape · stats band</span></div></div>
+  <div class="card"><canvas id="c4"></canvas><div class="bar"><span class="name">grid</span><span>radial pulses · long-form copy</span></div></div>
+  <div class="card"><canvas id="c5"></canvas><div class="bar"><span class="name">flow</span><span>arrow field · section break</span></div></div>
+  <div class="card"><canvas id="c6"></canvas><div class="bar"><span class="name">log</span><span>typed system log · hero inset</span></div></div>
+</div>
+
+<script src="../assets/ascii-anims.js"></script>
+<script>
+  AsciiAnims.wave(document.getElementById('c1'));
+  AsciiAnims.rain(document.getElementById('c2'), { accent: '#4ade80' });
+  AsciiAnims.ticker(document.getElementById('c3'));
+  AsciiAnims.grid(document.getElementById('c4'));
+  AsciiAnims.flow(document.getElementById('c5'));
+  AsciiAnims.log(document.getElementById('c6'));
+</script>
+</body></html>

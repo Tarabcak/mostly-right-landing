@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:28px 24px; background:#0a0a0a; color:#fff; font-family: var(--font-mono);}
+
+  .label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color: var(--text-subtle); margin-bottom:12px;}
+
+  form { display:flex; align-items:stretch; gap:16px; max-width:560px;}
+
+  .field { flex:1; position:relative; display:flex; align-items:center;}
+  .caret {
+    position:absolute; left:0; top:50%; transform: translateY(-50%);
+    font-size:14px; color: rgba(255,255,255,.35);
+    transition: color .15s ease-out, transform .15s ease-out;
+    pointer-events:none;
+  }
+  input {
+    flex:1; width:100%;
+    font-family: var(--font-mono); font-size:15px; font-weight:500;
+    padding:14px 0 14px 24px;
+    background:transparent; color:#fff; outline:none;
+    border:none; border-bottom:1px solid rgba(255,255,255,.25);
+    transition: border-color .15s ease-out;
+    caret-color:#fff;
+  }
+  input::placeholder { color: rgba(255,255,255,.3); font-weight:400;}
+  input:focus { border-bottom: 2px solid #fff; padding-bottom:13px;}
+  .field:focus-within .caret { color:#fff; transform: translateY(-50%) translateX(2px);}
+
+  button {
+    background:#fff; color:#0a0a0a; border:2px solid #fff;
+    font-family: var(--font-mono); font-size:13px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.06em;
+    padding:0 24px; cursor:pointer; white-space:nowrap;
+  }
+
+  .note { font-size:11px; color: var(--text-faint); margin-top:16px; letter-spacing:.02em;}
+</style></head>
+<body>
+  <label class="label" for="email">Get early access</label>
+  <form onsubmit="event.preventDefault()">
+    <div class="field">
+      <span class="caret">→</span>
+      <input id="email" type="email" placeholder="you@email.com" autofocus>
+    </div>
+    <button type="submit">Join waitlist</button>
+  </form>
+  <p class="note">Waitlist gets first SDK access and a free API tier.</p>
+</body></html>

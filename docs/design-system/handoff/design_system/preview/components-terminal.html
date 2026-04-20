@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px; background:#0a0a0a; color:#fff; font-family: var(--font-mono); font-variant-numeric: tabular-nums;}
+  .term { background: rgba(10,10,10,0.85); border:1px solid var(--border-default); }
+  .bar { padding:10px 16px; border-bottom:1px solid var(--border-default); background: rgba(255,255,255,.02); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color: var(--text-subtle); display:flex; justify-content:space-between;}
+  .body { padding:16px 18px; white-space:pre; font-size:12px; line-height:1.85; color: var(--text-body); overflow:auto;}
+  .muted { color: var(--text-faint);}
+  .num { color:#fff; font-weight:700;}
+  .live { color: var(--accent-live); font-weight:700;}
+  .live-wrap { display:inline-flex; align-items:center; gap:7px;}
+  .pulse { display:inline-block; width:7px; height:7px; background: var(--accent-live); transform: translateY(-1px); animation: livePulse 2s ease-in-out infinite;}
+</style></head>
+<body>
+  <div class="term">
+    <div class="bar"><span>KNYC · HIGH · 2026-04-18</span><span class="live-wrap"><span class="pulse"></span><span class="live">LIVE</span></span></div>
+<div class="body"><span class="muted">$ mostlyright snapshot KNYC-HIGH-2026-04-18</span>
+price       <span class="num">0.62</span>    <span class="muted"># mid, bid=.61 ask=.63</span>
+forecast    <span class="num">71°F</span>   <span class="muted"># NBM · 06Z</span>
+observed    <span class="num">69.3°F</span> <span class="muted"># IEM · T-group</span>
+resolution  NWS CLI  <span class="muted"># LST-aware</span></div>
+  </div>
+</body></html>

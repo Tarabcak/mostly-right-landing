@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:0; background:#0a0a0a; color:#fff; overflow:hidden;}
+  canvas { display:block; width:100%; height:260px;}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const chars = ' .,;:!|/\\-_~^`';
+let w, h, cellW, cellH, cols, rows, time = 0;
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  w = canvas.clientWidth; h = canvas.clientHeight;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+  cols = 120; cellW = w/cols; cellH = cellW*1.6; rows = Math.ceil(h/cellH);
+  ctx.font = `${Math.max(8, cellH*0.6)}px "JetBrains Mono", monospace`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+}
+resize(); window.addEventListener('resize', resize);
+function draw() {
+  ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,w,h);
+  for (let row=0; row<rows; row++) {
+    const band = Math.floor(row/4); const py = row*cellH + cellH/2;
+    for (let col=0; col<cols; col++) {
+      const px = col*cellW + cellW/2; const nx = col/cols;
+      const amp = 0.15*Math.sin(nx*5+time+band) + 0.1*Math.cos(nx*10-time*0.5);
+      const dist = row/rows - (0.5+amp);
+      const density = Math.exp(-(dist*dist)/0.02);
+      if (density < 0.05) continue;
+      const c = chars[Math.min(Math.floor(density*(chars.length-1)), chars.length-1)];
+      if (c === ' ') continue;
+      ctx.fillStyle = `rgba(232,230,224,${(density*0.65).toFixed(2)})`;
+      ctx.fillText(c, px, py);
+    }
+  }
+  time += 0.012;
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body></html>
