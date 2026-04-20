@@ -114,6 +114,20 @@
   --sl-shadow-lg: none;
 }
 
+/* ─── ROOT FONTS: explicit fallback ───
+   Starlight applies --sl-font to some descendants but leaves html/
+   body without an explicit font-family declaration, so their computed
+   font-family falls through to the browser default (Times New Roman
+   on macOS Safari / Chrome). Every authored element overrides this
+   locally, so no Times is actually rendered — but any un-styled
+   descendant (future component, stray dev-toolbar artifact, etc.)
+   would inherit Times. Pinning html + body to the mono stack closes
+   the gap and matches the handoff's "body default: mono 14px". */
+html,
+body {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 /* ─── SKIP-LINK: inherit color ───
    Starlight's SkipLink (`<a href="#_top">`) is visually clipped
    until focused, but its baseline color was defaulting to
