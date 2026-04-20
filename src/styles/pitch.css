@@ -22,39 +22,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ─── ANIMATIONS ─── */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes revealUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes revealDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── ENTRANCE ANIMATIONS ─── */
-.slide-headline {
-  opacity: 0;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
-}
-.slide .slide-body-small:first-of-type {
-  opacity: 0;
-  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
-}
-.slide .split,
-.slide .cards-row,
-.slide .code-split,
-.slide .flywheel-grid,
-.slide .solution-features,
-.slide .split-bridge {
-  opacity: 0;
-  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
-}
-
 /* ─── SLIDE CONTAINER ─── */
 .slide {
   min-height: 100vh;
@@ -200,9 +167,6 @@ html, body {
   padding: 32px 28px;
   overflow-x: auto;
 }
-.code-block:nth-child(1) { animation-delay: 0.3s; }
-.code-block:nth-child(2) { animation-delay: 0.45s; }
-
 .code-header {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -421,10 +385,6 @@ pre .builtin { color: #f78c6c; }
   padding: 36px 32px;
   border: 1px solid var(--border-default);
 }
-.team-card:nth-child(1) { animation-delay: 0.3s; }
-.team-card:nth-child(2) { animation-delay: 0.4s; }
-.team-card:nth-child(3) { animation-delay: 0.5s; }
-
 .team-photo {
   width: 72px;
   height: 72px;
@@ -521,9 +481,6 @@ pre .builtin { color: #f78c6c; }
   flex-direction: column;
   justify-content: center;
 }
-.chaos-side:nth-child(1) { animation-delay: 0.3s; }
-.chaos-side:nth-child(2) { animation-delay: 0.45s; }
-
 .chaos-logos {
   display: flex;
   flex-wrap: wrap;
