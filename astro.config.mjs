@@ -13,6 +13,7 @@ const TAG_LABELS = {
   Meta: 'About the API',
 };
 
+
 export default defineConfig({
   site: 'https://mostlyright.md',
   output: 'static',
@@ -43,9 +44,13 @@ export default defineConfig({
       // 720px main content instead. Per-page can re-enable if needed.
       tableOfContents: false,
       expressiveCode: {
-        // Keep Starlight's bundled Night Owl themes for colored syntax
-        // highlighting (blue keys, green strings, amber numbers, purple
-        // keywords) — matches the signed-off Claude design for code blocks.
+        // Syntax tokens are flattened to monochrome via CSS overrides
+        // in docs-overrides.css (`.expressive-code span[style^='--']`
+        // block). Starlight's config serializer drops custom Shiki theme
+        // objects — setting `themes: [{...}]` here has no effect. Instead
+        // we let the default Night Owl theme render, then neutralize its
+        // token colors in CSS. Matches handoff tokens.css monochrome
+        // default (--code-fg: rgba(255,255,255,0.78)).
         // Plugins (line numbers) and defaultProps live in ec.config.mjs —
         // that file is dynamically imported so plugin methods survive
         // the integration's config serialization (functions can't ride

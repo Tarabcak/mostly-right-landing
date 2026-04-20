@@ -336,15 +336,45 @@ h1.content-panel-title,
   padding: 0;
 }
 
-/* ─── SYNTAX COLORS ──────────────────────────────────────────
-   Per the latest Claude design review: code blocks KEEP
-   their colored syntax (Night Owl-family: blue JSON keys,
-   green string values, amber numbers, purple keywords).
-   Previously we mapped these to white-opacity variants per
-   the 2026-04-15 DESIGN.md decision, but the signed-off
-   design contract shows colored tokens for readability.
-   Leaving Expressive Code's bundled theme colors intact.
+/* ─── SYNTAX COLORS — MONOCHROME ──────────────────────────────
+   The authoritative design handoff (ui_kits/docs/tokens.css)
+   defaults to monochrome syntax:
+     --code-fg:      rgba(255,255,255,0.78)
+     --code-comment: rgba(255,255,255,0.30)
+     --code-string:  rgba(255,255,255,0.95)
+     --code-keyword: rgba(255,255,255,0.55)
+     --code-number:  #ffffff
+     --code-fn:      #ffffff
+   Colored Night Owl was a regression — the earlier comment in
+   this file claimed it was "signed off," but the handoff zip
+   only offers colored syntax via opt-in `[data-code-theme="contrast"]`.
+   Default is monochrome.
+
+   Expressive Code applies Night Owl token colors via inline
+   `style="--0: #hex; --0bg: ..."` on every token span. We can't
+   replace the theme (Starlight's config serializer drops custom
+   Shiki theme objects), so we neutralize the inline custom
+   properties instead — overriding --0 (dark theme) and --1
+   (light theme) on token spans.
+
+   Single-tone flatten: every token renders at --code-fg. We
+   lose the subtle opacity ladder but gain brand consistency
+   with the homepage and pitch code blocks. If the ladder is
+   wanted back, swap to scope-class based selectors after
+   expressive-code starts emitting token class names again.
    ──────────────────────────────────────────────────────────── */
+.expressive-code .ec-line span[style^='--']:not([class]) {
+  --0: var(--code-fg, rgba(255, 255, 255, 0.78)) !important;
+  --0bg: transparent !important;
+  --0fs: inherit !important;
+  --0fw: inherit !important;
+  --0td: inherit !important;
+  --1: var(--code-fg, rgba(255, 255, 255, 0.78)) !important;
+  --1bg: transparent !important;
+  --1fs: inherit !important;
+  --1fw: inherit !important;
+  --1td: inherit !important;
+}
 
 /* Title-bar row. Always rendered as a 36px panel with traffic-light
    dots on the left, language hint mid-left, and the copy button
