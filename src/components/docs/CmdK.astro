@@ -340,6 +340,32 @@
     flex: 1 1 auto;
     overflow-y: auto;
     padding-bottom: 4px;
+    /* Hide the scrollbar by default, show a slim 6px thumb on
+       hover/focus-within. Matches the sidebar treatment — no
+       permanent chrome in the palette. */
+    scrollbar-width: none;
+  }
+  .cmdk-results::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+  .cmdk-results:hover,
+  .cmdk-results:focus-within {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  }
+  .cmdk-results:hover::-webkit-scrollbar,
+  .cmdk-results:focus-within::-webkit-scrollbar {
+    width: 6px;
+  }
+  .cmdk-results:hover::-webkit-scrollbar-track,
+  .cmdk-results:focus-within::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .cmdk-results:hover::-webkit-scrollbar-thumb,
+  .cmdk-results:focus-within::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 0;
   }
   .cmdk-group-label {
     padding: 10px 18px 6px;

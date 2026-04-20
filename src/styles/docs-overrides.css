@@ -586,18 +586,25 @@ h1.content-panel-title,
 .expressive-code .frame > figcaption.header::after {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 11px !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   letter-spacing: 0.06em !important;
   text-transform: lowercase !important;
   color: var(--docs-fg-heading) !important;
   border-bottom: 1px solid var(--docs-accent-live) !important;
-  padding: 9px 2px !important;
-  display: inline-block !important;
+  padding: 11px 16px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
   flex: 0 0 auto !important;
   line-height: 1 !important;
   width: auto !important;
   position: static !important;
-  background: transparent !important;
+  /* Filled active-tab look matching Starlight Tabs + handoff §3
+     "Active tab: white text, 1px green bottom border, bg #080808".
+     Without this the single-block bash label floated on the tab bar
+     while multi-tab pip/poetry/uv showed a dark-filled active tab —
+     same indicator, different surfaces. Now both sit on bg-code. */
+  background: var(--docs-bg-code) !important;
+  margin-bottom: -1px !important;
   mask-image: none !important;
   content: 'code' !important; /* default fallback */
 }
@@ -1446,12 +1453,33 @@ starlight-theme-select {
    starlight-tabs container already supplies all four borders.
    Without this, the inner frame's 1px borders stack with the outer
    1px borders on left/right/bottom, producing the "doubled border"
-   look the user flagged. */
+   look the user flagged. Also drop `position: relative` so the
+   .copy button inside falls through to the tabs container, letting
+   us anchor COPY on the outer tab bar (next rule). */
 .sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .frame,
 .sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .frame {
   box-shadow: none;
   border: 0 !important;
   margin: 0;
+  position: static !important;
+}
+
+/* Copy button inside Tabs: re-anchor to the top-right of the outer
+   starlight-tabs (the tab bar) so COPY sits beside the tab labels,
+   matching the single-block layout. Without this override, .copy
+   was absolute-positioned against .frame — which begins BELOW the
+   tab bar — and the button landed inside the code panel.
+   Making starlight-tabs position: relative gives .copy a new
+   containing block at the outer edge. */
+.sl-markdown-content > starlight-tabs,
+.sl-markdown-content .sl-steps > li > starlight-tabs {
+  position: relative;
+}
+.sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .copy,
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .copy {
+  top: 0 !important;
+  right: 0 !important;
+  height: 37px !important;
 }
 /* And hide the nested code block's title row since the outer
    tabs already render one. */
