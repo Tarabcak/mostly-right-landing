@@ -612,11 +612,17 @@ h1.content-panel-title,
   text-transform: lowercase !important;
   color: var(--docs-fg-heading) !important;
   border: 0 !important;
+  /* Match Starlight Tabs active anchor geometry exactly: padding
+     11px 16px 10px, but with line-height 1.4 (not 1) so rendered
+     box-height lands at ~37px instead of 32px. Without this the
+     single-block label sat 5px shorter than the multi-tab anchor
+     and the green top indicator rendered at a visibly different
+     vertical position (user spotted it). */
   padding: 11px 16px 10px !important;
+  line-height: 1.4 !important;
   display: inline-flex !important;
   align-items: center !important;
   flex: 0 0 auto !important;
-  line-height: 1 !important;
   width: auto !important;
   position: relative !important;
   /* Folder-tab active state, matching Starlight Tabs:
