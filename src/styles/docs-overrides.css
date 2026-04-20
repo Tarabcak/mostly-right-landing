@@ -62,13 +62,39 @@
   --docs-patch:          #fbbf24;
   --docs-delete:         #f87171;
 
-  /* Code syntax (monochrome — opacity variants only) */
+  /* Code syntax (monochrome — opacity variants only).
+     Override via data-code-theme on <html>: "mono" (default), "contrast",
+     "dimmed". See `:root[data-code-theme=...]` blocks below. */
   --code-fg:             rgba(255, 255, 255, 0.78);
   --code-comment:        rgba(255, 255, 255, 0.30);
   --code-string:         rgba(255, 255, 255, 0.95);
   --code-keyword:        rgba(255, 255, 255, 0.55);
   --code-number:         #ffffff;
   --code-fn:             #ffffff;
+}
+
+/* Contrast code theme — colored variant from handoff tokens.css. */
+:root[data-code-theme='contrast'] {
+  --code-fg:             rgba(255, 255, 255, 0.82);
+  --code-comment:        rgba(255, 255, 255, 0.35);
+  --code-string:         #86efac;   /* green */
+  --code-keyword:        #c084fc;   /* purple */
+  --code-number:         #fbbf24;   /* amber */
+  --code-fn:             #60a5fa;   /* blue */
+}
+
+/* Dimmed code theme — softer monochrome, recedes further. */
+:root[data-code-theme='dimmed'] {
+  --code-fg:             rgba(255, 255, 255, 0.58);
+  --code-comment:        rgba(255, 255, 255, 0.22);
+  --code-string:         rgba(255, 255, 255, 0.72);
+  --code-keyword:        rgba(255, 255, 255, 0.40);
+  --code-number:         rgba(255, 255, 255, 0.82);
+  --code-fn:             rgba(255, 255, 255, 0.82);
+}
+
+:root {
+  /* resume sl-color-* declarations (split by the code-theme blocks above) */
 
   /* ─── Starlight variable mapping ─── */
   --sl-color-white:      #fff;
@@ -365,44 +391,114 @@ h1.content-panel-title,
   padding: 0;
 }
 
-/* ─── SYNTAX COLORS — MONOCHROME ──────────────────────────────
-   The authoritative design handoff (ui_kits/docs/tokens.css)
-   defaults to monochrome syntax:
-     --code-fg:      rgba(255,255,255,0.78)
-     --code-comment: rgba(255,255,255,0.30)
-     --code-string:  rgba(255,255,255,0.95)
-     --code-keyword: rgba(255,255,255,0.55)
-     --code-number:  #ffffff
-     --code-fn:      #ffffff
-   Colored Night Owl was a regression — the earlier comment in
-   this file claimed it was "signed off," but the handoff zip
-   only offers colored syntax via opt-in `[data-code-theme="contrast"]`.
-   Default is monochrome.
+/* ─── SYNTAX COLORS — MAP NIGHT OWL TO HANDOFF MONO LADDER ──────
+   Handoff ui_kits/docs/tokens.css default code theme is MONOCHROME
+   with a purposeful opacity ladder:
+     --code-comment: rgba(255,255,255,0.30) italic  (faintest — metadata)
+     --code-keyword: rgba(255,255,255,0.55)         (structure)
+     --code-fg:      rgba(255,255,255,0.78)         (default fg)
+     --code-string:  rgba(255,255,255,0.95)         (content wins)
+     --code-number:  #ffffff + tabular-nums         (brightest)
+     --code-fn:      #ffffff                         (brightest)
 
-   Expressive Code applies Night Owl token colors via inline
-   `style="--0: #hex; --0bg: ..."` on every token span. We can't
-   replace the theme (Starlight's config serializer drops custom
-   Shiki theme objects), so we neutralize the inline custom
-   properties instead — overriding --0 (dark theme) and --1
-   (light theme) on token spans.
+   Expressive Code renders every syntax token as
+     <span style="--0: #rrggbb; --0bg: ...">token</span>
+   where the inline hex comes from Starlight's bundled Night Owl
+   theme. Starlight's config serializer drops custom Shiki theme
+   objects, so we can't just swap the theme — instead we map
+   Night Owl's exact hex palette (measured on the rendered page)
+   back to our mono ladder by targeting each hex value.
 
-   Single-tone flatten: every token renders at --code-fg. We
-   lose the subtle opacity ladder but gain brand consistency
-   with the homepage and pitch code blocks. If the ladder is
-   wanted back, swap to scope-class based selectors after
-   expressive-code starts emitting token class names again.
+   Night Owl dark-theme palette in use (measured 2026-04-20):
+     #d6deeb, #d7dbe0, #b2ccd6   → default fg       (0.78)
+     #ecc48d, #d9f5dd            → strings          (0.95)
+     #c792ea, #c5e478, #3b61b0   → keywords/types   (0.55)
+     #82aaff                      → functions        (1.0)
+     #f78c6c                      → numbers          (1.0 + tabular)
+     #637777                      → comments         (0.30 italic)
+
+   The [data-code-theme="contrast"] and ="dimmed" branches (see
+   `:root[data-code-theme=...]` declarations above) swap the
+   --code-* variables so the same mapping produces different
+   colored themes without changing selectors.
    ──────────────────────────────────────────────────────────── */
+
+/* Default fg — off-white / punctuation gray */
+.expressive-code .ec-line span[style*='--0:#d6deeb' i],
+.expressive-code .ec-line span[style*='--0:#d7dbe0' i],
+.expressive-code .ec-line span[style*='--0:#b2ccd6' i] {
+  --0: var(--code-fg) !important;
+}
+
+/* Strings — Night Owl amber + string-template green */
+.expressive-code .ec-line span[style*='--0:#ecc48d' i],
+.expressive-code .ec-line span[style*='--0:#d9f5dd' i] {
+  --0: var(--code-string) !important;
+}
+
+/* Keywords / types / storage — purple + accent green + dark blue */
+.expressive-code .ec-line span[style*='--0:#c792ea' i],
+.expressive-code .ec-line span[style*='--0:#c5e478' i],
+.expressive-code .ec-line span[style*='--0:#3b61b0' i] {
+  --0: var(--code-keyword) !important;
+}
+
+/* Functions / json keys — blue */
+.expressive-code .ec-line span[style*='--0:#82aaff' i] {
+  --0: var(--code-fn) !important;
+}
+
+/* Numbers — orange */
+.expressive-code .ec-line span[style*='--0:#f78c6c' i] {
+  --0: var(--code-number) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* Comments — gray, italic */
+.expressive-code .ec-line span[style*='--0:#637777' i] {
+  --0: var(--code-comment) !important;
+  font-style: italic !important;
+}
+
+/* Neutralize any remaining background colors (Night Owl highlight bands) */
 .expressive-code .ec-line span[style^='--']:not([class]) {
-  --0: var(--code-fg, rgba(255, 255, 255, 0.78)) !important;
   --0bg: transparent !important;
-  --0fs: inherit !important;
-  --0fw: inherit !important;
-  --0td: inherit !important;
-  --1: var(--code-fg, rgba(255, 255, 255, 0.78)) !important;
   --1bg: transparent !important;
-  --1fs: inherit !important;
-  --1fw: inherit !important;
-  --1td: inherit !important;
+}
+
+/* ─── FORCE DARK EXPRESSIVE-CODE IN LIGHT MODE ─────────────────
+   Per DESIGN.md, docs are dark-only. When the user's OS (or
+   headless browser) reports prefers-color-scheme: light and
+   Starlight's theme-picker JS hasn't set data-theme='dark' yet,
+   expressive-code's bundled CSS switches to Night Owl LIGHT
+   palette (reading from `--1:#XXXXXX` inline vars). That renders
+   in tokens like #3B61B0 (blue), #8844AE (purple), #984E4D (red)
+   which our --0-based mono mapping doesn't catch.
+
+   Override: force --0 (dark) values to be used even in light mode
+   for both the media-query path and the explicit [data-theme='light']
+   path. Docs never intentionally render in light mode.
+   Also pin the code background to --docs-bg-code so the code frame
+   doesn't suddenly turn pale. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --ec-codeBg: var(--docs-bg-code) !important;
+    --ec-codeFg: var(--code-fg) !important;
+  }
+  :root:not([data-theme='dark']) .expressive-code .ec-line :where(span[style^='--']:not([class])) {
+    color: var(--0, inherit) !important;
+    background-color: var(--0bg, transparent) !important;
+  }
+}
+:root[data-theme='light'] .expressive-code:not([data-theme='dark']),
+.expressive-code[data-theme='light'] {
+  --ec-codeBg: var(--docs-bg-code) !important;
+  --ec-codeFg: var(--code-fg) !important;
+}
+:root[data-theme='light'] .expressive-code:not([data-theme='dark']) .ec-line :where(span[style^='--']:not([class])),
+.expressive-code[data-theme='light'] .ec-line :where(span[style^='--']:not([class])) {
+  color: var(--0, inherit) !important;
+  background-color: var(--0bg, transparent) !important;
 }
 
 /* Title-bar row. Always rendered as a 36px panel with traffic-light
