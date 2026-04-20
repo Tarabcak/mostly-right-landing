@@ -210,7 +210,11 @@ h1.content-panel-title,
    sits just below the uppercase eyebrow row. */
 .sl-markdown-content > h1:first-child,
 .content-panel h1 {
-  font-size: clamp(44px, 5.8vw, 60px);
+  /* Handoff §2 Content Column: H1 Funnel Display 400, 56px,
+     line-height 1.02, letter-spacing -0.035em. We keep a clamp
+     for narrower viewports (mobile ≥ 40px) rather than a hard
+     56px; the handoff doesn't specify mobile scale. */
+  font-size: clamp(40px, 4.4vw, 56px);
   line-height: 1.02;
   letter-spacing: -0.035em;
   margin-bottom: 24px;
