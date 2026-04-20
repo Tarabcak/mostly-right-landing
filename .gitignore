@@ -5,3 +5,5 @@ dist/
 .env
 .claude/worktrees/
 pitch.local-backup/
+.gstack/
+*.zip
