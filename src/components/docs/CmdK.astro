@@ -1,0 +1,443 @@
+---
+/**
+ * Docs ⌘K palette — replaces Starlight's default Search component.
+ *
+ * Handoff §8 spec:
+ *   - Modal, centered at 12vh from top, 620px wide.
+ *   - Grouped results (Ask AI / Recent / Pages / API).
+ *   - Overlay rgba(0,0,0,.72).
+ *   - Input row — 14px mono, ESC key hint on the right.
+ *   - Rows: › bullet (or ✦ green for Ask AI), title + sub caption, hint right.
+ *   - Keyboard: arrow up/down, enter, esc. Selected row has elevated bg +
+ *     2px white left rail.
+ *   - Footer row with key-cap hints.
+ *   - ⌘K / Ctrl+K toggles; ESC closes.
+ *
+ * Implementation: self-contained Astro component that renders the
+ * trigger button (shown in Starlight's top-bar slot) + the modal
+ * markup in a portal. A single inline <script> wires the keyboard
+ * + mouse behavior. Search dataset is static for now (8 entries
+ * covering current pages + SDK methods); a future enhancement can
+ * pipe Pagefind's index in.
+ */
+---
+
+<button id="cmdk-trigger" class="cmdk-trigger" type="button" aria-label="Open command palette (⌘K)">
+  <span class="cmdk-trigger-icon" aria-hidden="true">⌕</span>
+  <span class="cmdk-trigger-label">Search</span>
+  <span class="cmdk-trigger-hint" aria-hidden="true">
+    <kbd>⌘</kbd><kbd>K</kbd>
+  </span>
+</button>
+
+<div id="cmdk-root" class="cmdk-root" role="dialog" aria-modal="true" aria-label="Command palette" hidden>
+  <div class="cmdk-overlay" data-cmdk-close></div>
+  <div class="cmdk-panel" role="document">
+    <div class="cmdk-input-row">
+      <span class="cmdk-input-icon" aria-hidden="true">⌕</span>
+      <input
+        id="cmdk-input"
+        class="cmdk-input"
+        type="text"
+        placeholder="Search docs, API methods, ask AI…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <span class="cmdk-esc" aria-hidden="true">ESC</span>
+    </div>
+    <div id="cmdk-results" class="cmdk-results" role="listbox"></div>
+    <div class="cmdk-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+      <span class="cmdk-footer-brand">Mostly Right · ⌘K</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Static search dataset — handoff §8 grouping.
+  // Future: replace with a Pagefind query on filtered.
+  type Row = { g: string; t: string; sub: string; href: string; hint?: string; ai?: boolean };
+  const ALL: Row[] = [
+    { g: 'Pages', t: 'Introduction',   sub: 'What MostlyRight is and who it is for',       href: '/docs/introduction/',               hint: '/introduction' },
+    { g: 'Pages', t: 'Quickstart',     sub: 'pip install → first call in five minutes',    href: '/docs/quickstart/',                 hint: '/quickstart' },
+    { g: 'Pages', t: 'Authentication', sub: 'X-API-Key header, rate limits, key hygiene',  href: '/docs/authentication/',             hint: '/authentication' },
+    { g: 'Pages', t: 'Data sources',   sub: 'AWC > IEM > GHCNh, raw-as-reported rule',     href: '/docs/concepts/data-sources/',      hint: '/concepts' },
+    { g: 'SDK',   t: 'Installation',   sub: 'pip / poetry / uv, optional deps',            href: '/docs/sdk/installation/',           hint: 'python' },
+    { g: 'SDK',   t: 'TherminalClient',sub: 'observations(), climate(), forecasts(), pairs()', href: '/docs/sdk/therminal-client/',   hint: 'python' },
+    { g: 'SDK',   t: 'WeatherLive',    sub: 'Live METAR from AWC',                          href: '/docs/sdk/weather-live/',           hint: 'python' },
+    { g: 'API',   t: 'GET /observations',    sub: 'Historical station observations',        href: '/docs/api/operations/get_observations_observations_get/',    hint: 'GET' },
+    { g: 'API',   t: 'GET /forecasts',       sub: 'NWS MOS and Open-Meteo forecasts',       href: '/docs/api/operations/get_forecasts_forecasts_get/',          hint: 'GET' },
+    { g: 'API',   t: 'GET /climate',         sub: 'Daily climate aggregates',               href: '/docs/api/operations/get_climate_climate_get/',              hint: 'GET' },
+    { g: 'API',   t: 'GET /stations',        sub: 'List available stations',                 href: '/docs/api/operations/get_stations_stations_get/',            hint: 'GET' },
+    { g: 'API',   t: 'GET /snapshot',        sub: 'Real-time cross-station snapshot',        href: '/docs/api/operations/get_snapshot_snapshot_get/',            hint: 'GET' },
+    { g: 'API',   t: 'GET /capabilities',    sub: 'Runtime SDK/API capabilities',            href: '/docs/api/operations/get_capabilities_capabilities_get/',    hint: 'GET' },
+  ];
+
+  const GROUPS = ['Ask AI', 'Recent', 'Pages', 'SDK', 'API'] as const;
+
+  const root = document.getElementById('cmdk-root') as HTMLElement | null;
+  const trigger = document.getElementById('cmdk-trigger') as HTMLButtonElement | null;
+  const input = document.getElementById('cmdk-input') as HTMLInputElement | null;
+  const results = document.getElementById('cmdk-results') as HTMLElement | null;
+
+  if (!root || !trigger || !input || !results) {
+    // Component missing — nothing to wire.
+  } else {
+
+    let selected = 0;
+    let currentRows: Row[] = [];
+
+    function open() {
+      root!.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      input!.value = '';
+      render('');
+      setTimeout(() => input!.focus(), 20);
+    }
+
+    function close() {
+      root!.hidden = true;
+      document.documentElement.style.overflow = '';
+      trigger!.focus();
+    }
+
+    function render(q: string) {
+      const query = q.toLowerCase().trim();
+      // Ask-AI row is always present with the query echoed back.
+      const askAi: Row = {
+        g: 'Ask AI',
+        t: `Ask "${q || 'How do I backfill observations?'}"`,
+        sub: 'Answers cited from docs',
+        href: '#',
+        hint: '↵',
+        ai: true,
+      };
+      const filtered = query
+        ? ALL.filter((r) => (r.t + ' ' + r.sub).toLowerCase().includes(query))
+        : ALL;
+      currentRows = [askAi, ...filtered];
+
+      // Group rows
+      const byGroup: Record<string, Row[]> = {};
+      currentRows.forEach((r) => {
+        (byGroup[r.g] ??= []).push(r);
+      });
+
+      let html = '';
+      let flatIndex = 0;
+      for (const g of GROUPS) {
+        if (!byGroup[g] || byGroup[g].length === 0) continue;
+        html += `<div class="cmdk-group-label">${g}</div>`;
+        for (const r of byGroup[g]) {
+          const isSel = flatIndex === selected;
+          html += `
+            <a
+              class="cmdk-row${isSel ? ' is-selected' : ''}${r.ai ? ' is-ai' : ''}"
+              href="${r.href}"
+              role="option"
+              aria-selected="${isSel ? 'true' : 'false'}"
+              data-idx="${flatIndex}"
+            >
+              <span class="cmdk-row-bullet" aria-hidden="true">${r.ai ? '✦' : '›'}</span>
+              <span class="cmdk-row-body">
+                <span class="cmdk-row-title">${escapeHtml(r.t)}</span>
+                <span class="cmdk-row-sub">${escapeHtml(r.sub)}</span>
+              </span>
+              ${r.hint ? `<span class="cmdk-row-hint">${escapeHtml(r.hint)}</span>` : ''}
+            </a>
+          `;
+          flatIndex++;
+        }
+      }
+      if (currentRows.length === 1 && query) {
+        // Only ask-ai row matched — show empty state
+        html += '<div class="cmdk-empty">No matches. Try a different query or ask AI above.</div>';
+      }
+      results!.innerHTML = html;
+      results!.querySelectorAll<HTMLElement>('.cmdk-row').forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+          const i = Number(el.dataset.idx ?? -1);
+          if (Number.isInteger(i) && i !== selected) {
+            selected = i;
+            highlightSelected();
+          }
+        });
+      });
+    }
+
+    function highlightSelected() {
+      results!.querySelectorAll<HTMLElement>('.cmdk-row').forEach((el) => {
+        const i = Number(el.dataset.idx ?? -1);
+        const on = i === selected;
+        el.classList.toggle('is-selected', on);
+        el.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (on) el.scrollIntoView({ block: 'nearest' });
+      });
+    }
+
+    function escapeHtml(s: string) {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Keyboard: ⌘K / Ctrl+K to toggle, Esc closes.
+    window.addEventListener('keydown', (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        root!.hidden ? open() : close();
+        return;
+      }
+      if (root!.hidden) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selected = Math.min(currentRows.length - 1, selected + 1);
+        highlightSelected();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selected = Math.max(0, selected - 1);
+        highlightSelected();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const row = currentRows[selected];
+        if (row && !row.ai && row.href && row.href !== '#') {
+          window.location.href = row.href;
+        }
+        close();
+      }
+    });
+
+    trigger.addEventListener('click', open);
+    root.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target?.dataset?.cmdkClose !== undefined || target === root) {
+        close();
+      }
+    });
+    input.addEventListener('input', () => {
+      selected = 0;
+      render(input.value);
+    });
+  }
+</script>
+
+<style is:global>
+  /* Global — the row HTML is emitted via innerHTML from the script
+     below, which bypasses Astro's scoped-class pipeline. Scoping
+     would swallow every `.cmdk-*` selector. */
+
+  /* Trigger button — lives in Starlight's search slot. Matches the
+     top-bar search button from handoff Shell.jsx TopBar. */
+  .cmdk-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px 6px 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.45);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    cursor: pointer;
+    min-width: 260px;
+    line-height: 1;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .cmdk-trigger:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .cmdk-trigger-icon { opacity: 0.5; }
+  .cmdk-trigger-label { flex: 1; text-align: left; }
+  .cmdk-trigger-hint {
+    display: inline-flex;
+    gap: 2px;
+    margin-left: 8px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.28);
+  }
+  .cmdk-trigger-hint kbd {
+    font-family: inherit;
+    padding: 0 4px;
+    line-height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: inherit;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  /* Modal overlay + panel */
+  .cmdk-root[hidden] { display: none; }
+  .cmdk-root {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 12vh;
+  }
+  .cmdk-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+  }
+  .cmdk-panel {
+    position: relative;
+    width: 620px;
+    max-width: calc(100vw - 40px);
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    max-height: 72vh;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  .cmdk-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .cmdk-input-icon {
+    color: rgba(255, 255, 255, 0.28);
+    font-size: 14px;
+  }
+  .cmdk-input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: none;
+    font: inherit;
+    font-size: 14px;
+    color: #ffffff;
+    padding: 0;
+  }
+  .cmdk-input::placeholder {
+    color: rgba(255, 255, 255, 0.28);
+  }
+  .cmdk-esc {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1px 6px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .cmdk-results {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding-bottom: 4px;
+  }
+  .cmdk-group-label {
+    padding: 10px 18px 6px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+    font-weight: 700;
+  }
+  .cmdk-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-left: 2px solid transparent;
+    text-decoration: none !important;
+    border-bottom: 0 !important;
+    color: inherit;
+    cursor: pointer;
+  }
+  .cmdk-row.is-selected {
+    background: #0e0e0e;
+    border-left-color: #ffffff;
+  }
+  .cmdk-row-bullet {
+    color: rgba(255, 255, 255, 0.28);
+    font-size: 13px;
+    line-height: 1;
+  }
+  .cmdk-row.is-ai .cmdk-row-bullet {
+    color: #4ade80;
+  }
+  .cmdk-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .cmdk-row-title {
+    color: #ffffff;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cmdk-row-sub {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cmdk-row-hint {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    flex-shrink: 0;
+  }
+  .cmdk-empty {
+    padding: 32px 18px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+  }
+
+  .cmdk-footer {
+    display: flex;
+    gap: 18px;
+    padding: 10px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.28);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .cmdk-footer kbd {
+    font-family: inherit;
+    padding: 0 5px;
+    margin-right: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.45);
+    background: transparent;
+    border-radius: 0;
+    font-size: 10px;
+    line-height: 14px;
+    display: inline-block;
+  }
+  .cmdk-footer-brand {
+    margin-left: auto;
+    color: rgba(255, 255, 255, 0.28);
+  }
+
+  @media (max-width: 720px) {
+    .cmdk-trigger {
+      min-width: 0;
+      padding: 6px 10px;
+    }
+    .cmdk-trigger-label { display: none; }
+    .cmdk-trigger-hint { display: none; }
+  }
+</style>

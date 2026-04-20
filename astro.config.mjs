@@ -58,8 +58,14 @@ export default defineConfig({
       },
       // Override SocialIcons with our custom component that renders
       // the version tag + "GitHub ↗" text link (per Claude design).
+      // Override Search with our ⌘K palette (handoff §8 — grouped
+      // results Ask AI / Recent / Pages / SDK / API, ✦ bullet for AI
+      // rows, keyboard nav, ESC to close). Starlight's default
+      // Pagefind search still builds the index (see pagefind output);
+      // a future enhancement can pipe that into our palette.
       components: {
         SocialIcons: './src/components/docs/DocsTopRight.astro',
+        Search: './src/components/docs/CmdK.astro',
       },
       // Remove right-rail TOC per design handoff — intentional
       // "No right TOC — removed for focus." The column centers on the
