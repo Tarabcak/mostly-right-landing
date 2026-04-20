@@ -265,6 +265,17 @@
     letter-spacing: 0.1em;
     color: rgba(255, 255, 255, 0.28);
   }
+  /* Mobile: hide the trigger in the nav. At 375-width the
+     trigger collided with Starlight's hamburger menu button
+     (both positioned at the right edge). Search is still
+     reachable via ⌘K / Ctrl+K keystroke, which mobile
+     browsers with external keyboards can hit. In a later
+     pass we can add a search entry inside the mobile menu. */
+  @media (max-width: 50rem) {
+    .cmdk-trigger {
+      display: none !important;
+    }
+  }
   .cmdk-trigger-hint kbd {
     font-family: inherit;
     padding: 0 4px;
