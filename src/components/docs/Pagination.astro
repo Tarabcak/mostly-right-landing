@@ -1,0 +1,151 @@
+---
+/**
+ * Docs Pagination — replaces Starlight's default Pagination.
+ *
+ * Problem: starlight-openapi generates API reference pages at
+ * runtime via a route middleware. Starlight's native prev/next
+ * is computed at build time from the content collection, which
+ * doesn't contain the generated pages — so API-ref pages ship
+ * with an empty pagination footer.
+ *
+ * Fix: read from `Astro.locals.starlightRoute.sidebar` (the
+ * post-middleware sidebar, which DOES include API entries),
+ * flatten to a link list, find the current page, and render
+ * ← prev / next → ourselves.
+ *
+ * For all non-API pages, behavior is identical to Starlight's
+ * default — this override is a safe drop-in everywhere.
+ */
+
+type Link = { href: string; label: string; isCurrent: boolean };
+type SidebarEntry = {
+  type?: 'link' | 'group';
+  label?: string;
+  href?: string;
+  isCurrent?: boolean;
+  entries?: SidebarEntry[];
+};
+
+function flatten(entries: SidebarEntry[] | undefined, acc: Link[] = []): Link[] {
+  if (!entries) return acc;
+  for (const e of entries) {
+    if (e.type === 'link' && e.href && e.label) {
+      acc.push({ href: e.href, label: e.label, isCurrent: Boolean(e.isCurrent) });
+    } else if (e.type === 'group' && e.entries) {
+      flatten(e.entries, acc);
+    }
+  }
+  return acc;
+}
+
+const { sidebar, pagination } = Astro.locals.starlightRoute;
+const flat = flatten(sidebar as SidebarEntry[]);
+const currentIdx = flat.findIndex((l) => l.isCurrent);
+
+// Prefer Starlight's native pagination when it's populated
+// (frontmatter overrides, etc.). Fall back to sidebar-derived
+// links when Starlight returns nothing — the API-ref case.
+const prev =
+  pagination.prev ??
+  (currentIdx > 0 ? flat[currentIdx - 1] : undefined);
+const next =
+  pagination.next ??
+  (currentIdx >= 0 && currentIdx < flat.length - 1
+    ? flat[currentIdx + 1]
+    : undefined);
+---
+
+<div class="docs-pagination print:hidden" dir={Astro.locals.starlightRoute.dir}>
+  {
+    prev && (
+      <a href={prev.href} rel="prev" class="docs-pagination-link is-prev">
+        <span class="docs-pagination-hint">
+          <span class="docs-pagination-arrow" aria-hidden="true">
+            ←
+          </span>
+          Previous
+        </span>
+        <span class="docs-pagination-title">{prev.label}</span>
+      </a>
+    )
+  }
+  {
+    next && (
+      <a href={next.href} rel="next" class="docs-pagination-link is-next">
+        <span class="docs-pagination-hint">
+          Next
+          <span class="docs-pagination-arrow" aria-hidden="true">
+            →
+          </span>
+        </span>
+        <span class="docs-pagination-title">{next.label}</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .docs-pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 56px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .docs-pagination-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 0;
+    text-decoration: none !important;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 120ms linear;
+  }
+  .docs-pagination-link.is-next {
+    align-items: flex-end;
+    text-align: right;
+    grid-column: 2;
+  }
+  .docs-pagination-link.is-prev {
+    grid-column: 1;
+  }
+  .docs-pagination-link:hover {
+    color: #ffffff;
+  }
+  .docs-pagination-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+  }
+  .docs-pagination-arrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .docs-pagination-title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  @media (max-width: 720px) {
+    .docs-pagination {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .docs-pagination-link.is-prev,
+    .docs-pagination-link.is-next {
+      grid-column: 1;
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+</style>

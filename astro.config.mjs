@@ -71,6 +71,12 @@ export default defineConfig({
         // field above the H1, per handoff §2 Content Column ordering
         // (eyebrow → H1 → lead).
         PageTitle: './src/components/docs/PageTitle.astro',
+        // Custom pagination: starlight-openapi generates pages at
+        // runtime via middleware, so Starlight's native prev/next
+        // (computed from the content collection at build time) ships
+        // empty on API-ref pages. Our override reads the live sidebar
+        // and falls back to that when pagination is empty.
+        Pagination: './src/components/docs/Pagination.astro',
       },
       // Remove right-rail TOC per design handoff — intentional
       // "No right TOC — removed for focus." The column centers on the
