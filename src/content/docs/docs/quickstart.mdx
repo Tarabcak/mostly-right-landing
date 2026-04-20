@@ -1,8 +1,99 @@
 ---
 title: Quickstart
-description: Install the SDK, request an API key, make your first call.
+description: Install the SDK, request an API key, and make your first call in under five minutes.
 ---
 
-:::note
-Coming soon. `pip install mostlyright`, API key request flow, first historical observation call, first live METAR call.
-:::
+## 1. Install
+
+```bash
+pip install mostlyright
+```
+
+Python 3.12+. `pandas` is optional — install it if you want `as_dataframe=True`.
+
+## 2. Get an API key
+
+Email [vu@marinade.finance](mailto:vu@marinade.finance) with your GitHub handle and what you're building. Private beta. We'll send a key.
+
+Set it in your environment:
+
+```bash
+export MOSTLYRIGHT_API_KEY="mr_..."
+```
+
+The SDK picks it up automatically. No configuration needed.
+
+## 3. Your first historical call
+
+```python
+from mostlyright import MostlyRightClient
+
+client = MostlyRightClient()
+obs = client.observations(
+    station="NYC",
+    from_date="2026-04-01",
+    to_date="2026-04-07",
+)
+
+print(f"{len(obs)} observations")
+print(obs[0])
+```
+
+Expected output — a list of dicts, one row per observation, 30 raw fields each:
+
+```python
+168 observations
+{
+  "station": "NYC",
+  "observed_at": "2026-04-01T00:51:00Z",
+  "temp_f": 52,
+  "temp_c": 11.1,
+  "dewpoint_f": 45,
+  "wind_dir_deg": 270,
+  "wind_speed_kt": 8,
+  "pressure_inhg": 30.12,
+  "visibility_mi": 10.0,
+  ...
+  "source": "IEM",
+  "observation_type": "METAR",
+}
+```
+
+Temperatures are stored unrounded. Wind is in knots. Pressure in inHg and hPa. Source and observation type are always present.
+
+## 4. Your first live METAR call
+
+```python
+from mostlyright import WeatherLive
+
+with WeatherLive() as live:
+    now = live.observations("NYC")
+    print(now)
+```
+
+`WeatherLive` hits AWC directly. Same field names as `MostlyRightClient.observations()` — column parity is enforced, so anything you did against historical data works against live with no code changes.
+
+## 5. Pick a station
+
+Twenty stations in the current registry:
+
+```
+ATL  AUS  BOS  DCA  DEN  DFW  HOU  LAS  LAX  MDW
+MIA  MSP  NYC  ORD  PDX  PHX  SAN  SEA  SFO  STL
+```
+
+Use the 3-letter NWS code, not ICAO. If you pass an unknown code you'll get a 404 with the full list of valid codes in the response.
+
+List them programmatically:
+
+```python
+for s in client.stations():
+    print(s.code, s.name)
+```
+
+## What to read next
+
+- [Authentication](/docs/authentication/) — header format, env var fallback, rate limits.
+- [TherminalClient](/docs/sdk/therminal-client/) — every parameter of `observations()` with worked examples.
+- [API Reference](/docs/api/) — every HTTP endpoint.
+- [Data sources](/docs/concepts/data-sources/) — why the source priority matters for settlement.

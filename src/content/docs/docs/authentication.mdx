@@ -1,8 +1,86 @@
 ---
 title: Authentication
-description: API key header, rate limits, and how to request access.
+description: X-API-Key header, environment variables, rate limits.
 ---
 
-:::note
-Coming soon. X-API-Key header, rate limits sourced from `api/deps.py`, link to `/capabilities` as the runtime source of truth.
-:::
+## Header
+
+All requests to `api.mostlyright.xyz` require the `X-API-Key` header. Exemptions: `/health`, `/capabilities`, and `/openapi.json` (unauthenticated for discovery).
+
+```bash
+curl -H "X-API-Key: mr_your_key_here" \
+  https://api.mostlyright.xyz/observations?station=NYC&from_date=2026-04-01
+```
+
+In Python, the SDK picks up the key from `MOSTLYRIGHT_API_KEY`:
+
+```bash
+export MOSTLYRIGHT_API_KEY="mr_..."
+```
+
+```python
+from mostlyright import MostlyRightClient
+client = MostlyRightClient()  # reads env var
+```
+
+Or pass it explicitly:
+
+```python
+client = MostlyRightClient(api_key="mr_...")
+```
+
+## Getting a key
+
+Private beta. Email [vu@marinade.finance](mailto:vu@marinade.finance) with:
+
+- Your GitHub handle.
+- What you're building (one sentence).
+
+We reply manually. Keys are scoped per-account and don't expire.
+
+## Rate limits
+
+Rate limiting is **not yet enforced**. The `/capabilities` endpoint is the runtime source of truth:
+
+```python
+caps = client.capabilities()
+print(caps["rate_limits"])
+# {"requests_per_minute": None, "note": "Not yet enforced"}
+```
+
+When limits turn on, they'll surface in two places:
+
+1. `/capabilities.rate_limits.requests_per_minute` — the enforced ceiling.
+2. `429 Too Many Requests` responses with a `Retry-After` header and a `RateLimitError` raised by the SDK.
+
+In the meantime: be reasonable. If you're pulling a full backfill, loop with a small sleep between requests and use `from_date` / `to_date` to page, not tight concurrent fan-out.
+
+## Errors
+
+The SDK maps HTTP status codes to typed exceptions:
+
+| Status | Exception | When |
+|---|---|---|
+| 401 | `AuthenticationError` | Missing or invalid key |
+| 403 | `ForbiddenError` | Key valid, endpoint not allowed |
+| 404 | `NotFoundError` | Unknown station or route |
+| 422 | `ValidationError` | Bad date format, unknown parameter |
+| 429 | `RateLimitError` | Rate limit (once enforced) |
+| 5xx | `ServerError` | Transient server issue |
+
+Catch the base class if you want to handle any API failure:
+
+```python
+from mostlyright import TherminalError
+
+try:
+    obs = client.observations("NYC", from_date="2026-04-01")
+except TherminalError as e:
+    log.error(f"API call failed: {e}")
+```
+
+## Key hygiene
+
+- **Never commit keys to source.** Use env vars or a secrets manager.
+- **Don't embed keys in client-side code.** The SDK is a server/notebook/agent tool — not browser.
+- **Rotate if leaked.** Email us; we'll revoke the old key and issue a new one within an hour.

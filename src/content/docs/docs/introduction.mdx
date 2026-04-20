@@ -1,8 +1,53 @@
 ---
 title: Introduction
-description: What MostlyRight is — settlement truth layer for prediction markets.
+description: Settlement truth layer for prediction markets. What MostlyRight is and who it's for.
 ---
 
-:::note
-Coming soon. This page will cover what MostlyRight is, who it's for, and a first worked example using `client.observations("NYC")`.
-:::
+MostlyRight is a data API for prediction markets. It starts with weather because weather settles first, fastest, and hardest on Kalshi.
+
+## The problem
+
+When you settle a weather market on Kalshi, you need exactly two numbers: **what the station reported, and when**. Public feeds give you approximations. Airport sensors publish METARs that get rewritten by downstream aggregators, rounded, timezone-shifted, and occasionally silently corrected hours later. By the time the number lands in most APIs, it's no longer the number the market settled on.
+
+That mismatch loses money. Not every day. But when it does, you won't know why — you'll just see a losing trade on a position you were certain of.
+
+## What we do
+
+We store weather observations **raw-as-reported**, from the station, at the moment they were reported. We never overwrite with corrections. The first observation wins. We validate against physics at ingest and quarantine bad records instead of dropping them silently.
+
+Three sources, strict priority:
+
+```
+AWC    (live aviation METAR)     priority 3
+IEM    (Iowa Environmental)      priority 2
+GHCNh  (NOAA hourly archive)     priority 1
+```
+
+Rawer source wins. First-reported wins within a source. One row per observation, no duplicates, no silent overwrites.
+
+## Who this is for
+
+- **Quants** running live Kalshi weather positions who need the exact number that settled the contract.
+- **AI agents** — Claude, GPT, any model that can call an HTTP endpoint — that need structured, cacheable, machine-readable weather data with versioning tokens.
+- **Researchers** building forecasting models who need the real observation, not the cleaned one.
+
+Not for: casual weather dashboards, consumer apps, or anyone who wants their data "tidied up."
+
+## A first call
+
+```python
+from mostlyright import MostlyRightClient
+
+client = MostlyRightClient()
+obs = client.observations("NYC", from_date="2026-04-01", to_date="2026-04-07")
+print(obs[0]["temp_f"], obs[0]["observed_at"])
+```
+
+That's it. You're reading Central Park, April 1–7, raw. Twenty stations currently online. Climate, forecasts, feature catalog, live METAR, and OHLCV candles all through the same client.
+
+## Next steps
+
+- [Quickstart](/docs/quickstart/) — install, API key, first call.
+- [Authentication](/docs/authentication/) — header, rate limits, key hygiene.
+- [API Reference](/docs/api/) — every HTTP endpoint, auto-generated.
+- [Data sources](/docs/concepts/data-sources/) — why we pick AWC over IEM over GHCNh.

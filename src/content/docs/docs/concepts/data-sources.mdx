@@ -1,8 +1,69 @@
 ---
 title: Data sources
-description: AWC, IEM, and GHCNh priority and the raw-as-reported rule.
+description: Why MostlyRight picks AWC over IEM over GHCNh, and why raw-as-reported is non-negotiable.
 ---
 
-:::note
-Coming soon. AWC > IEM > GHCNh priority, raw-as-reported rule, first-reported wins. Links to the pipeline rules.
-:::
+Three sources feed the same observation table, with strict priority:
+
+```
+priority  source  origin                              when it's rawest
+────────  ──────  ──────────────────────────────────  ──────────────────────
+   3      AWC     aviationweather.gov                 Live feed, sensor output
+   2      IEM     Iowa Environmental Mesonet          Near-real-time archive
+   1      GHCNh   NOAA hourly archive                 Historical, quality-flagged
+```
+
+For any given `(station, observed_at)`, the rawest source wins. First-reported wins within a source. One row per observation, no duplicates, no silent overwrites.
+
+## Why this order
+
+**AWC is the sensor**. When an airport publishes a METAR, AWC has it within seconds. The string stored in `raw_metar` is the exact text the station broadcast. Nothing between the thermistor and you.
+
+**IEM is a trustworthy mirror**. The Iowa Environmental Mesonet re-publishes METARs from NOAA's feed. Timing is near-real-time (minutes, not seconds) and the `metar` column contains the same raw string — we parse it ourselves rather than trusting IEM's pre-decoded columns, so the transform is identical to AWC's.
+
+**GHCNh is the quality-flagged archive**. NOAA's Global Historical Climatology Network – hourly is authoritative for historical analysis, but it's downstream of both AWC and IEM. It carries quality codes (0/1/4/5 good; I/P/R/U flagged) — we filter to raw-only. If there's a disagreement between GHCNh and AWC, GHCNh is the one that's been through someone's quality pipeline. We prefer the rawer number.
+
+## Raw-as-reported, no corrections
+
+**The first observation wins. Forever.**
+
+If a station publishes a METAR at 14:51Z saying the temperature is 52°F, and at 15:03Z publishes a correction saying it was actually 51°F — the 52°F observation is what lives in the database. The correction is never merged in.
+
+This is counterintuitive for anyone coming from traditional data engineering, where data quality means "fix errors as soon as you find them." In settlement, data quality means "reproduce the record the market was trading on."
+
+When a Kalshi weather contract settled based on a 14:51Z METAR, it settled on 52°F — not 51°F. If your backtest data contains 51°F, you are modeling a market that never existed.
+
+The rule: **dedup comparison uses strict `>`, not `>=`**. A later report never overwrites an earlier one with the same observation timestamp.
+
+## The three-layer priority in practice
+
+Imagine NYC at 2024-07-15 14:51Z, temperature 85°F.
+
+- **AWC** (priority 3) publishes it at 14:51:12Z, within seconds of the station broadcast. Wins.
+- **IEM** (priority 2) publishes the same METAR at 14:53:00Z. Skipped — AWC already has it.
+- **GHCNh** (priority 1) eventually lands in the monthly archive, possibly with a quality flag. Skipped.
+
+Now imagine a network hiccup where AWC never receives that METAR.
+
+- **AWC** has nothing for 14:51Z.
+- **IEM** publishes at 14:53:00Z. Wins by default.
+- **GHCNh** lands later. Skipped.
+
+Or the worst case — the station's outbound link was down for an hour.
+
+- Only **GHCNh** carries the record, weeks later.
+- GHCNh wins by default, with the `source: "GHCNh"` field letting callers see the source.
+
+You always know which source produced a row by looking at `source` — never trust that all rows for a station are from the same source.
+
+## Downstream implications
+
+- **`as_of` queries** are safe. When you filter `observed_at <= as_of`, you are asking "what did the market know at this time?" — and because we don't overwrite with later corrections, the answer is stable.
+- **Caching is safe**. A row with `(station, observed_at)` never changes. You can cache forever.
+- **Deterministic versioning** works. `client.data_version()` returns a token derived from the observation set. Same token → same data, across SDK versions, across machines.
+
+## Related
+
+- [`.claude/rules/python-data-pipeline.md`](https://github.com/Tarabcak/mostlyright/blob/main/.claude/rules/python-data-pipeline.md) — the architectural rules this doc summarizes.
+- [Raw-as-reported](/docs/concepts/raw-as-reported/) — the rule in depth.
+- [Observation schema](/docs/concepts/observation-schema/) — the 30-field contract.

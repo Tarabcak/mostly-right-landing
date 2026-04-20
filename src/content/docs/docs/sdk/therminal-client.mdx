@@ -1,8 +1,163 @@
 ---
 title: TherminalClient
-description: Historical weather observations, climate, forecasts.
+description: Reference for MostlyRightClient — historical observations, climate, forecasts, pairs, snapshot.
 ---
 
-:::note
-Coming soon. Every param of `TherminalClient.observations()` documented, worked examples, common pitfalls (timezones, ICAO vs 3-letter station codes). This page is the model for future SDK reference pages.
-:::
+`MostlyRightClient` (aliased as `TherminalClient`) is the main client. It covers everything except live METAR — for that, use [`WeatherLive`](/docs/sdk/weather-live/).
+
+```python
+from mostlyright import MostlyRightClient
+client = MostlyRightClient()
+```
+
+## Construction
+
+```python
+MostlyRightClient(
+    api_key: str | None = None,      # defaults to MOSTLYRIGHT_API_KEY env var
+    base_url: str | None = None,     # defaults to https://api.mostlyright.xyz
+    timeout: float = 30.0,           # per-request timeout in seconds
+)
+```
+
+Use as a context manager to guarantee the HTTP session closes:
+
+```python
+with MostlyRightClient() as client:
+    obs = client.observations("NYC")
+```
+
+## `observations()` — the main method
+
+Returns raw hourly weather observations.
+
+```python
+client.observations(
+    station: str | None = None,
+    from_date: str | None = None,
+    to_date: str | None = None,
+    *,
+    as_of: str | None = None,
+    obs_type: str | None = None,
+    resolution: str | None = None,
+    units: str | None = None,
+    tz: str | None = None,
+    format: str | None = None,
+    columns: list[str] | None = None,
+    features: list[str] | None = None,
+    limit: int = 1000,
+    offset: int = 0,
+    as_dataframe: bool = False,
+    save_path: str | Path | None = None,
+) -> list[dict] | DataFrame | str
+```
+
+### Required-ish parameters
+
+- **`station`** — 3-letter NWS code (e.g. `"NYC"`, `"ATL"`). If omitted, returns a cross-station slice bounded by `from_date`/`to_date`.
+- **`from_date`** / **`to_date`** — `YYYY-MM-DD`. Inclusive on both ends.
+
+### Settlement-critical parameters
+
+- **`as_of`** — UTC ISO-8601 timestamp. Filters to `observed_at <= as_of`. Use this for point-in-time correctness in inference loops and backtests. Example: `"2026-04-12T14:00:00Z"`.
+
+  ```python
+  # What was the NYC temp known as of noon UTC, April 12?
+  obs = client.observations("NYC", as_of="2026-04-12T12:00:00Z")
+  ```
+
+  `as_of` must be UTC. Naive timestamps raise `ValidationError`. Comparison is on datetime objects, not strings, so timezone conversions are safe.
+
+- **`obs_type`** — filter by report type. `"METAR"` (hourly) or `"SPECI"` (special, off-hour reports for significant weather). Omit to get both.
+
+### Shape parameters
+
+- **`columns`** — list of field names to return. Reduces payload size.
+
+  ```python
+  obs = client.observations("NYC", columns=["observed_at", "temp_f", "wind_speed_kt"])
+  ```
+
+- **`format`** — `"json"` (default), `"csv"`, `"parquet"`, or `"toon"`. `"toon"` is a compact tabular encoding optimized for AI agent context windows.
+- **`as_dataframe`** — return a pandas DataFrame instead of a list of dicts. Requires `pandas` installed.
+- **`save_path`** — write the response to disk. Format inferred from extension (`.csv`, `.parquet`, `.json`).
+
+### Feature DSL
+
+- **`features`** — list of derived feature spec strings evaluated client-side from the raw observations.
+
+  ```python
+  obs = client.observations(
+      "NYC",
+      from_date="2026-04-01",
+      to_date="2026-04-07",
+      features=["temp_f.rolling_mean(24)", "wind_speed_kt.pct_change(1)"],
+      as_dataframe=True,
+  )
+  ```
+
+  See `client.feature_catalog()` for every supported field and available transforms.
+
+### Paging
+
+- **`limit`** — default 1000, max 10,000.
+- **`offset`** — skip N rows. Use in combination with `limit` for cursor-style paging. For time-series slicing, prefer `from_date`/`to_date` over `offset`.
+
+## Other methods
+
+### `climate(station, from_date, to_date, ...)`
+Daily climate aggregates from GHCNd. Different entity from observations — aggregated, not raw.
+
+### `climate_gaps(station, from_date, to_date)`
+Identifies gaps in the climate record for a station. Useful for sanity-checking a backfill before trading on it.
+
+### `pairs(station, horizons=[6, 12, 24], ...)`
+Joins forecasts to ground-truth observations at settlement. This is the dataset you train models against.
+
+### `snapshot()`
+Real-time cross-station snapshot — the latest observation from every station in one call. Optimized for dashboard polling.
+
+### `forecasts(station, model, ...)` and `forecast_series(...)`
+Forecast ingestion from NWS MOS and Open-Meteo. Returns the forecast record **as issued**, keyed by `issued_at`.
+
+### `feature_catalog()`
+Returns every supported observation field — type, unit, bounds, and catalog of transforms available in the `features` parameter.
+
+### `stations()` and `station(code)`
+List all stations or fetch one by code. `StationInfo` includes lat/lon, timezone, network, and ICAO equivalent.
+
+### `availability(station, from_date, to_date)`
+Reports data-density for a station over a range. Use to decide whether a station has enough coverage for your backtest window.
+
+### `capabilities()`
+Runtime endpoint — returns rate limits, supported formats, SDK version compatibility. Treat as the source of truth over anything in this doc.
+
+### `data_version(station, ...)`
+Deterministic version token for a station+range. Use to cache or to assert "the data I'm training on is the same data I traded on."
+
+## Common pitfalls
+
+### Timezones
+All `observed_at` and `as_of` timestamps are UTC. Passing a naive or local timestamp for `as_of` raises `ValidationError`. Convert explicitly:
+
+```python
+from datetime import datetime, timezone
+local = datetime(2026, 4, 12, 8, 0)
+utc = local.astimezone(timezone.utc).isoformat()
+# Use utc as the as_of value.
+```
+
+### Station codes
+Use 3-letter NWS codes (`"NYC"`), not ICAO (`"KLGA"`). A 404 response gives you the full list of valid codes — don't guess.
+
+### Empty responses
+An empty list isn't an error. It means no observations in that range — gaps happen, especially at secondary stations. Use `availability()` to confirm whether the gap is real or a query bug.
+
+### as_of without to_date
+If you pass `as_of` without `to_date`, today's date is used as the API partition bound and `as_of` is applied as a post-filter. For large ranges, pass both — you'll pull less data over the wire.
+
+## See also
+
+- [WeatherLive](/docs/sdk/weather-live/) — real-time METAR.
+- [API Reference](/docs/api/) — the raw HTTP surface.
+- [Data sources](/docs/concepts/data-sources/) — why source priority matters for `as_of`.
