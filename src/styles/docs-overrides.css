@@ -1,10 +1,18 @@
-/* MostlyRight Docs — Starlight theme overrides per landing DESIGN.md.
-   Brutally Minimal, dark-only, Funnel Display + JetBrains Mono,
-   monochrome with zero decorative accent. */
+/* ============================================================
+   MostlyRight Docs — Starlight theme overrides
+   Source of truth: docs/design-system/handoff/ (zip handoff #2).
+   Brutally Minimal, dark-only, Funnel Display + JetBrains Mono.
+   Monochrome chrome with a tightly-scoped semantic palette
+   used ONLY where readers need to discriminate kind:
+     - Callout types (note / tip / warn / caution)
+     - HTTP method badges (GET / POST / PATCH / DELETE)
+     - LIVE status pulse
+   Links, nav, buttons, borders, focus rings all stay monochrome.
+   ============================================================ */
 
 /* ─── FONTS (self-hosted) ─── */
-/* Re-declared here because Starlight pages don't go through
-   BaseLayout.astro, so they don't inherit global.css's @font-face. */
+/* Re-declared because Starlight pages don't go through
+   BaseLayout.astro and so don't inherit global.css's @font-face. */
 @font-face {
   font-family: 'Funnel Display';
   src: url('/fonts/funnel-display-latin.woff2') format('woff2');
@@ -21,71 +29,92 @@
   font-display: swap;
 }
 
-/* ─── DARK-MODE PALETTE (maps DESIGN.md tokens to Starlight vars) ─── */
+/* ─── DOCS TOKENS (handoff-aligned, layered on landing tokens) ─── */
 :root,
 :root[data-theme='dark'],
 :root[data-theme='light'] {
-  /* Grayscale ramp — rgba on white for monochrome depth */
-  --sl-color-white: #fff;
-  --sl-color-gray-1: rgba(255, 255, 255, 0.9);   /* headings */
-  --sl-color-gray-2: rgba(255, 255, 255, 0.55);  /* body */
-  --sl-color-gray-3: rgba(255, 255, 255, 0.5);   /* muted */
-  --sl-color-gray-4: rgba(255, 255, 255, 0.35);  /* subtle */
-  --sl-color-gray-5: rgba(255, 255, 255, 0.25);  /* faint */
-  --sl-color-gray-6: rgba(255, 255, 255, 0.06);  /* surface-card */
-  --sl-color-gray-7: rgba(255, 255, 255, 0.03);  /* deeper surface */
-  --sl-color-black: #0a0a0a;                      /* bg */
+  /* Backgrounds */
+  --docs-bg:             #0a0a0a;
+  --docs-bg-elevated:    #0e0e0e;
+  --docs-bg-code:        #080808;
+  --docs-bg-sidebar:     #0a0a0a;
 
-  /* Accent collapsed to white — DESIGN.md's #4ade80 LIVE-green is
-     reserved for status pulse only, NEVER on links/nav/buttons. */
-  --sl-color-accent-low: rgba(255, 255, 255, 0.06);
-  --sl-color-accent: #fff;
+  /* Borders */
+  --docs-border:         rgba(255, 255, 255, 0.08);
+  --docs-border-strong:  rgba(255, 255, 255, 0.18);
+  --docs-border-focus:   rgba(255, 255, 255, 0.5);
+
+  /* Foreground ladder */
+  --docs-fg-heading:     #ffffff;
+  --docs-fg:             #e8e8e8;
+  --docs-fg-muted:       rgba(255, 255, 255, 0.60);
+  --docs-fg-subtle:      rgba(255, 255, 255, 0.45);
+  --docs-fg-faint:       rgba(255, 255, 255, 0.28);
+
+  /* Semantic — scoped to callouts and method badges only */
+  --docs-accent-live:    #4ade80;
+  --docs-note:           #60a5fa;
+  --docs-warn:           #fbbf24;
+  --docs-caution:        #f87171;
+  --docs-tip:            #4ade80;
+  --docs-get:            #4ade80;
+  --docs-post:           #60a5fa;
+  --docs-patch:          #fbbf24;
+  --docs-delete:         #f87171;
+
+  /* Code syntax (monochrome — opacity variants only) */
+  --code-fg:             rgba(255, 255, 255, 0.78);
+  --code-comment:        rgba(255, 255, 255, 0.30);
+  --code-string:         rgba(255, 255, 255, 0.95);
+  --code-keyword:        rgba(255, 255, 255, 0.55);
+  --code-number:         #ffffff;
+  --code-fn:             #ffffff;
+
+  /* ─── Starlight variable mapping ─── */
+  --sl-color-white:      #fff;
+  --sl-color-gray-1:     rgba(255, 255, 255, 0.9);
+  --sl-color-gray-2:     rgba(255, 255, 255, 0.60);
+  --sl-color-gray-3:     rgba(255, 255, 255, 0.45);
+  --sl-color-gray-4:     rgba(255, 255, 255, 0.28);
+  --sl-color-gray-5:     rgba(255, 255, 255, 0.18);
+  --sl-color-gray-6:     rgba(255, 255, 255, 0.06);
+  --sl-color-gray-7:     rgba(255, 255, 255, 0.03);
+  --sl-color-black:      #0a0a0a;
+
+  /* Accent collapsed to white — chrome stays monochrome. */
+  --sl-color-accent-low:  rgba(255, 255, 255, 0.06);
+  --sl-color-accent:      #fff;
   --sl-color-accent-high: #fff;
 
-  /* Semantic mappings */
-  --sl-color-text: rgba(255, 255, 255, 0.55);
-  --sl-color-text-accent: #fff;
-  --sl-color-text-invert: #0a0a0a;
+  --sl-color-text:         rgba(255, 255, 255, 0.60);
+  --sl-color-text-accent:  #fff;
+  --sl-color-text-invert:  #0a0a0a;
 
-  --sl-color-bg: #0a0a0a;
-  --sl-color-bg-nav: #0a0a0a;
-  --sl-color-bg-sidebar: #0a0a0a;
-  --sl-color-bg-inline-code: rgba(255, 255, 255, 0.06);
-  --sl-color-bg-accent: #fff;
+  --sl-color-bg:               #0a0a0a;
+  --sl-color-bg-nav:           #0a0a0a;
+  --sl-color-bg-sidebar:       #0a0a0a;
+  --sl-color-bg-inline-code:   rgba(255, 255, 255, 0.06);
+  --sl-color-bg-accent:        #fff;
 
-  --sl-color-hairline-light: rgba(255, 255, 255, 0.1);
-  --sl-color-hairline: rgba(255, 255, 255, 0.1);
-  --sl-color-hairline-shade: rgba(255, 255, 255, 0.1);
+  --sl-color-hairline-light: rgba(255, 255, 255, 0.08);
+  --sl-color-hairline:       rgba(255, 255, 255, 0.08);
+  --sl-color-hairline-shade: rgba(255, 255, 255, 0.18);
 
-  --sl-color-backdrop-overlay: rgba(10, 10, 10, 0.7);
+  --sl-color-backdrop-overlay: rgba(0, 0, 0, 0.72);
 
-  /* Fonts — JetBrains Mono is the base; headings override to Funnel. */
-  --sl-font: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --sl-font:      'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --sl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Line-height matches landing body */
-  --sl-line-height: 1.75;
+  --sl-line-height:          1.75;
   --sl-line-height-headings: 1.2;
 
-  /* Shadows — flatten (brutalist has no depth) */
+  /* Flatten Starlight shadows (brutalist has no depth). */
   --sl-shadow-sm: none;
   --sl-shadow-md: none;
   --sl-shadow-lg: none;
 }
 
-/* ─── HEADINGS: Funnel Display ─── */
-.sl-markdown-content :is(h1, h2, h3, h4, h5, h6),
-h1.content-panel-title,
-.content-panel h1,
-.content-panel h2,
-.sl-container :is(h1, h2, h3) {
-  font-family: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* ─── BORDER-RADIUS: 0 everywhere (brutalist rule) ─── */
+/* ─── BORDER-RADIUS: 0 EVERYWHERE (non-negotiable) ─── */
 .sl-markdown-content :is(pre, code, kbd, blockquote, table, img, figure),
 .expressive-code :is(.frame, pre, .copy button),
 .starlight-aside,
@@ -96,115 +125,651 @@ h1.content-panel-title,
 button,
 input,
 select,
+textarea,
 starlight-tabs :is(ul, [role='tab'], [role='tabpanel']),
 dialog,
 [data-dialog-root] {
   border-radius: 0 !important;
 }
 
-/* ─── NAV: uppercase labels, monospace ─── */
-.sidebar-content summary > :is(.large, .group-label, span),
-.sidebar-content .top-level > li > a.large {
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
+/* ─── TYPOGRAPHY: Funnel headings, mono everywhere else ─── */
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6),
+h1.content-panel-title,
+.content-panel h1,
+.content-panel h2,
+.sl-container :is(h1, h2, h3) {
+  font-family: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--docs-fg-heading);
 }
 
-.sidebar-content a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8125rem;
+/* H1 — page title, the one Funnel moment that anchors the column. */
+.sl-markdown-content > h1:first-child,
+.content-panel h1 {
+  font-size: clamp(40px, 5.6vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
 }
 
-/* ─── LINKS: white underline, no color ─── */
+/* H2 — section heads, smaller than landing-page H2. */
+.sl-markdown-content h2 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-top: 56px;
+  margin-bottom: 16px;
+}
+
+.sl-markdown-content h3 {
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+
+/* Body — mono 14px / 1.75. The default, never drifts. */
+.sl-markdown-content {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--docs-fg-muted);
+}
+
+.sl-markdown-content p,
+.sl-markdown-content li {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--docs-fg-muted);
+}
+
+/* Lead paragraph — the first <p> in the markdown content area
+   (Starlight renders the H1 outside `.sl-markdown-content`, so the
+   first paragraph inside IS the lead). Funnel Display 300 is the
+   only Funnel body moment per handoff. */
+.sl-markdown-content > p:first-child {
+  font-family: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  color: var(--docs-fg-muted);
+  max-width: 620px;
+  margin-bottom: 32px;
+}
+
+/* ─── LINKS: white underline, monochrome ─── */
 .sl-markdown-content a {
   color: #fff;
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: rgba(255, 255, 255, 0.5);
+  text-decoration-color: var(--docs-border-strong);
   transition: text-decoration-color 0.15s ease;
 }
 .sl-markdown-content a:hover {
   text-decoration-color: #fff;
 }
 
-/* ─── THEME TOGGLE: hide (dark-only per DESIGN.md) ─── */
-starlight-theme-select {
-  display: none !important;
-}
-
-/* ─── FOCUS RING: white 50% (DESIGN.md spec) ─── */
-:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
-  outline-offset: 4px;
-}
-
-/* ─── TABLES: tabular numbers (DESIGN.md mandate) ─── */
-.sl-markdown-content table {
-  font-variant-numeric: tabular-nums;
-}
-
-/* ─── ASIDES (callouts): flat monochrome ─── */
-.starlight-aside {
-  background: rgba(255, 255, 255, 0.03);
-  border-inline-start-width: 2px;
-  border-inline-start-color: rgba(255, 255, 255, 0.5);
-  border-block: none;
-  border-inline-end: none;
-}
-.starlight-aside__title {
-  font-family: 'JetBrains Mono', monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* ─── INLINE CODE: surface-card background ─── */
+/* ─── INLINE CODE ─── */
 .sl-markdown-content :not(pre) > code {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.125rem 0.375rem;
+  background: var(--sl-color-bg-inline-code);
+  border: 1px solid var(--docs-border);
+  padding: 1px 6px;
   color: #fff;
-  font-size: 0.875em;
+  font-size: 0.86em;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-/* ─── CODE BLOCKS: flat panel, no depth ─── */
-.expressive-code .frame {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-}
-.expressive-code pre {
-  background: transparent !important;
-  border: none;
-}
-
-/* ─── HORIZONTAL RULE ─── */
+/* ─── HORIZONTAL RULES ─── */
 .sl-markdown-content hr {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--docs-border);
   margin-block: 2rem;
 }
 
-/* ─── HEADER NAV: uppercase, tighter ─── */
+/* ─── TABLES: tabular numbers, hairline borders ─── */
+.sl-markdown-content table {
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--docs-border);
+  border-collapse: collapse;
+}
+.sl-markdown-content th,
+.sl-markdown-content td {
+  border-top: 1px solid var(--docs-border);
+  padding: 10px 14px;
+  text-align: left;
+}
+.sl-markdown-content th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--docs-fg-faint);
+  background: var(--docs-bg-elevated);
+}
+
+/* ============================================================
+   CODE BLOCKS — Terminal-chrome treatment.
+   Outer frame: 1px strong border, near-black bg, faint inset
+   highlight + hairline outer shadow to feel like a panel.
+   Title bar: lowercase mono lang tabs, traffic-light dots.
+   Active tab gets a 1px green underline.
+   ============================================================ */
+
+/* Frame (Expressive Code wrapper) */
+.expressive-code .frame {
+  background: var(--docs-bg-code);
+  border: 1px solid var(--docs-border-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 1px 0 rgba(0, 0, 0, 0.4);
+  margin: 24px 0;
+}
+
+/* Strip Expressive Code's own pre background — the frame supplies it. */
+.expressive-code pre {
+  background: transparent !important;
+  border: none;
+  padding: 18px 20px;
+}
+.expressive-code pre > code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--code-fg);
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+/* Title-bar row. Always rendered as a 36px panel with traffic-light
+   dots on the left, language hint mid-left, and the copy button
+   floated into the right edge (Expressive Code positions the copy
+   div absolute against the figure — we re-anchor it to the bar). */
+.expressive-code .frame {
+  position: relative;
+}
+.expressive-code .frame > figcaption.header {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-bottom: 1px solid var(--docs-border-strong) !important;
+  min-height: 36px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  /* Left-pad leaves room for Expressive Code's absolutely-positioned
+     traffic-light dots; right-pad for our absolutely-positioned COPY. */
+  padding: 0 80px 0 64px !important;
+  position: relative;
+}
+
+/* Traffic-light dots — Expressive Code already renders these via
+   `::before` with absolute-position + mask-image + box-shadow fill.
+   We only need to recolor them: override the box-shadow (which is the
+   "fill" that paints through the mask) to our #3a3a3a / #2a2a2a hue. */
+.expressive-code .frame.is-terminal > figcaption.header::before {
+  /* Repaint EC's mask with our traffic-light hue.
+     `box-shadow: inset 99rem 99rem` is EC's "fill entire masked box"
+     trick — we just swap the color for our dark grey. */
+  box-shadow: inset 99rem 99rem #3a3a3a !important;
+  opacity: 1 !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+/* Render dots on non-terminal frames too, so every code block has
+   the same chrome. Expressive Code doesn't emit ::before for these,
+   so we render our own absolutely positioned 3-circle mask. */
+.expressive-code .frame:not(.is-terminal) > figcaption.header::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 39px !important;
+  height: 8px !important;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 4px 4px, #3a3a3a 0 4px, transparent 4.5px),
+    radial-gradient(circle at 19.5px 4px, #2a2a2a 0 4px, transparent 4.5px),
+    radial-gradient(circle at 35px 4px, #2a2a2a 0 4px, transparent 4.5px) !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Faint language hint — driven by frame variant.
+   `is-terminal` → "bash"; everything else → "code". */
+.expressive-code .frame > figcaption.header::after {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: lowercase !important;
+  color: var(--docs-fg-heading) !important;
+  border-bottom: 1px solid var(--docs-accent-live) !important;
+  padding: 9px 2px !important;
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  line-height: 1 !important;
+  width: auto !important;
+  position: static !important;
+  background: transparent !important;
+  mask-image: none !important;
+}
+.expressive-code .frame.is-terminal > figcaption.header::after {
+  content: 'bash' !important;
+}
+.expressive-code .frame:not(.is-terminal) > figcaption.header::after {
+  content: 'code' !important;
+}
+
+/* Filename — only visible when the fence supplies one (e.g. `bash title="..."`). */
+.expressive-code .frame > figcaption.header .title:not(:empty) {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0.06em;
+  color: var(--docs-fg-faint);
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+}
+.expressive-code .frame > figcaption.header .title:empty { display: none; }
+.expressive-code .frame > figcaption.header .sr-only { display: none; }
+
+/* Copy button — re-anchor into the title bar's right edge. */
+.expressive-code .copy {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+.expressive-code .copy button {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--docs-fg-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 14px !important;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  opacity: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  box-sizing: content-box !important;
+  position: static;
+  inset: auto !important;
+  margin: 0 !important;
+  --code-background: transparent;
+}
+/* Expressive Code's own rule masks an SVG over ::after via
+   `mask-image` and `position: absolute; inset: 0`. We replace it
+   with plain text — important + neutralised mask/inset/bg. */
+.expressive-code .copy button::after {
+  content: 'COPY' !important;
+  position: static !important;
+  inset: auto !important;
+  display: inline !important;
+  background: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  pointer-events: none;
+  color: inherit;
+  font: inherit;
+}
+.expressive-code .copy button.copied::after {
+  content: '✓ COPIED' !important;
+}
+.expressive-code .copy button:hover {
+  color: var(--docs-fg-heading);
+}
+.expressive-code .copy button.copied {
+  color: var(--docs-accent-live);
+}
+
+/* Hide Expressive Code's icon and the inner div placeholder. */
+.expressive-code .copy button > div,
+.expressive-code .copy button svg { display: none; }
+
+/* Line numbers (when enabled in fenced block). */
+.expressive-code .ln {
+  color: var(--docs-fg-faint);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+  border-right: 1px solid var(--docs-border);
+  padding-right: 12px;
+  margin-right: 14px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ============================================================
+   CALLOUTS — colored 3px left border by kind.
+   Note=blue, Tip=green, Warn=amber, Caution=red.
+   Background is elevated; border-block hidden so only the
+   left rail carries the color.
+   ============================================================ */
+.starlight-aside {
+  background: var(--docs-bg-elevated);
+  border: 1px solid var(--docs-border);
+  border-left-width: 3px;
+  padding: 14px 18px;
+  margin: 20px 0;
+  display: flex;
+  gap: 14px;
+}
+
+.starlight-aside--note     { border-left-color: var(--docs-note); }
+.starlight-aside--tip      { border-left-color: var(--docs-tip); }
+.starlight-aside--caution  { border-left-color: var(--docs-warn); }
+.starlight-aside--danger   { border-left-color: var(--docs-caution); }
+
+.starlight-aside__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  min-width: 64px;
+  flex-shrink: 0;
+  margin: 0;
+}
+.starlight-aside--note    .starlight-aside__title { color: var(--docs-note); }
+.starlight-aside--tip     .starlight-aside__title { color: var(--docs-tip); }
+.starlight-aside--caution .starlight-aside__title { color: var(--docs-warn); }
+.starlight-aside--danger  .starlight-aside__title { color: var(--docs-caution); }
+
+.starlight-aside__icon { display: none; }
+
+.starlight-aside__content {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--docs-fg-muted);
+}
+.starlight-aside__content > :first-child { margin-top: 0; }
+.starlight-aside__content > :last-child { margin-bottom: 0; }
+
+/* ============================================================
+   SIDEBAR — hairline column, uppercase mono labels,
+   active link gets a 2px white left rail (no fill box).
+   ============================================================ */
+.sidebar-pane,
+.sidebar-content {
+  background: var(--docs-bg-sidebar);
+  border-right: 1px solid var(--docs-border);
+}
+
+/* Section labels (Get Started, SDK, Concepts...) */
+.sidebar-content summary > :is(.large, .group-label, span),
+.sidebar-content .top-level > li > a.large,
+.sidebar-content .top-level > li > details > summary {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--docs-fg-faint);
+  padding-block: 6px;
+}
+
+/* Item links */
+.sidebar-content a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--docs-fg-muted);
+  border-left: 2px solid transparent;
+  padding-left: 12px;
+  margin-left: -2px;
+  border-bottom: 0;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.sidebar-content a:hover {
+  color: var(--docs-fg-heading);
+}
+.sidebar-content a[aria-current='page'],
+.sidebar-content a.starlight-aside-active {
+  color: var(--docs-fg-heading);
+  border-left-color: var(--docs-fg-heading);
+  background: transparent;
+  font-weight: 500;
+}
+
+/* ============================================================
+   TOP BAR — hairline bottom, monospace nav, search width.
+   ============================================================ */
+header.header,
+.page header[data-has-sidebar] {
+  background: var(--docs-bg);
+  border-bottom: 1px solid var(--docs-border);
+  height: 56px;
+}
+
 header nav a,
 .sl-nav a {
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 0.75rem;
+  font-size: 11px;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
+  color: var(--docs-fg-muted);
+}
+header nav a:hover {
+  color: var(--docs-fg-heading);
 }
 
-/* ─── SITE TITLE ─── */
 .site-title,
 a.site-title {
   font-family: 'Funnel Display', sans-serif;
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--docs-fg-heading);
   text-decoration: none;
+  font-size: 14px;
+}
+
+/* Add a faint "/ docs" eyebrow after the wordmark.
+   Hidden on narrow viewports — mobile hides the wordmark itself so
+   the eyebrow would strand alone. */
+@media (min-width: 50rem) {
+  a.site-title::after {
+    content: ' / docs';
+    color: var(--docs-fg-faint);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    margin-left: 6px;
+  }
+}
+
+/* Search button — mono, hairline border, room for ⌘K hint. */
+site-search button,
+.search-input,
+button[aria-label*='Search' i],
+button[data-open-modal] {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--docs-bg);
+  border: 1px solid var(--docs-border-strong);
+  color: var(--docs-fg-muted);
+  min-width: 240px;
+  padding: 6px 10px;
+}
+
+/* ============================================================
+   ON-THIS-PAGE (right-rail TOC).
+   The handoff removes this on prose pages, but Starlight ships
+   it. Keep it but make it monochrome and quiet.
+   ============================================================ */
+.right-sidebar h2,
+.right-sidebar .heading {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--docs-fg-faint);
+}
+.right-sidebar a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--docs-fg-muted);
+  border: 0;
+  text-decoration: none;
+}
+.right-sidebar a:hover { color: var(--docs-fg-heading); }
+.right-sidebar a[aria-current='true'] {
+  color: var(--docs-fg-heading);
+  font-weight: 500;
+}
+
+/* ============================================================
+   BOTTOM PAGE NAV (← prev / next →) — mono, hairline rule.
+   ============================================================ */
+.pagination-links,
+nav.pagination-links {
+  border-top: 1px solid var(--docs-border);
+  margin-top: 96px;
+  padding-top: 24px;
+}
+.pagination-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--docs-fg-muted);
+  border: 0;
+  text-decoration: none;
+}
+.pagination-links a:hover { color: var(--docs-fg-heading); }
+
+/* ============================================================
+   STARLIGHT-OPENAPI — method badges and endpoint blocks.
+   starlight-openapi ships HTML like:
+     <div class="method-path">
+       <div class="method get">GET</div>
+       <div class="path">/availability/{station}</div>
+     </div>
+   We recolor the verb by color, leave the path white, and shape
+   the outer row into a flat terminal panel.
+   ============================================================ */
+.method-path {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--docs-bg-elevated) !important;
+  border: 1px solid var(--docs-border) !important;
+  padding: 14px 18px !important;
+  margin: 16px 0 28px !important;
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
+}
+
+.method-path .method,
+.sl-method {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  padding: 2px 8px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  text-transform: uppercase !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  display: inline-block;
+}
+.method-path .method.get,
+.sl-method[data-method='get']    { color: var(--docs-get)    !important; border-color: var(--docs-get)    !important; }
+.method-path .method.post,
+.sl-method[data-method='post']   { color: var(--docs-post)   !important; border-color: var(--docs-post)   !important; }
+.method-path .method.put,
+.sl-method[data-method='put']    { color: var(--docs-post)   !important; border-color: var(--docs-post)   !important; }
+.method-path .method.patch,
+.sl-method[data-method='patch']  { color: var(--docs-patch)  !important; border-color: var(--docs-patch)  !important; }
+.method-path .method.delete,
+.sl-method[data-method='delete'] { color: var(--docs-delete) !important; border-color: var(--docs-delete) !important; }
+
+.method-path .path {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--docs-fg-heading);
+  background: transparent !important;
+}
+
+/* Legacy selectors (keep in case the plugin renames). */
+.sl-operation-path,
+.sl-operation-header {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--docs-bg-elevated);
+  border: 1px solid var(--docs-border);
+  padding: 14px 18px;
+  margin: 16px 0 28px;
+}
+
+/* Param tables (rendered by starlight-openapi as <table>) — already
+   covered by the global table rule above; nudge the param-name cell
+   so it reads as code, not prose. */
+.sl-operation table code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--docs-fg-heading);
+  font-weight: 600;
+}
+
+/* "REQUIRED" caution badge inside param tables. */
+.sl-operation table .required,
+.sl-operation .required-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-caution);
+  padding: 1px 6px;
+  border: 1px solid var(--docs-caution);
+}
+
+/* ============================================================
+   THEME TOGGLE — hide. Dark-only per DESIGN.md.
+   ============================================================ */
+starlight-theme-select {
+  display: none !important;
+}
+
+/* ============================================================
+   FOCUS RING — DESIGN.md spec.
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--docs-border-focus);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   LIVE-STATUS PULSE — preserved from landing for any inline
+   status indicator (`<span class="live-dot">`) we drop into MDX.
+   ============================================================ */
+@keyframes docsLivePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--docs-accent-live);
+  vertical-align: middle;
+  margin-right: 8px;
+  animation: docsLivePulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
 }
