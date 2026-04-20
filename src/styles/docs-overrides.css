@@ -132,6 +132,56 @@ dialog,
   border-radius: 0 !important;
 }
 
+/* ─── CONTENT COLUMN: airy spacing per handoff ───
+   Max-width 720px. Top panel gets the 72px top pad. Bottom
+   panel gets the 96px bottom pad. Everything between is flush
+   so the H1 → lead-paragraph gap isn't bloated by panel
+   padding stacking on top of H1 margin-bottom. */
+.main-pane .content-panel,
+main .content-panel {
+  padding-block: 0;
+  padding-inline: 56px;
+}
+/* First panel: 72px top (the breathing room above the H1). */
+.main-pane .content-panel:first-of-type,
+main .content-panel:first-of-type {
+  padding-top: 72px;
+}
+/* Last panel: 96px bottom (before the prev/next pagination). */
+.main-pane .content-panel:last-of-type,
+main .content-panel:last-of-type {
+  padding-bottom: 96px;
+}
+/* Small neck between panels: let the natural H1 margin-bottom (24px)
+   carry the gap instead of adding 96px of panel pad on top. */
+.main-pane .content-panel + .content-panel,
+main .content-panel + .content-panel {
+  padding-top: 0;
+}
+
+.main-pane .content-panel > .sl-container,
+.main-pane .sl-markdown-content,
+main .sl-container,
+main .sl-markdown-content {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+@media (max-width: 50rem) {
+  .main-pane .content-panel,
+  main .content-panel {
+    padding-inline: 24px;
+  }
+  .main-pane .content-panel:first-of-type,
+  main .content-panel:first-of-type {
+    padding-top: 48px;
+  }
+  .main-pane .content-panel:last-of-type,
+  main .content-panel:last-of-type {
+    padding-bottom: 72px;
+  }
+}
+
 /* ─── TYPOGRAPHY: Funnel headings, mono everywhere else ─── */
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6),
 h1.content-panel-title,
@@ -144,10 +194,12 @@ h1.content-panel-title,
   color: var(--docs-fg-heading);
 }
 
-/* H1 — page title, the one Funnel moment that anchors the column. */
+/* H1 — page title, the one Funnel moment that anchors the column.
+   Matches the Claude-design Snapshot screenshot: large, tight, and
+   sits just below the uppercase eyebrow row. */
 .sl-markdown-content > h1:first-child,
 .content-panel h1 {
-  font-size: clamp(40px, 5.6vw, 56px);
+  font-size: clamp(44px, 5.8vw, 60px);
   line-height: 1.02;
   letter-spacing: -0.035em;
   margin-bottom: 24px;
@@ -284,6 +336,16 @@ h1.content-panel-title,
   padding: 0;
 }
 
+/* ─── SYNTAX COLORS ──────────────────────────────────────────
+   Per the latest Claude design review: code blocks KEEP
+   their colored syntax (Night Owl-family: blue JSON keys,
+   green string values, amber numbers, purple keywords).
+   Previously we mapped these to white-opacity variants per
+   the 2026-04-15 DESIGN.md decision, but the signed-off
+   design contract shows colored tokens for readability.
+   Leaving Expressive Code's bundled theme colors intact.
+   ──────────────────────────────────────────────────────────── */
+
 /* Title-bar row. Always rendered as a 36px panel with traffic-light
    dots on the left, language hint mid-left, and the copy button
    floated into the right edge (Expressive Code positions the copy
@@ -337,8 +399,11 @@ h1.content-panel-title,
   background-repeat: no-repeat !important;
 }
 
-/* Faint language hint — driven by frame variant.
-   `is-terminal` → "bash"; everything else → "code". */
+/* Faint language hint — driven by the real <pre data-language="...">
+   value so python/bash/curl/json/ts all read correctly (not a flat
+   "code" placeholder). We also keep an `is-terminal` fallback for
+   fences that Expressive Code flags as a terminal frame but where
+   the `data-language` is `shellsession` / `sh`. */
 .expressive-code .frame > figcaption.header::after {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 11px !important;
@@ -355,12 +420,40 @@ h1.content-panel-title,
   position: static !important;
   background: transparent !important;
   mask-image: none !important;
+  content: 'code' !important; /* default fallback */
 }
+/* Map the real <pre data-language="..."> values to readable labels.
+   :has() has broad modern browser support (all our supported targets). */
+.expressive-code .frame:has(pre[data-language='bash']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='sh']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='shellsession']) > figcaption.header::after,
 .expressive-code .frame.is-terminal > figcaption.header::after {
   content: 'bash' !important;
 }
-.expressive-code .frame:not(.is-terminal) > figcaption.header::after {
-  content: 'code' !important;
+.expressive-code .frame:has(pre[data-language='python']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='py']) > figcaption.header::after {
+  content: 'python' !important;
+}
+.expressive-code .frame:has(pre[data-language='curl']) > figcaption.header::after {
+  content: 'curl' !important;
+}
+.expressive-code .frame:has(pre[data-language='json']) > figcaption.header::after {
+  content: 'json' !important;
+}
+.expressive-code .frame:has(pre[data-language='ts']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='typescript']) > figcaption.header::after {
+  content: 'typescript' !important;
+}
+.expressive-code .frame:has(pre[data-language='js']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='javascript']) > figcaption.header::after {
+  content: 'javascript' !important;
+}
+.expressive-code .frame:has(pre[data-language='http']) > figcaption.header::after {
+  content: 'http' !important;
+}
+.expressive-code .frame:has(pre[data-language='plaintext']) > figcaption.header::after,
+.expressive-code .frame:has(pre[data-language='text']) > figcaption.header::after {
+  content: 'text' !important;
 }
 
 /* Filename — only visible when the fence supplies one (e.g. `bash title="..."`). */
@@ -426,19 +519,42 @@ h1.content-panel-title,
   color: inherit;
   font: inherit;
 }
-.expressive-code .copy button.copied::after {
-  content: '✓ COPIED' !important;
-}
 .expressive-code .copy button:hover {
   color: var(--docs-fg-heading);
 }
-.expressive-code .copy button.copied {
-  color: var(--docs-accent-live);
+
+/* COPIED state.
+   Expressive Code's runtime appends a `<div class="feedback show">`
+   sibling to the button (inside `.copy`) when copy succeeds. It
+   doesn't toggle a class on the button itself, so we:
+     1) detect that sibling with `:has()` and swap the button label,
+     2) hide EC's own floating feedback pill (we render our own via
+        the label change).
+   Chosen over a JS hook because it survives HMR and view transitions. */
+.expressive-code .copy:has(.feedback.show) button {
+  color: var(--docs-accent-live) !important;
+}
+.expressive-code .copy:has(.feedback.show) button::after {
+  content: '✓ COPIED' !important;
+}
+.expressive-code .copy .feedback {
+  /* Hide EC's default "Copied to clipboard" tooltip — our label swap
+     is the visual signal instead. */
+  display: none !important;
 }
 
-/* Hide Expressive Code's icon and the inner div placeholder. */
+/* Hide Expressive Code's icon, the inner-div background fill, and
+   the ::before border ring. EC normally wraps the copy button in a
+   full border + idle-background chip. We want just the text — no
+   chip, no ring — so all three sub-layers get neutralised here. */
 .expressive-code .copy button > div,
 .expressive-code .copy button svg { display: none; }
+.expressive-code .copy button::before {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+  background: transparent !important;
+}
 
 /* Line numbers (when enabled in fenced block). */
 .expressive-code .ln {
@@ -499,59 +615,123 @@ h1.content-panel-title,
 .starlight-aside__content > :last-child { margin-bottom: 0; }
 
 /* ============================================================
-   SIDEBAR — hairline column, uppercase mono labels,
+   SIDEBAR — airy 280px column, sentence-case mono labels,
    active link gets a 2px white left rail (no fill box).
+
+   Case: handoff README uses UPPERCASE for nav labels, but the
+   Claude design screenshot the user signs off on shows
+   SENTENCE CASE ("Get started", "Introduction"). We follow the
+   signed-off visual — sentence case throughout the sidebar.
+   Content-level eyebrows ("API REFERENCE · WEATHER") stay
+   uppercase because those are true eyebrows, not nav labels.
    ============================================================ */
 .sidebar-pane,
 .sidebar-content {
   background: var(--docs-bg-sidebar);
   border-right: 1px solid var(--docs-border);
+  --sl-sidebar-width: 300px;
 }
 
-/* Section labels (Get Started, SDK, Concepts...) */
+/* Widen Starlight's sidebar column per the signed-off Claude design —
+   items read at 14px with generous breathing room, so 300px gives
+   "Point-in-time queries" and similar long labels room to breathe. */
+:root {
+  --sl-sidebar-width: 300px;
+  --sl-sidebar-pad-x: 1.5rem;
+}
+
+/* Group labels (Get started, Guides, Agents, API Reference) — SAME
+   size and weight as item links per the design review. They're just
+   parent rows with a chevron, not typographic heads. */
 .sidebar-content summary > :is(.large, .group-label, span),
 .sidebar-content .top-level > li > a.large,
-.sidebar-content .top-level > li > details > summary {
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 11px;
-  font-weight: 700;
+.sidebar-content .top-level > li > details > summary,
+.sidebar-content details > summary .group-label,
+.sidebar-content details > summary > span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+  font-weight: 400;
   font-family: 'JetBrains Mono', monospace;
-  color: var(--docs-fg-faint);
-  padding-block: 6px;
+  color: var(--docs-fg-muted);
+  padding-block: 10px;
 }
 
-/* Item links */
+/* Extra breathing room between top-level groups. */
+.sidebar-content .top-level > li + li {
+  margin-top: 18px;
+}
+
+/* Item links — 14px, generous padding so each row has real rhythm. */
 .sidebar-content a {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--docs-fg-muted);
-  border-left: 2px solid transparent;
-  padding-left: 12px;
-  margin-left: -2px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  padding: 8px 12px;
+  border: 0;
   border-bottom: 0;
+  border-radius: 0;
   text-decoration: none;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 .sidebar-content a:hover {
   color: var(--docs-fg-heading);
 }
+/* Active page — filled white rectangle, black text, zero radius.
+   Per design review: no left rail, no border — just the block. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a.starlight-aside-active {
-  color: var(--docs-fg-heading);
-  border-left-color: var(--docs-fg-heading);
-  background: transparent;
+  background: #ffffff;
+  color: #0a0a0a;
   font-weight: 500;
+  border: 0;
+  border-radius: 0 !important;
+}
+
+/* Starlight's own `.large` class on group heads still tries to
+   inherit uppercase + bold. Nail it down to our target. */
+.sidebar-content .large {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+/* Chevron on group labels — small, muted, leading-position. Starlight
+   ships it via a ::marker or an SVG inside <summary>; tune it to
+   the triangle treatment in the design (▾ / ▸). */
+.sidebar-content details > summary {
+  list-style: none;
+}
+.sidebar-content details > summary::-webkit-details-marker { display: none; }
+.sidebar-content details > summary svg.caret {
+  color: var(--docs-fg-faint);
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  transition: transform 0.15s ease;
 }
 
 /* ============================================================
-   TOP BAR — hairline bottom, monospace nav, search width.
+   TOP BAR — airy 64px shell with hairline bottom, monospace nav,
+   wide search input. Logo is the marketing wordmark SVG
+   (18px tall); the "/ docs" eyebrow trails it in mono faint.
    ============================================================ */
 header.header,
 .page header[data-has-sidebar] {
   background: var(--docs-bg);
   border-bottom: 1px solid var(--docs-border);
-  height: 56px;
+  height: 64px;
+  padding-inline: 1.5rem;
+}
+
+/* Starlight top-bar uses --sl-nav-height for its internal layout. */
+:root {
+  --sl-nav-height: 64px;
+  --sl-nav-pad-x: 1.5rem;
 }
 
 header nav a,
@@ -567,6 +747,10 @@ header nav a:hover {
   color: var(--docs-fg-heading);
 }
 
+/* Wordmark (SVG logo replaces the title text). Tight height per
+   handoff: 18px. The "/ docs" eyebrow is attached to the anchor
+   wrapping the logo (Starlight injects an <a class="site-title">
+   containing <img>). */
 .site-title,
 a.site-title {
   font-family: 'Funnel Display', sans-serif;
@@ -575,6 +759,13 @@ a.site-title {
   color: var(--docs-fg-heading);
   text-decoration: none;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+a.site-title img {
+  height: 22px;
+  width: auto;
 }
 
 /* Add a faint "/ docs" eyebrow after the wordmark.
@@ -582,12 +773,14 @@ a.site-title {
    the eyebrow would strand alone. */
 @media (min-width: 50rem) {
   a.site-title::after {
-    content: ' / docs';
+    content: '/ docs';
     color: var(--docs-fg-faint);
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: lowercase;
-    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: 4px;
   }
 }
 
@@ -597,39 +790,37 @@ site-search button,
 button[aria-label*='Search' i],
 button[data-open-modal] {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 13px;
   background: var(--docs-bg);
   border: 1px solid var(--docs-border-strong);
   color: var(--docs-fg-muted);
-  min-width: 240px;
-  padding: 6px 10px;
+  min-width: 260px;
+  padding: 8px 12px;
+}
+/* Starlight wraps the ⌘K key hint in <kbd>. Style like the
+   hairline key-cap chips in the handoff's ⌘K palette. */
+button[data-open-modal] kbd,
+site-search kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--docs-fg-subtle);
+  border: 1px solid var(--docs-border);
+  padding: 1px 5px;
+  background: transparent;
+  margin-left: 6px;
 }
 
 /* ============================================================
    ON-THIS-PAGE (right-rail TOC).
-   The handoff removes this on prose pages, but Starlight ships
-   it. Keep it but make it monochrome and quiet.
+   The handoff explicitly removes this: "No right TOC — intentionally
+   removed for focus." We set `tableOfContents: false` in
+   astro.config.mjs, but Starlight still ships the mobile TOC
+   collapsible above the content column — belt-and-suspenders hide it.
    ============================================================ */
-.right-sidebar h2,
-.right-sidebar .heading {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--docs-fg-faint);
-}
-.right-sidebar a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--docs-fg-muted);
-  border: 0;
-  text-decoration: none;
-}
-.right-sidebar a:hover { color: var(--docs-fg-heading); }
-.right-sidebar a[aria-current='true'] {
-  color: var(--docs-fg-heading);
-  font-weight: 500;
+.right-sidebar,
+mobile-starlight-toc {
+  display: none !important;
 }
 
 /* ============================================================
@@ -724,7 +915,60 @@ nav.pagination-links {
   font-weight: 600;
 }
 
-/* "REQUIRED" caution badge inside param tables. */
+/* ============================================================
+   STARLIGHT-OPENAPI — Params panel (live in .panel > .key rows).
+   Real DOM shape for 0.24.x:
+     <div class="panel">
+       <div class="key not-content">
+         <div class="name"><strong>station</strong>
+           <div class="required">required</div>
+         </div>
+         <div class="description">…description…
+           <span class="type">string</span>
+         </div>
+       </div>
+       … more keys …
+     </div>
+   Shape it into our brutalist params-table per handoff #6.
+   ============================================================ */
+.sl-markdown-content .panel {
+  border: 1px solid var(--docs-border);
+  background: transparent;
+  margin: 20px 0 28px;
+}
+
+.sl-markdown-content .panel .key {
+  padding: 14px 18px;
+  border-top: 1px solid var(--docs-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sl-markdown-content .panel .key:first-child {
+  border-top: 0;
+}
+
+/* Param name + type + required badge row */
+.sl-markdown-content .panel .key .name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 0;
+}
+.sl-markdown-content .panel .key .name strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--docs-fg-heading);
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+/* REQUIRED caution badge */
+.sl-markdown-content .panel .key .required,
+.sl-markdown-content .panel .key .name .required,
 .sl-operation table .required,
 .sl-operation .required-badge {
   font-family: 'JetBrains Mono', monospace;
@@ -735,6 +979,68 @@ nav.pagination-links {
   color: var(--docs-caution);
   padding: 1px 6px;
   border: 1px solid var(--docs-caution);
+  display: inline-block;
+  line-height: 1.3;
+}
+
+/* Description block beneath the name row */
+.sl-markdown-content .panel .key .description {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--docs-fg-muted);
+}
+.sl-markdown-content .panel .key .description > :first-child { margin-top: 0; }
+.sl-markdown-content .panel .key .description > :last-child { margin-bottom: 0; }
+.sl-markdown-content .panel .key .description em {
+  font-style: normal;
+  color: var(--docs-fg-muted);
+}
+
+/* Type hint chip (e.g. "string", "integer") */
+.sl-markdown-content .panel .key .type,
+.sl-markdown-content .panel .key .description .type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--docs-fg-subtle);
+  letter-spacing: 0.04em;
+}
+
+/* "Any of:" / union helper text */
+.sl-markdown-content .panel .key .description span.type + starlight-tabs {
+  margin-top: 8px;
+}
+
+/* Nested tabs inside params (Any of: string | null) — quiet them down */
+.sl-markdown-content .panel starlight-tabs {
+  margin-top: 6px;
+}
+.sl-markdown-content .panel starlight-tabs .tablist-wrapper {
+  border: 0;
+  background: transparent;
+}
+.sl-markdown-content .panel starlight-tabs [role='tab'] {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--docs-fg-subtle);
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+}
+.sl-markdown-content .panel starlight-tabs [role='tab'][aria-selected='true'] {
+  color: var(--docs-fg-heading);
+  border-bottom: 1px solid var(--docs-fg-heading);
+}
+
+/* Authorizations block — same panel framing, tighter leading. */
+.sl-markdown-content .panel ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.sl-markdown-content .panel li {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--docs-fg-muted);
 }
 
 /* ============================================================

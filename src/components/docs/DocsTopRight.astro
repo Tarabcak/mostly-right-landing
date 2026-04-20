@@ -1,0 +1,47 @@
+---
+/**
+ * Docs topbar right cluster — version tag + GitHub text link.
+ *
+ * Replaces Starlight's default SocialIcons slot (see `components.SocialIcons`
+ * override in astro.config.mjs) so the docs header matches the Claude
+ * design screenshot: a small mono version badge, then "GitHub ↗" as a
+ * text link (no icon). Uses the marketing repo's package.json version
+ * at build time — source of truth lives in one place.
+ */
+import pkg from '../../../package.json';
+---
+
+<div class="docs-top-right">
+  <span class="docs-version" aria-label={`Version ${pkg.version}`}>v{pkg.version}</span>
+  <a class="docs-gh-link" href="https://github.com/Tarabcak/mostlyright" rel="noopener">
+    GitHub<span aria-hidden="true"> ↗</span>
+  </a>
+</div>
+
+<style>
+  .docs-top-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .docs-version {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.45);
+    font-variant-numeric: tabular-nums;
+  }
+  .docs-gh-link {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    text-transform: none;
+    transition: color 0.15s ease;
+  }
+  .docs-gh-link:hover {
+    color: #fff;
+  }
+</style>

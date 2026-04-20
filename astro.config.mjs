@@ -22,9 +22,53 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: 'MostlyRight Docs',
+      title: 'Mostly Right',
       description: 'Settlement truth layer for prediction markets',
       customCss: ['./src/styles/docs-overrides.css'],
+      // Marketing wordmark (wave mark + "Mostly Right" lockup). Using
+      // replacesTitle:true hides the text title so the SVG carries the
+      // brand. The faint "/ docs" eyebrow is added in CSS so it can go
+      // beside the wordmark without stretching the logo artwork.
+      logo: {
+        src: './src/assets/logo-white.svg',
+        replacesTitle: true,
+      },
+      // Override SocialIcons with our custom component that renders
+      // the version tag + "GitHub ↗" text link (per Claude design).
+      components: {
+        SocialIcons: './src/components/docs/DocsTopRight.astro',
+      },
+      // Remove right-rail TOC per design handoff — intentional
+      // "No right TOC — removed for focus." The column centers on the
+      // 720px main content instead. Per-page can re-enable if needed.
+      tableOfContents: false,
+      expressiveCode: {
+        // Keep Starlight's bundled Night Owl themes for colored syntax
+        // highlighting (blue keys, green strings, amber numbers, purple
+        // keywords) — matches the signed-off Claude design for code blocks.
+        // Plugins (line numbers) and defaultProps live in ec.config.mjs —
+        // that file is dynamically imported so plugin methods survive
+        // the integration's config serialization (functions can't ride
+        // through JSON). Styling (data-only) can stay inline here.
+        styleOverrides: {
+          borderColor: 'rgba(255,255,255,0.18)',
+          borderRadius: '0',
+          codeBackground: '#080808',
+          codeFontFamily: "'JetBrains Mono', monospace",
+          codeFontSize: '13px',
+          codeLineHeight: '1.7',
+          frames: {
+            frameBoxShadowCssValue: 'inset 0 1px 0 rgba(255,255,255,.03), 0 1px 0 rgba(0,0,0,.4)',
+            editorActiveTabIndicatorBottomColor: '#4ade80',
+            editorActiveTabIndicatorTopColor: 'transparent',
+            editorActiveTabBackground: '#080808',
+            editorTabBarBackground: 'rgba(255,255,255,0.02)',
+            terminalTitlebarBackground: 'rgba(255,255,255,0.02)',
+            terminalBackground: '#080808',
+            terminalTitlebarBorderBottomColor: 'rgba(255,255,255,0.18)',
+          },
+        },
+      },
       plugins: [
         starlightOpenAPI([
           {
