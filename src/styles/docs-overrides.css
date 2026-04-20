@@ -1234,3 +1234,156 @@ starlight-theme-select {
 @media (prefers-reduced-motion: reduce) {
   .live-dot { animation: none; }
 }
+
+/* ============================================================
+   STARLIGHT TABS — multi-language code tabs per handoff #3.
+
+   Handoff CodeTabs spec (Modules.jsx CodeTabs):
+     - Tab bar lives in the code block's title row alongside the
+       traffic-light dots (we render it above code, similar feel).
+     - Lowercase mono labels, .06em tracking, 11px.
+     - Active tab:
+         boxShadow: inset 0 2px 0 var(--docs-accent-live),
+                    1px 0 0 var(--docs-border-strong),
+                    -1px 0 0 var(--docs-border-strong)
+       = green 2px TOP indicator inset from the tab's top edge,
+       side borders that merge with chrome to create a
+       "pulled forward" pill. Plus bg: --docs-bg-code (one step
+       darker than the tab bar), color: heading white, bold.
+     - Inactive tab: plain muted text on transparent bg.
+
+   Starlight renders <Tabs> as:
+     <starlight-tabs>
+       <ul role="tablist">
+         <li class="tab"><a role="tab" aria-selected="true|false">label</a></li>
+       </ul>
+       <section role="tabpanel">...</section>
+     </starlight-tabs>
+
+   We target the MAIN-PANE tabs only (not tabs nested inside param
+   panels — those have their own quieter treatment further up).
+   ============================================================ */
+.sl-markdown-content > starlight-tabs,
+.sl-markdown-content .sl-steps > li > starlight-tabs {
+  display: block;
+  margin: 24px 0;
+  border: 1px solid var(--docs-border-strong);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.sl-markdown-content > starlight-tabs > .tablist-wrapper,
+.sl-markdown-content .sl-steps > li > starlight-tabs > .tablist-wrapper {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--docs-border-strong);
+  padding-left: 64px;
+  /* leaves room for our traffic-light dot pseudo-element below */
+  position: relative;
+}
+
+/* Traffic-light dots on the tab bar — match code-block chrome */
+.sl-markdown-content > starlight-tabs > .tablist-wrapper::before,
+.sl-markdown-content .sl-steps > li > starlight-tabs > .tablist-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 8px;
+  background-image:
+    radial-gradient(circle, #3a3a3a 50%, transparent 52%),
+    radial-gradient(circle, #2a2a2a 50%, transparent 52%),
+    radial-gradient(circle, #2a2a2a 50%, transparent 52%);
+  background-size: 8px 8px;
+  background-repeat: no-repeat;
+  background-position: 0 center, 15px center, 30px center;
+  pointer-events: none;
+}
+
+.sl-markdown-content > starlight-tabs > .tablist-wrapper > ul[role='tablist'],
+.sl-markdown-content .sl-steps > li > starlight-tabs > .tablist-wrapper > ul[role='tablist'] {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  display: flex !important;
+  gap: 0 !important;
+  border-bottom: 0 !important;
+  min-height: 36px;
+  align-items: stretch;
+  overflow: visible !important;
+}
+
+.sl-markdown-content > starlight-tabs li.tab,
+.sl-markdown-content .sl-steps > li > starlight-tabs li.tab {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: flex;
+}
+
+.sl-markdown-content > starlight-tabs a[role='tab'],
+.sl-markdown-content .sl-steps > li > starlight-tabs a[role='tab'] {
+  display: flex;
+  align-items: center;
+  padding: 11px 16px 10px !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-weight: 500;
+  color: var(--docs-fg-subtle) !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  text-decoration: none !important;
+  margin-bottom: -1px; /* let side shadows merge with tablist bottom border */
+  position: relative;
+  z-index: 0;
+  transition: color 0.15s ease;
+}
+
+.sl-markdown-content > starlight-tabs a[role='tab']:hover,
+.sl-markdown-content .sl-steps > li > starlight-tabs a[role='tab']:hover {
+  color: var(--docs-fg-muted) !important;
+}
+
+/* Active tab — green 2px TOP inset + side borders + heading-white */
+.sl-markdown-content > starlight-tabs a[role='tab'][aria-selected='true'],
+.sl-markdown-content .sl-steps > li > starlight-tabs a[role='tab'][aria-selected='true'] {
+  font-weight: 600 !important;
+  color: var(--docs-fg-heading) !important;
+  background: var(--docs-bg-code) !important;
+  box-shadow:
+    inset 0 2px 0 var(--docs-accent-live),
+    1px 0 0 var(--docs-border-strong),
+    -1px 0 0 var(--docs-border-strong) !important;
+  z-index: 1;
+}
+
+/* Tab panel — uses code bg since an active tab sits on it */
+.sl-markdown-content > starlight-tabs [role='tabpanel'],
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* Drop the default expressive-code frame shadow on code blocks
+   nested inside a tab — the outer tabs container already supplies it. */
+.sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .frame,
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .frame {
+  box-shadow: none;
+  border-top: 0;
+  margin: 0;
+}
+/* And hide the nested code block's title row since the outer
+   tabs already render one. */
+.sl-markdown-content > starlight-tabs [role='tabpanel'] .expressive-code .frame > figcaption.header,
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] .expressive-code .frame > figcaption.header {
+  display: none !important;
+}

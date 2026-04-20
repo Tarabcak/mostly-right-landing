@@ -6,6 +6,7 @@ description: Install the SDK, request an API key, and make your first call in un
 import Eyebrow from '../../../components/docs/Eyebrow.astro';
 import Lead from '../../../components/docs/Lead.astro';
 import Steps from '../../../components/docs/Steps.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 <Eyebrow>Get started</Eyebrow>
 
@@ -19,9 +20,23 @@ import Steps from '../../../components/docs/Steps.astro';
 
 ## 01 · Install
 
-```bash
-pip install mostlyright
-```
+<Tabs syncKey="pkg">
+  <TabItem label="pip">
+    ```bash
+    pip install mostlyright
+    ```
+  </TabItem>
+  <TabItem label="poetry">
+    ```bash
+    poetry add mostlyright
+    ```
+  </TabItem>
+  <TabItem label="uv">
+    ```bash
+    uv add mostlyright
+    ```
+  </TabItem>
+</Tabs>
 
 Python 3.12+. `pandas` is optional — install it if you want `as_dataframe=True`.
 
@@ -39,19 +54,29 @@ The SDK picks it up automatically. No configuration needed.
 
 ## 03 · Your first historical call
 
-```python
-from mostlyright import MostlyRightClient
+<Tabs syncKey="lang">
+  <TabItem label="Python">
+    ```python
+    from mostlyright import MostlyRightClient
 
-client = MostlyRightClient()
-obs = client.observations(
-    station="NYC",
-    from_date="2026-04-01",
-    to_date="2026-04-07",
-)
+    client = MostlyRightClient()
+    obs = client.observations(
+        station="NYC",
+        from_date="2026-04-01",
+        to_date="2026-04-07",
+    )
 
-print(f"{len(obs)} observations")
-print(obs[0])
-```
+    print(f"{len(obs)} observations")
+    print(obs[0])
+    ```
+  </TabItem>
+  <TabItem label="curl">
+    ```bash
+    curl -H "X-API-Key: $MOSTLYRIGHT_API_KEY" \
+      "https://api.mostlyright.xyz/observations?station=NYC&from_date=2026-04-01&to_date=2026-04-07"
+    ```
+  </TabItem>
+</Tabs>
 
 Expected output — a list of dicts, one row per observation, 30 raw fields each:
 
