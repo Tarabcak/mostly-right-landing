@@ -1,9 +1,113 @@
 ---
 title: WeatherLive
-description: Live METAR observations and forecasts.
-status: stub
+description: Live METAR observations pulled directly from the aviation weather feed, with field parity against MostlyRightClient so backtests and live inference share the same code.
 ---
 
-:::note
-Stub — coming soon. Live METAR polling from AWC, field parity with historical observations.
-:::
+`WeatherLive` is the real-time sibling of `MostlyRightClient`. Where `MostlyRightClient` queries our archive (AWC + IEM + GHCNh, deduped and stored), `WeatherLive` hits the NOAA Aviation Weather feed directly and returns the latest METAR within seconds of broadcast.
+
+```python
+from mostlyright import WeatherLive
+
+with WeatherLive() as live:
+    now = live.observations("NYC")
+    print(now)
+```
+
+Use it for inference loops, live dashboards, and any pipeline that needs the station's latest observation before it lands in the historical archive.
+
+## 01 · Column parity
+
+Every field `WeatherLive.observations()` returns is a field `MostlyRightClient.observations()` returns. Same names, same units, same encodings. Whatever code you wrote against historical data runs against live with no adjustments.
+
+```python
+def check_settlement_threshold(obs):
+    return obs["temp_f"] >= 85  # works on both
+
+hist = MostlyRightClient().observations("NYC", as_of="2024-07-04T18:00:00Z")
+assert check_settlement_threshold(hist[-1])
+
+live = WeatherLive().observations("NYC")
+assert check_settlement_threshold(live[0])  # same shape, same keys
+```
+
+Parity is enforced by a shared schema spec, `OBSERVATION_SCHEMA`. If the live feed ever drops a field or changes a unit, the parse fails loudly rather than returning mismatched shapes. See [Observation schema](/docs/concepts/observation-schema/) for the full field list.
+
+## 02 · Construction
+
+```python
+WeatherLive(
+    timeout: float = 15.0,          # per-request timeout
+    cache_ttl: int = 60,            # seconds to cache a METAR before refetching
+)
+```
+
+No API key required. The AWC feed is public. Rate-limiting is enforced client-side at 30 requests/minute per host by default.
+
+Use as a context manager to guarantee the HTTP session closes:
+
+```python
+with WeatherLive() as live:
+    obs = live.observations("NYC")
+```
+
+## 03 · `observations()`: one station, latest METAR
+
+```python
+live.observations(
+    station: str,
+    *,
+    include_forecast: bool = False,
+) -> list[dict]
+```
+
+Returns the most recent METAR for `station`. Same 30 fields as the historical API. The list always has at least one row. Older METARs can be fetched by range from `MostlyRightClient`.
+
+```python
+with WeatherLive() as live:
+    latest = live.observations("NYC")[0]
+    print(latest["temp_f"], latest["observed_at"])
+    # 84.0 2026-04-21T14:51:00Z
+```
+
+Pass `include_forecast=True` to attach a short-horizon forecast block:
+
+```python
+latest = live.observations("NYC", include_forecast=True)[0]
+latest["forecast"]["nbm"]["temp_f"]  # current NBM 1-hour forecast
+```
+
+## 04 · `forecasts()`: short-horizon
+
+```python
+live.forecasts(
+    station: str,
+    model: str = "nbm",
+    horizon: int = 24,              # hours ahead
+) -> list[dict]
+```
+
+Returns the forecast issued closest to "now" for `station`, out to `horizon` hours. Models supported: `"nbm"` (default), `"gfs"`, `"hrrr"`, `"ecmwf"`.
+
+```python
+with WeatherLive() as live:
+    f = live.forecasts("NYC", model="nbm", horizon=6)
+    for hour in f:
+        print(hour["valid_at"], hour["temp_f"])
+```
+
+## 05 · When to reach for historical instead
+
+Use `MostlyRightClient` instead of `WeatherLive` when you need any of:
+
+- **`as_of` filtering.** Backtests, point-in-time inference, settlement replay. `WeatherLive` is always "now".
+- **Multi-station slices.** `WeatherLive.observations()` is one station at a time. For a cross-station snapshot, `MostlyRightClient.observations()` with `from_date`/`to_date` is the right call.
+- **Non-METAR fields.** `WeatherLive` only exposes what is in the live feed. Climate aggregates, forecast history, and pairs tables live in the archive only.
+- **Anything settlement-critical.** Settlements use the archived record. Even for live display, pull from historical and only overlay `WeatherLive` as a "latest reading" badge.
+
+`WeatherLive` is for the moment. Use `MostlyRightClient` for the record.
+
+## Related
+
+- [`MostlyRightClient`](/docs/sdk/therminal-client/) for the archive-backed client.
+- [Observation schema](/docs/concepts/observation-schema/) for the 30-field contract shared by both.
+- [Data sources](/docs/concepts/data-sources/) for what flows into the archive.

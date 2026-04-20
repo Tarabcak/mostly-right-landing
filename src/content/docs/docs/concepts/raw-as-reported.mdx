@@ -1,16 +1,11 @@
 ---
 title: Raw-as-reported
-description: Why we never overwrite with corrections.
-status: stub
+description: Every observation we store is the first broadcast the station made. We never overwrite with corrections, because settlement traded on the original number, not the fix.
 ---
 
 import Diff from '../../../../components/docs/Diff.astro';
 
-:::note
-Stub — coming soon. Why the first reported observation is authoritative; no silent corrections.
-:::
-
-The shape of the rule in code: a point-in-time query as of `2026-04-02T12:00:00Z` returns what was actually reported at that moment, not what later corrections rewrote.
+The rule is one line: **the first observation for a given `(station, observed_at, report_type)` is final**. No corrections, no overwrites, no backfills. If NWS issues a correction an hour later, the original number is still what the market settled on. So the original number is still what lives in the archive.
 
 <Diff
   beforeLabel="Corrected-in-place (wrong)"
@@ -29,3 +24,78 @@ obs = client.observations(
 obs[0].temp_f
 # 69  ← original METAR, as received`}
 />
+
+## 01 · Why this matters for settlement
+
+A Kalshi weather contract settles on the number the NWS reported at the settlement time. If at 14:51Z the NYC station broadcast a temperature of 52°F, that contract settled on 52. An hour later, the station may publish a correction saying it was actually 51. Too late. The market already paid out.
+
+If your backtest archive quietly replaced 52 with 51, your model now believes a contract settled on 51. When you size the next position against that belief, you are trading on a market that never existed.
+
+**Your backtest is only useful if it reproduces the data the market traded on.** That is what raw-as-reported guarantees.
+
+## 02 · The dedup rule
+
+For each row insert:
+
+```
+if row.key NOT in archive:
+    insert row
+else:
+    skip  # first-write wins
+```
+
+The key is `(station, observed_at, report_type)`. A later-arriving row with the same key is discarded, not merged. No update path exists for an observation once it lands.
+
+This is the opposite of standard data-engineering hygiene. In most pipelines, data quality means "catch errors and fix them." Here, data quality means **"replay the record exactly as it was the first time anyone saw it."**
+
+## 03 · What we do keep about corrections
+
+We do not overwrite, but we do not throw away the correction either. When AWC publishes a COR or RTD METAR (coded correction), we ingest it as a new row with a different `report_type` and, if one is given, a different `observed_at`. If the correction carries the same `observed_at` as the original, it lands in an audit table, not the primary observation table.
+
+You can inspect that audit table if you need to:
+
+```python
+from mostlyright import MostlyRightClient
+
+with MostlyRightClient() as client:
+    corrections = client.corrections(
+        station="NYC",
+        from_date="2026-04-02",
+        to_date="2026-04-02",
+    )
+    for c in corrections:
+        print(c.observed_at, c.original["temp_f"], "→", c.corrected["temp_f"])
+```
+
+This is an audit surface, not a settlement surface. Settlement always uses the original.
+
+## 04 · The `as_of` guarantee
+
+Because rows are immutable once stored, `as_of` queries are stable forever:
+
+```python
+# Query A, run today:
+a = client.observations("NYC", as_of="2026-04-02T12:00:00Z")
+
+# Query A, run six months from today:
+a_later = client.observations("NYC", as_of="2026-04-02T12:00:00Z")
+
+# These return the same rows. Bit-for-bit.
+assert a == a_later
+```
+
+You can cache indefinitely. You can version your model against a fixed `data_version` token and know that re-running with that token months later produces the same inputs. See [`data_version`](/docs/sdk/therminal-client/) for the exact guarantee.
+
+## 05 · Where the rule applies, and where it does not
+
+- **Observations.** Covered, without exception. Even if we find a bug in our parser six months from now, the rows already stored do not get rewritten. We fix the parser forward and leave the archive alone.
+- **Forecasts.** Not covered in the same way. A forecast is a prediction about a future window. The same forecast model issues new runs every few hours. Each run is a new row keyed by `issued_at`. We keep every issuance, so replay of "what did the NBM think at 06Z?" works the same way.
+- **Climate aggregates.** Not covered. CLIMATE rollups are derivations, not observations. They can be re-derived on schema changes without breaking the settlement story, because the underlying observation rows they derived from are still immutable.
+
+The single rule, applied to the single place where it matters, gives you the one property you actually need: **a backtest you can trust against a market that actually cleared.**
+
+## Related
+
+- [Data sources](/docs/concepts/data-sources/) for why AWC beats IEM beats GHCNh.
+- [Observation schema](/docs/concepts/observation-schema/) for the 30 fields every raw row carries.
+- [`as_of` parameter on `observations()`](/docs/sdk/therminal-client/) for the query-side surface of the rule.
