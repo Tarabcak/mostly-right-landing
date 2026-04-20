@@ -204,10 +204,16 @@ main .content-panel:last-of-type {
   padding-bottom: 96px;
 }
 /* Small neck between panels: let the natural H1 margin-bottom (24px)
-   carry the gap instead of adding 96px of panel pad on top. */
+   carry the gap instead of adding 96px of panel pad on top. Also
+   kill Starlight's default 1px top border on subsequent panels —
+   that divider line was showing up under the H1 on pages where the
+   title and body render in separate content-panels (user flagged it
+   as "Quickstart line with no margin to content below"). The spec
+   is brutalist-minimal, not Shopify-style ruled sections. */
 .main-pane .content-panel + .content-panel,
 main .content-panel + .content-panel {
   padding-top: 0;
+  border-top: 0 !important;
 }
 
 .main-pane .content-panel > .sl-container,
