@@ -4,6 +4,28 @@ description: Why we never overwrite with corrections.
 status: stub
 ---
 
+import Diff from '../../../../components/docs/Diff.astro';
+
 :::note
 Stub — coming soon. Why the first reported observation is authoritative; no silent corrections.
 :::
+
+The shape of the rule in code: a point-in-time query as of `2026-04-02T12:00:00Z` returns what was actually reported at that moment, not what later corrections rewrote.
+
+<Diff
+  beforeLabel="Corrected-in-place (wrong)"
+  afterLabel="Raw-as-reported (right)"
+  before={`# Most weather archives silently overwrite
+# corrections. Your settlement replay drifts.
+obs = archive.get("NYC", at="2026-04-02T12:00Z")
+obs.temp_f
+# 71  ← NWS correction issued Apr 4
+#       (original report was 69)`}
+  after={`# MostlyRight preserves what was actually
+# reported at query time. Replay is exact.
+obs = client.observations(
+    "NYC", as_of="2026-04-02T12:00:00Z"
+)
+obs[0].temp_f
+# 69  ← original METAR, as received`}
+/>

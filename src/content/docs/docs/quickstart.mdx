@@ -1,14 +1,13 @@
 ---
 title: Quickstart
 description: Install the SDK, request an API key, and make your first call in under five minutes.
+eyebrow: Get started
 ---
 
-import Eyebrow from '../../../components/docs/Eyebrow.astro';
 import Lead from '../../../components/docs/Lead.astro';
 import Steps from '../../../components/docs/Steps.astro';
+import Playground from '../../../components/docs/Playground.astro';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-
-<Eyebrow>Get started</Eyebrow>
 
 <Lead>Install the SDK, request a private-beta API key, and pull your first point-in-time weather observation in under five minutes.</Lead>
 
@@ -129,6 +128,12 @@ List them programmatically:
 for s in client.stations():
     print(s.code, s.name)
 ```
+
+## Try it live
+
+Sandbox response. Edit the fields and run — mock data, no key required.
+
+<Playground />
 
 ## What to read next
 

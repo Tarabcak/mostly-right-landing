@@ -39,6 +39,7 @@ export default defineConfig({
             (function () {
               try {
                 document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.setAttribute('data-code-theme', 'contrast');
                 document.documentElement.style.colorScheme = 'dark';
                 if (typeof localStorage !== 'undefined') {
                   localStorage.setItem('starlight-theme', 'dark');
@@ -66,6 +67,10 @@ export default defineConfig({
       components: {
         SocialIcons: './src/components/docs/DocsTopRight.astro',
         Search: './src/components/docs/CmdK.astro',
+        // Custom page title: renders optional `eyebrow` frontmatter
+        // field above the H1, per handoff §2 Content Column ordering
+        // (eyebrow → H1 → lead).
+        PageTitle: './src/components/docs/PageTitle.astro',
       },
       // Remove right-rail TOC per design handoff — intentional
       // "No right TOC — removed for focus." The column centers on the

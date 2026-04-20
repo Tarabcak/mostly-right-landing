@@ -292,11 +292,12 @@ h1.content-panel-title,
   color: var(--docs-fg-muted);
 }
 
-/* Lead paragraph — the first <p> in the markdown content area
-   (Starlight renders the H1 outside `.sl-markdown-content`, so the
-   first paragraph inside IS the lead). Funnel Display 300 is the
-   only Funnel body moment per handoff. */
-.sl-markdown-content > p:first-child {
+/* Lead paragraph — the single Funnel-Display moment in body copy.
+   Matched via the explicit `.docs-lead` class (emitted by the Lead
+   component) so eyebrows and other first paragraphs aren't swept
+   into this rule by the old `:first-child` selector. */
+.sl-markdown-content .docs-lead,
+.sl-markdown-content p.docs-lead {
   font-family: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
   font-weight: 300;
   font-size: 17px;
@@ -304,7 +305,7 @@ h1.content-panel-title,
   letter-spacing: -0.005em;
   color: var(--docs-fg-muted);
   max-width: 620px;
-  margin-bottom: 32px;
+  margin: 0 0 32px;
 }
 
 /* ─── LINKS: white underline, monochrome ─── */
@@ -1281,6 +1282,17 @@ starlight-theme-select {
   padding-left: 64px;
   /* leaves room for our traffic-light dot pseudo-element below */
   position: relative;
+  /* Starlight's default tablist-wrapper uses overflow:auto which
+     shows a horizontal scrollbar. Handoff §3 code chrome has no
+     scrollbar on the title bar — hide it. Tabs that genuinely
+     exceed the frame will clip; docs today never have enough to
+     wrap. */
+  overflow: hidden !important;
+}
+
+.sl-markdown-content > starlight-tabs > .tablist-wrapper::-webkit-scrollbar,
+.sl-markdown-content .sl-steps > li > starlight-tabs > .tablist-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 /* Traffic-light dots on the tab bar — match code-block chrome */
@@ -1352,16 +1364,15 @@ starlight-theme-select {
   color: var(--docs-fg-muted) !important;
 }
 
-/* Active tab — green 2px TOP inset + side borders + heading-white */
+/* Active tab — green 2px BOTTOM inset (matches Expressive Code
+   frame's active-tab indicator, handoff §3: "Active tab: white
+   text, 1px green bottom border, bg #080808"). */
 .sl-markdown-content > starlight-tabs a[role='tab'][aria-selected='true'],
 .sl-markdown-content .sl-steps > li > starlight-tabs a[role='tab'][aria-selected='true'] {
   font-weight: 600 !important;
   color: var(--docs-fg-heading) !important;
   background: var(--docs-bg-code) !important;
-  box-shadow:
-    inset 0 2px 0 var(--docs-accent-live),
-    1px 0 0 var(--docs-border-strong),
-    -1px 0 0 var(--docs-border-strong) !important;
+  box-shadow: inset 0 -2px 0 var(--docs-accent-live) !important;
   z-index: 1;
 }
 

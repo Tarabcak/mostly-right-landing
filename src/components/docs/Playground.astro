@@ -1,0 +1,317 @@
+---
+/**
+ * Docs Playground — interactive request/response demo.
+ *
+ * Handoff §7 spec:
+ *   2-column grid (inputs | response) with a 1px center gutter.
+ *   Header: green 6×6 square + LIVE PLAYGROUND label.
+ *   Inputs side: REQUEST eyebrow; stacked labeled text inputs;
+ *     format segmented control (json / toon) — active has solid
+ *     white bg + black text; big Run request → button.
+ *   Response side: RESPONSE eyebrow + 200 · 43ms on success;
+ *     pre-formatted JSON with syntax highlighting; 240px min-height.
+ *   Simulates a 650ms latency; cycles mid price by a small jitter.
+ *
+ * Static defaults match handoff Modules.jsx Playground().
+ */
+---
+
+<div class="docs-playground">
+  <div class="docs-playground-header">
+    <span class="docs-playground-dot" aria-hidden="true"></span>
+    Live playground
+  </div>
+  <div class="docs-playground-grid">
+    <div class="docs-playground-inputs">
+      <p class="docs-playground-eyebrow">Request</p>
+      <div class="docs-playground-field">
+        <label for="pg-city">city</label>
+        <input id="pg-city" type="text" value="NYC" spellcheck="false" autocomplete="off" />
+      </div>
+      <div class="docs-playground-field">
+        <label for="pg-asof">as_of</label>
+        <input id="pg-asof" type="text" value="2024-07-04T18:00:00Z" spellcheck="false" autocomplete="off" />
+      </div>
+      <div class="docs-playground-field">
+        <label>format</label>
+        <div class="docs-playground-seg" role="group" aria-label="Response format">
+          <button type="button" class="is-active" data-format="json">json</button>
+          <button type="button" data-format="toon">toon</button>
+        </div>
+      </div>
+      <button type="button" class="docs-playground-run" id="pg-run">
+        <span class="docs-playground-run-label">Run request →</span>
+      </button>
+    </div>
+    <div class="docs-playground-response">
+      <div class="docs-playground-response-head">
+        <span class="docs-playground-eyebrow">Response</span>
+        <span class="docs-playground-status" id="pg-status" hidden></span>
+      </div>
+      <pre class="docs-playground-body" id="pg-body"><span class="docs-playground-hint">// click "Run request" to see a real response</span></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector('.docs-playground') as HTMLElement | null;
+  if (root) {
+    const cityEl = root.querySelector('#pg-city') as HTMLInputElement;
+    const asofEl = root.querySelector('#pg-asof') as HTMLInputElement;
+    const runBtn = root.querySelector('#pg-run') as HTMLButtonElement;
+    const runLabel = root.querySelector('.docs-playground-run-label') as HTMLSpanElement;
+    const statusEl = root.querySelector('#pg-status') as HTMLSpanElement;
+    const bodyEl = root.querySelector('#pg-body') as HTMLPreElement;
+    const segButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('.docs-playground-seg button'));
+
+    let format: 'json' | 'toon' = 'json';
+    let loading = false;
+
+    segButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        segButtons.forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        format = (btn.dataset.format as 'json' | 'toon') ?? 'json';
+      });
+    });
+
+    const jitter = () => (0.58 + Math.random() * 0.08).toFixed(3);
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const highlightJson = (s: string) =>
+      escape(s)
+        .replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="tk-f">$1</span>$2')
+        .replace(/:\s*(&quot;[^&]*?&quot;)/g, (m, p1) => m.replace(p1, `<span class="tk-s">${p1}</span>`))
+        .replace(/\b(true|false|null)\b/g, '<span class="tk-k">$1</span>')
+        .replace(/(-?\b\d+(?:\.\d+)?\b)/g, '<span class="tk-n">$1</span>');
+
+    const toToon = (obj: unknown, indent = 0): string => {
+      const pad = '  '.repeat(indent);
+      if (obj === null) return 'null';
+      if (typeof obj !== 'object') return String(obj);
+      return Object.entries(obj as Record<string, unknown>)
+        .map(([k, v]) => {
+          if (v && typeof v === 'object') return `${pad}${k}:\n${toToon(v, indent + 1)}`;
+          return `${pad}${k}: ${String(v)}`;
+        })
+        .join('\n');
+    };
+
+    const run = () => {
+      if (loading) return;
+      loading = true;
+      runBtn.disabled = true;
+      runLabel.textContent = 'Running…';
+      statusEl.hidden = true;
+      bodyEl.innerHTML = '<span class="docs-playground-hint">// running…</span>';
+
+      window.setTimeout(() => {
+        const data = {
+          city: cityEl.value || 'NYC',
+          as_of: asofEl.value || '2024-07-04T18:00:00Z',
+          market: {
+            id: 'KXHIGHNY-24JUL04-T88',
+            mid: parseFloat(jitter()),
+            bid: 0.57,
+            ask: 0.61,
+          },
+          observations: { temp_f: 87.4, source: 'IEM', ts: '2024-07-04T17:51:00Z' },
+          forecast: { model: 'NBM', temp_f: 88, issued: '2024-07-04T06:00:00Z' },
+          settlement: { station: 'KNYC', basis: 'NWS CLI', lst: true },
+          version: 'v0.4.2',
+        };
+        const text = format === 'json' ? JSON.stringify(data, null, 2) : toToon(data);
+        bodyEl.innerHTML = format === 'json' ? highlightJson(text) : escape(text);
+        statusEl.textContent = '200 · 43ms';
+        statusEl.hidden = false;
+        runLabel.textContent = 'Run request →';
+        runBtn.disabled = false;
+        loading = false;
+      }, 650);
+    };
+
+    runBtn.addEventListener('click', run);
+  }
+</script>
+
+<style>
+  .docs-playground {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 24px 0;
+    background: #0a0a0a;
+  }
+  .docs-playground-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .docs-playground-dot {
+    width: 6px;
+    height: 6px;
+    background: #4ade80;
+    display: inline-block;
+  }
+  .docs-playground-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .docs-playground-inputs,
+  .docs-playground-response {
+    background: #080808;
+  }
+  .docs-playground-inputs {
+    padding: 18px 20px;
+  }
+  .docs-playground-eyebrow {
+    margin: 0 0 16px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+    font-weight: 600;
+  }
+  .docs-playground-field {
+    margin-bottom: 12px;
+  }
+  .docs-playground-field:last-of-type {
+    margin-bottom: 18px;
+  }
+  .docs-playground-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .docs-playground-field input {
+    width: 100%;
+    padding: 8px 10px;
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 120ms linear;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  .docs-playground-field input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  .docs-playground-seg {
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .docs-playground-seg button {
+    flex: 1;
+    padding: 8px 10px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: background 120ms linear, color 120ms linear;
+  }
+  .docs-playground-seg button.is-active {
+    background: #ffffff;
+    color: #0a0a0a;
+  }
+  .docs-playground-run {
+    width: 100%;
+    padding: 12px 16px;
+    background: #ffffff;
+    color: #0a0a0a;
+    border: 2px solid #ffffff;
+    border-radius: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 120ms linear, color 120ms linear;
+  }
+  .docs-playground-run:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .docs-playground-response-head {
+    padding: 18px 20px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .docs-playground-response-head .docs-playground-eyebrow {
+    margin: 0;
+  }
+  .docs-playground-status {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    font-variant-numeric: tabular-nums;
+  }
+  .docs-playground-body {
+    margin: 0;
+    padding: 0 20px 20px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.78);
+    overflow: auto;
+    max-height: 300px;
+    min-height: 240px;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+  }
+  .docs-playground-body :global(.tk-c) {
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
+  }
+  .docs-playground-body :global(.tk-s) {
+    color: rgba(255, 255, 255, 0.95);
+  }
+  .docs-playground-body :global(.tk-k) {
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .docs-playground-body :global(.tk-n) {
+    color: #ffffff;
+    font-variant-numeric: tabular-nums;
+  }
+  .docs-playground-body :global(.tk-f) {
+    color: #ffffff;
+  }
+  .docs-playground-hint {
+    color: rgba(255, 255, 255, 0.28);
+    font-style: italic;
+  }
+
+  @media (max-width: 720px) {
+    .docs-playground-grid {
+      grid-template-columns: 1fr;
+    }
+    .docs-playground-body {
+      min-height: 180px;
+    }
+  }
+</style>

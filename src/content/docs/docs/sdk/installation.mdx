@@ -3,6 +3,8 @@ title: SDK installation
 description: Install the MostlyRight Python SDK.
 ---
 
+import AsToolsPreview from '../../../../components/docs/AsToolsPreview.astro';
+
 ## 01 · Install
 
 ```bash
@@ -56,6 +58,8 @@ For AI agents, the SDK exposes its surface as a tools schema:
 tools = client.as_tools()
 # list of function schemas compatible with Claude, GPT function-calling, etc.
 ```
+
+<AsToolsPreview />
 
 Pair it with the feature catalog for retrieval-aware prompts:
 
