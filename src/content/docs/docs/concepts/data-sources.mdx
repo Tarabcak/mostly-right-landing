@@ -15,7 +15,7 @@ priority  source  origin                              when it's rawest
 
 For any given `(station, observed_at)`, the rawest source wins. First-reported wins within a source. One row per observation, no duplicates, no silent overwrites.
 
-## Why this order
+## 01 · Why this order
 
 **AWC is the sensor**. When an airport publishes a METAR, AWC has it within seconds. The string stored in `raw_metar` is the exact text the station broadcast. Nothing between the thermistor and you.
 
@@ -23,7 +23,7 @@ For any given `(station, observed_at)`, the rawest source wins. First-reported w
 
 **GHCNh is the quality-flagged archive**. NOAA's Global Historical Climatology Network – hourly is authoritative for historical analysis, but it's downstream of both AWC and IEM. It carries quality codes (0/1/4/5 good; I/P/R/U flagged) — we filter to raw-only. If there's a disagreement between GHCNh and AWC, GHCNh is the one that's been through someone's quality pipeline. We prefer the rawer number.
 
-## Raw-as-reported, no corrections
+## 02 · Raw-as-reported, no corrections
 
 **The first observation wins. Forever.**
 
@@ -35,7 +35,7 @@ When a Kalshi weather contract settled based on a 14:51Z METAR, it settled on 52
 
 The rule: **dedup comparison uses strict `>`, not `>=`**. A later report never overwrites an earlier one with the same observation timestamp.
 
-## The three-layer priority in practice
+## 03 · The three-layer priority in practice
 
 Imagine NYC at 2024-07-15 14:51Z, temperature 85°F.
 
@@ -56,7 +56,7 @@ Or the worst case — the station's outbound link was down for an hour.
 
 You always know which source produced a row by looking at `source` — never trust that all rows for a station are from the same source.
 
-## Downstream implications
+## 04 · Downstream implications
 
 - **`as_of` queries** are safe. When you filter `observed_at <= as_of`, you are asking "what did the market know at this time?" — and because we don't overwrite with later corrections, the answer is stable.
 - **Caching is safe**. A row with `(station, observed_at)` never changes. You can cache forever.

@@ -3,7 +3,7 @@ title: Quickstart
 description: Install the SDK, request an API key, and make your first call in under five minutes.
 ---
 
-## 1. Install
+## 01 · Install
 
 ```bash
 pip install mostlyright
@@ -11,7 +11,7 @@ pip install mostlyright
 
 Python 3.12+. `pandas` is optional — install it if you want `as_dataframe=True`.
 
-## 2. Get an API key
+## 02 · Get an API key
 
 Email [vuhcze@gmail.com](mailto:vuhcze@gmail.com) with your GitHub handle and what you're building. Private beta. We'll send a key.
 
@@ -23,7 +23,7 @@ export MOSTLYRIGHT_API_KEY="mr_..."
 
 The SDK picks it up automatically. No configuration needed.
 
-## 3. Your first historical call
+## 03 · Your first historical call
 
 ```python
 from mostlyright import MostlyRightClient
@@ -61,7 +61,7 @@ Expected output — a list of dicts, one row per observation, 30 raw fields each
 
 Temperatures are stored unrounded. Wind is in knots. Pressure in inHg and hPa. Source and observation type are always present.
 
-## 4. Your first live METAR call
+## 04 · Your first live METAR call
 
 ```python
 from mostlyright import WeatherLive
@@ -73,7 +73,7 @@ with WeatherLive() as live:
 
 `WeatherLive` hits AWC directly. Same field names as `MostlyRightClient.observations()` — column parity is enforced, so anything you did against historical data works against live with no code changes.
 
-## 5. Pick a station
+## 05 · Pick a station
 
 Twenty stations in the current registry:
 

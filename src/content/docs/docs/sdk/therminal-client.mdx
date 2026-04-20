@@ -10,7 +10,7 @@ from mostlyright import MostlyRightClient
 client = MostlyRightClient()
 ```
 
-## Construction
+## 01 · Construction
 
 ```python
 MostlyRightClient(
@@ -27,7 +27,7 @@ with MostlyRightClient() as client:
     obs = client.observations("NYC")
 ```
 
-## `observations()` — the main method
+## 02 · `observations()`: the main method
 
 Returns raw hourly weather observations.
 
@@ -103,7 +103,7 @@ client.observations(
 - **`limit`** — default 1000, max 10,000.
 - **`offset`** — skip N rows. Use in combination with `limit` for cursor-style paging. For time-series slicing, prefer `from_date`/`to_date` over `offset`.
 
-## Other methods
+## 03 · Other methods
 
 ### `climate(station, from_date, to_date, ...)`
 Daily climate aggregates from GHCNd. Different entity from observations — aggregated, not raw.
@@ -135,7 +135,7 @@ Runtime endpoint — returns rate limits, supported formats, SDK version compati
 ### `data_version(station, ...)`
 Deterministic version token for a station+range. Use to cache or to assert "the data I'm training on is the same data I traded on."
 
-## Common pitfalls
+## 04 · Common pitfalls
 
 ### Timezones
 All `observed_at` and `as_of` timestamps are UTC. Passing a naive or local timestamp for `as_of` raises `ValidationError`. Convert explicitly:

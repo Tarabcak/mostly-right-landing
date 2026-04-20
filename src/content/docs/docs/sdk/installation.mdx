@@ -3,7 +3,7 @@ title: SDK installation
 description: Install the MostlyRight Python SDK.
 ---
 
-## Install
+## 01 · Install
 
 ```bash
 pip install mostlyright
@@ -11,7 +11,7 @@ pip install mostlyright
 
 Python **3.12 or newer**. Older versions are not supported — the SDK uses modern type syntax (`str | None`) and structural pattern matching.
 
-## Optional dependencies
+## 02 · Optional dependencies
 
 The core SDK is zero-dependency beyond `httpx`. Install these if you need them:
 
@@ -22,7 +22,7 @@ pip install pyarrow  # for format="parquet" responses
 
 Neither is required for basic use.
 
-## Import
+## 03 · Import
 
 Two classes cover everything:
 
@@ -33,7 +33,7 @@ from mostlyright import WeatherLive         # real-time METAR, direct from AWC
 
 `TherminalClient` is a drop-in alias for `MostlyRightClient` — kept for backward compatibility with earlier `therminal-py` users. Use `MostlyRightClient` in new code.
 
-## Verify
+## 04 · Verify
 
 ```python
 from mostlyright import MostlyRightClient
@@ -48,7 +48,7 @@ print(f"{len(stations)} stations available")
 
 If you see `AuthenticationError`, your `MOSTLYRIGHT_API_KEY` env var isn't set. See [Authentication](/docs/authentication/).
 
-## Agent usage
+## 05 · Agent usage
 
 For AI agents, the SDK exposes its surface as a tools schema:
 

@@ -3,7 +3,7 @@ title: Authentication
 description: X-API-Key header, environment variables, rate limits.
 ---
 
-## Header
+## 01 · Header
 
 All requests to `api.mostlyright.xyz` require the `X-API-Key` header. Exemptions: `/health`, `/capabilities`, and `/openapi.json` (unauthenticated for discovery).
 
@@ -29,7 +29,7 @@ Or pass it explicitly:
 client = MostlyRightClient(api_key="mr_...")
 ```
 
-## Getting a key
+## 02 · Getting a key
 
 Private beta. Email [vuhcze@gmail.com](mailto:vuhcze@gmail.com) with:
 
@@ -38,7 +38,7 @@ Private beta. Email [vuhcze@gmail.com](mailto:vuhcze@gmail.com) with:
 
 We reply manually. Keys are scoped per-account and don't expire.
 
-## Rate limits
+## 03 · Rate limits
 
 Rate limiting is **not yet enforced**. The `/capabilities` endpoint is the runtime source of truth:
 
@@ -55,7 +55,7 @@ When limits turn on, they'll surface in two places:
 
 In the meantime: be reasonable. If you're pulling a full backfill, loop with a small sleep between requests and use `from_date` / `to_date` to page, not tight concurrent fan-out.
 
-## Errors
+## 04 · Errors
 
 The SDK maps HTTP status codes to typed exceptions:
 
@@ -79,7 +79,7 @@ except TherminalError as e:
     log.error(f"API call failed: {e}")
 ```
 
-## Key hygiene
+## 05 · Key hygiene
 
 - **Never commit keys to source.** Use env vars or a secrets manager.
 - **Don't embed keys in client-side code.** The SDK is a server/notebook/agent tool — not browser.

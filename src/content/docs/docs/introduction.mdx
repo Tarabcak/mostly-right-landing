@@ -5,13 +5,13 @@ description: Settlement truth layer for prediction markets. What MostlyRight is 
 
 MostlyRight is a data API for prediction markets. It starts with weather because weather settles first, fastest, and hardest on Kalshi.
 
-## The problem
+## 01 · The problem
 
 When you settle a weather market on Kalshi, you need exactly two numbers: **what the station reported, and when**. Public feeds give you approximations. Airport sensors publish METARs that get rewritten by downstream aggregators, rounded, timezone-shifted, and occasionally silently corrected hours later. By the time the number lands in most APIs, it's no longer the number the market settled on.
 
 That mismatch loses money. Not every day. But when it does, you won't know why — you'll just see a losing trade on a position you were certain of.
 
-## What we do
+## 02 · What we do
 
 We store weather observations **raw-as-reported**, from the station, at the moment they were reported. We never overwrite with corrections. The first observation wins. We validate against physics at ingest and quarantine bad records instead of dropping them silently.
 
@@ -25,7 +25,7 @@ GHCNh  (NOAA hourly archive)     priority 1
 
 Rawer source wins. First-reported wins within a source. One row per observation, no duplicates, no silent overwrites.
 
-## Who this is for
+## 03 · Who this is for
 
 - **Quants** running live Kalshi weather positions who need the exact number that settled the contract.
 - **AI agents** — Claude, GPT, any model that can call an HTTP endpoint — that need structured, cacheable, machine-readable weather data with versioning tokens.
@@ -33,7 +33,7 @@ Rawer source wins. First-reported wins within a source. One row per observation,
 
 Not for: casual weather dashboards, consumer apps, or anyone who wants their data "tidied up."
 
-## A first call
+## 04 · A first call
 
 ```python
 from mostlyright import MostlyRightClient
