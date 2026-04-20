@@ -590,21 +590,28 @@ h1.content-panel-title,
   letter-spacing: 0.06em !important;
   text-transform: lowercase !important;
   color: var(--docs-fg-heading) !important;
-  border-bottom: 1px solid var(--docs-accent-live) !important;
+  border: 0 !important;
   padding: 11px 16px 10px !important;
   display: inline-flex !important;
   align-items: center !important;
   flex: 0 0 auto !important;
   line-height: 1 !important;
   width: auto !important;
-  position: static !important;
-  /* Filled active-tab look matching Starlight Tabs + handoff §3
-     "Active tab: white text, 1px green bottom border, bg #080808".
-     Without this the single-block bash label floated on the tab bar
-     while multi-tab pip/poetry/uv showed a dark-filled active tab —
-     same indicator, different surfaces. Now both sit on bg-code. */
+  position: relative !important;
+  /* Folder-tab active state, matching Starlight Tabs:
+     - bg #080808 (code panel surface) so the label reads as
+       "pulled forward" onto the code area below
+     - 2px green top indicator via inset box-shadow (no layout cost)
+     - 1px side seams in border-strong to stitch into chrome
+     - margin-bottom: -1px + z-index: 1 so the label overlaps the
+       header's bottom border (the classic folder-tab overlap). */
   background: var(--docs-bg-code) !important;
+  box-shadow:
+    inset 0 2px 0 var(--docs-accent-live),
+    1px 0 0 var(--docs-border-strong),
+    -1px 0 0 var(--docs-border-strong) !important;
   margin-bottom: -1px !important;
+  z-index: 1;
   mask-image: none !important;
   content: 'code' !important; /* default fallback */
 }
@@ -1332,7 +1339,11 @@ starlight-theme-select {
   display: block;
   margin: 24px 0;
   border: 1px solid var(--docs-border-strong);
-  background: rgba(255, 255, 255, 0.02);
+  /* Container bg = code bg (#080808), darker than the page's #0a0a0a.
+     The tablist-wrapper paints rgba(white,.02) chrome ON TOP so the
+     header reads as the lighter strip above the code area. Matches
+     Expressive Code frames, which use codeBackground: #080808. */
+  background: var(--docs-bg-code);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.03),
     0 1px 0 rgba(0, 0, 0, 0.4);
@@ -1427,16 +1438,25 @@ starlight-theme-select {
   color: var(--docs-fg-muted) !important;
 }
 
-/* Active tab — green 1px BOTTOM inset. Handoff §3 explicitly
-   says 1px green bottom border, and Expressive Code renders the
-   bash label with a 1px green border-bottom via ::after. Starlight
-   Tabs was rendering 2px and the user caught the inconsistency. */
+/* Active tab — classic "folder tab" overlap, per full spec:
+   - 2px green TOP indicator (inset box-shadow, no layout cost)
+   - 1px side seams matching container border color
+   - margin-bottom: -1px + z-index: 1 so the tab's bottom edge
+     bleeds over the tablist-wrapper's bottom border, visually
+     merging the tab into the code panel surface below.
+   - background matches code panel (#080808) so the tab reads
+     as "pulled forward" onto the content. */
 .sl-markdown-content > starlight-tabs a[role='tab'][aria-selected='true'],
 .sl-markdown-content .sl-steps > li > starlight-tabs a[role='tab'][aria-selected='true'] {
   font-weight: 600 !important;
   color: var(--docs-fg-heading) !important;
   background: var(--docs-bg-code) !important;
-  box-shadow: inset 0 -1px 0 var(--docs-accent-live) !important;
+  box-shadow:
+    inset 0 2px 0 var(--docs-accent-live),
+    1px 0 0 var(--docs-border-strong),
+    -1px 0 0 var(--docs-border-strong) !important;
+  margin-bottom: -1px !important;
+  position: relative !important;
   z-index: 1;
 }
 
