@@ -12,7 +12,7 @@ function init(): void {
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const canvas = document.getElementById('waveCanvas') as HTMLCanvasElement | null;
+  const canvas = document.querySelector('.w-hero-wrapper #waveCanvas') as HTMLCanvasElement | null;
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d')!;
