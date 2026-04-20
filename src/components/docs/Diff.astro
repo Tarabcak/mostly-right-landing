@@ -59,6 +59,13 @@ const {
     background: #080808;
     min-width: 0;
   }
+  /* Kill Starlight's markdown rhythm rule adding 16px margin-top
+     to the second grid cell. Both columns should sit flush. */
+  .docs-diff-col,
+  .docs-diff-col > *,
+  .docs-diff-body {
+    margin-top: 0 !important;
+  }
   .docs-diff-head {
     padding: 10px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);

@@ -116,6 +116,14 @@ const {
     background: #080808;
     padding: 14px 16px;
   }
+  /* Starlight's markdown vertical-rhythm rule was adding 16px
+     margin-top to every grid cell after the first, breaking the
+     grid alignment. Reset it for cards and their descendants. */
+  .docs-astools-card,
+  .docs-astools-card > *,
+  .docs-astools-chip {
+    margin-top: 0 !important;
+  }
   .docs-astools-card-head {
     display: flex;
     justify-content: space-between;

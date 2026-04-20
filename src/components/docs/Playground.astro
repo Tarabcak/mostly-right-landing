@@ -173,6 +173,20 @@
   .docs-playground-inputs {
     padding: 18px 20px;
   }
+  /* Kill Starlight's markdown vertical-rhythm rule
+     `.sl-markdown-content :not(h1..) + :not(h1..) { margin-top: 16px }`
+     for every descendant inside the playground — it was stacking
+     16px above every field, the format seg, and the Run button,
+     compounding my own margin-bottom values and breaking layout. */
+  .docs-playground-inputs > *,
+  .docs-playground-response > *,
+  .docs-playground-field,
+  .docs-playground-field > *,
+  .docs-playground-seg,
+  .docs-playground-response-head,
+  .docs-playground-body {
+    margin-top: 0 !important;
+  }
   .docs-playground-eyebrow {
     margin: 0 0 16px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -219,6 +233,14 @@
   }
   .docs-playground-seg button {
     flex: 1;
+    /* Kill Starlight's markdown vertical rhythm rule
+       `.sl-markdown-content :not(h1..) + :not(h1..)` that was
+       applying margin-top: 16px to TOON because it's the second
+       sibling after JSON. That margin made TOON render 16px
+       shorter than JSON inside the flex row — visible as TOON
+       sitting 16px below the top of the seg with empty space
+       above it. */
+    margin: 0 !important;
     padding: 8px 10px;
     /* Disable native button styling — with appearance:auto, Chrome
      was painting its native white "buttonface" bg under my
