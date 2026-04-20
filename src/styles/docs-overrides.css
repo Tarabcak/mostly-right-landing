@@ -114,6 +114,17 @@
   --sl-shadow-lg: none;
 }
 
+/* ─── SKIP-LINK: inherit color ───
+   Starlight's SkipLink (`<a href="#_top">`) is visually clipped
+   until focused, but its baseline color was defaulting to
+   browser-blue (rgb(0,0,238)) — a DESIGN.md violation ("links:
+   color: inherit by default to prevent default-blue leak on
+   wrapper anchors"). Kill the default; Starlight's :focus rule
+   re-paints it on-white when activated by keyboard. */
+a[href='#_top'] {
+  color: inherit;
+}
+
 /* ─── BORDER-RADIUS: 0 EVERYWHERE (non-negotiable) ─── */
 .sl-markdown-content :is(pre, code, kbd, blockquote, table, img, figure),
 .expressive-code :is(.frame, pre, .copy button),
