@@ -1,0 +1,89 @@
+---
+/**
+ * Docs Steps — numbered 3-column grid that sits at the top of sequential
+ * pages (Quickstart). Shows the user what's about to happen.
+ *
+ * Handoff §2 Content Column, item 5:
+ *   "3-column grid, 1px border, each cell has 01 / 02 / 03 eyebrow +
+ *    step title"
+ * Spec from handoff Pages.jsx → Steps():
+ *   padding 16px 18px per cell, 1px vertical separator, 28px top margin,
+ *   44px bottom margin, eyebrow mono 10px .14em tracking faint, title
+ *   13px heading color.
+ *
+ * Usage in MDX:
+ *   import Steps from '@components/docs/Steps.astro';
+ *   <Steps steps={[
+ *     { n: '01', t: 'Install the SDK' },
+ *     { n: '02', t: 'Authenticate' },
+ *     { n: '03', t: 'Your first query' },
+ *   ]} />
+ */
+
+export interface Step {
+  n: string;
+  t: string;
+}
+
+export interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<ol class="docs-steps" style={`grid-template-columns: repeat(${steps.length}, 1fr);`}>
+  {
+    steps.map((s, i) => (
+      <li class={`docs-step${i < steps.length - 1 ? ' has-sep' : ''}`}>
+        <span class="docs-step-n">{s.n}</span>
+        <span class="docs-step-t">{s.t}</span>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .docs-steps {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 44px;
+    display: grid;
+    gap: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .docs-step {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .docs-step.has-sep {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .docs-step-n {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.28);
+    font-variant-numeric: tabular-nums;
+  }
+  .docs-step-t {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: #ffffff;
+    line-height: 1.35;
+  }
+
+  /* Mobile: stack vertically + switch separator to horizontal. */
+  @media (max-width: 720px) {
+    .docs-steps {
+      grid-template-columns: 1fr !important;
+    }
+    .docs-step.has-sep {
+      border-right: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  }
+</style>

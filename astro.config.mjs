@@ -26,6 +26,28 @@ export default defineConfig({
       title: 'Mostly Right',
       description: 'Settlement truth layer for prediction markets',
       customCss: ['./src/styles/docs-overrides.css'],
+      // Force dark mode on every docs page — handoff DESIGN.md is
+      // dark-only. The inline script sets data-theme BEFORE Starlight's
+      // built-in ThemeProvider runs, so there's no light-mode flash on
+      // users who have prefers-color-scheme: light. Also wipes any stale
+      // 'light' choice from localStorage (prior versions of the site
+      // may have surfaced a theme toggle we later removed).
+      head: [
+        {
+          tag: 'script',
+          content: `
+            (function () {
+              try {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.style.colorScheme = 'dark';
+                if (typeof localStorage !== 'undefined') {
+                  localStorage.setItem('starlight-theme', 'dark');
+                }
+              } catch (e) {}
+            })();
+          `.trim(),
+        },
+      ],
       // Marketing wordmark (wave mark + "Mostly Right" lockup). Using
       // replacesTitle:true hides the text title so the SVG carries the
       // brand. The faint "/ docs" eyebrow is added in CSS so it can go

@@ -1,0 +1,32 @@
+---
+/**
+ * Docs Lead — the single Funnel Display moment in body copy.
+ *
+ * Handoff §2 Content Column spec: Funnel Display 300, 17px, line-height 1.6,
+ * letter-spacing -0.005em, color rgba(255,255,255,.60), max-width 620px.
+ * "This is the ONLY Funnel moment in body copy — everything else is mono."
+ *
+ * Renders immediately below H1 as a lead paragraph.
+ *
+ * Usage inside an MDX page:
+ *   import Lead from '@components/docs/Lead.astro';
+ *   <Lead>Install the SDK, authenticate, and pull your first snapshot.</Lead>
+ */
+---
+
+<p class="docs-lead">
+  <slot />
+</p>
+
+<style>
+  .docs-lead {
+    font-family: 'Funnel Display', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 620px;
+    margin: 0 0 24px;
+  }
+</style>
