@@ -21,9 +21,11 @@
   "homepage": "https://github.com/Tarabcak/mostly-right-landing#readme",
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/starlight": "0.38.3",
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.102.1",
     "astro": "^6.1.4",
-    "satori": "^0.26.0"
+    "satori": "^0.26.0",
+    "starlight-openapi": "0.24.0"
   }
 }
