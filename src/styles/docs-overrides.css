@@ -540,7 +540,11 @@ h1.content-panel-title,
 }
 .expressive-code .frame > figcaption.header {
   background: rgba(255, 255, 255, 0.02) !important;
-  border-bottom: 1px solid var(--docs-border-strong) !important;
+  /* Separator moved from header border-bottom → pre border-top
+     (next rule). Same reason as Starlight Tabs: the folder-tab
+     language label uses margin-bottom: -1px + z-index: 1 to
+     overlap and hide the line directly under itself. */
+  border-bottom: 0 !important;
   min-height: 36px;
   display: flex !important;
   align-items: center !important;
@@ -550,6 +554,13 @@ h1.content-panel-title,
      traffic-light dots; right-pad for our absolutely-positioned COPY. */
   padding: 0 80px 0 64px !important;
   position: relative;
+}
+/* Chrome/code separator, drawn on the top of the code content
+   instead of the header's bottom so the active language label
+   (figcaption::after) with -1px margin and z-index:1 can
+   overlap + hide the line under itself. */
+.expressive-code .frame > pre {
+  border-top: 1px solid var(--docs-border-strong) !important;
 }
 
 /* Traffic-light dots — Expressive Code already renders these via
@@ -612,10 +623,15 @@ h1.content-panel-title,
      - margin-bottom: -1px + z-index: 1 so the label overlaps the
        header's bottom border (the classic folder-tab overlap). */
   background: var(--docs-bg-code) !important;
+  /* Shadow stack matches Starlight Tabs active anchor — see the
+     longer explanation there. The 0 1px 0 bg-code layer is the
+     one that hides the header's 1px border-bottom directly under
+     this label, finishing the folder-tab illusion. */
   box-shadow:
     inset 0 2px 0 var(--docs-accent-live),
     1px 0 0 var(--docs-border-strong),
-    -1px 0 0 var(--docs-border-strong) !important;
+    -1px 0 0 var(--docs-border-strong),
+    0 1px 0 var(--docs-bg-code) !important;
   margin-bottom: -1px !important;
   z-index: 1;
   mask-image: none !important;
@@ -1358,16 +1374,17 @@ starlight-theme-select {
 .sl-markdown-content > starlight-tabs > .tablist-wrapper,
 .sl-markdown-content .sl-steps > li > starlight-tabs > .tablist-wrapper {
   background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid var(--docs-border-strong);
+  /* Move the chrome/code separator OFF the wrapper. We paint it on
+     the tabpanel's border-top (see rule below), so the active tab,
+     with its -1px margin and z-index:1, can overlap + hide the line
+     directly under itself. This is what makes the active tab read
+     as a folder tab instead of a flat rectangle. */
   padding-left: 64px;
   /* leaves room for our traffic-light dot pseudo-element below */
   position: relative;
-  /* Starlight's default tablist-wrapper uses overflow:auto which
-     shows a horizontal scrollbar. Handoff §3 code chrome has no
-     scrollbar on the title bar — hide it. Tabs that genuinely
-     exceed the frame will clip; docs today never have enough to
-     wrap. */
-  overflow: hidden !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  scrollbar-width: none;
 }
 
 .sl-markdown-content > starlight-tabs > .tablist-wrapper::-webkit-scrollbar,
@@ -1457,21 +1474,48 @@ starlight-theme-select {
   font-weight: 600 !important;
   color: var(--docs-fg-heading) !important;
   background: var(--docs-bg-code) !important;
+  /* Shadow layers:
+     - inset 0 2px green   → 2px green TOP indicator
+     - 1px 0 / -1px 0      → side seams in chrome border color
+     - 0 1px 0 bg-code     → 1px BELOW the tab in CODE-PANEL color,
+                              painted over the wrapper's own 1px
+                              border-bottom so no hairline is
+                              visible directly under the active tab.
+                              This is what finishes the folder-tab
+                              illusion. */
   box-shadow:
     inset 0 2px 0 var(--docs-accent-live),
     1px 0 0 var(--docs-border-strong),
-    -1px 0 0 var(--docs-border-strong) !important;
+    -1px 0 0 var(--docs-border-strong),
+    0 1px 0 var(--docs-bg-code) !important;
   margin-bottom: -1px !important;
   position: relative !important;
   z-index: 1;
 }
 
-/* Tab panel — uses code bg since an active tab sits on it */
+/* Tab panel — uses code bg since an active tab sits on it.
+   The chrome/code separator lives here as border-top so the active
+   tab (margin-bottom: -1px, z-index: 1) can overlap and hide the
+   line right below itself. Inactive tabs sit on top of the line.
+   Starlight ships a default margin-top: 16px on this panel that
+   pushes the border down and away from the tab bar — zero that so
+   the line sits exactly at tab-bottom + 0px, where the overlap
+   can land. */
 .sl-markdown-content > starlight-tabs [role='tabpanel'],
 .sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'] {
   padding: 0 !important;
   border: 0 !important;
+  border-top: 1px solid var(--docs-border-strong) !important;
   background: transparent !important;
+  margin-top: 0 !important;
+}
+/* Only the first (active) tab panel gets the separator — hidden
+   inactive panels are display:none and would otherwise be invisible
+   anyway, but we narrow the selector to avoid stacking borders if
+   Starlight ever renders them. */
+.sl-markdown-content > starlight-tabs [role='tabpanel'][hidden],
+.sl-markdown-content .sl-steps > li > starlight-tabs [role='tabpanel'][hidden] {
+  border-top: 0 !important;
 }
 
 /* Drop the default expressive-code frame shadow AND the frame's own
