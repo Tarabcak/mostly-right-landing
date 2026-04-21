@@ -280,6 +280,34 @@
 .w-btn-ghost::before { background: var(--surface-white); }
 .w-btn-ghost:hover { color: var(--surface-dark); }
 
+/* Tertiary CTA — text + arrow, no chrome. Sits next to .w-btn; vertical
+   padding matches the button so the baseline aligns on the flex row. */
+.w-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 16px 4px;
+  transition: color 0.3s ease, transform 0.15s ease-out;
+}
+.w-text-link-arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.w-text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.w-text-link:hover .w-text-link-arrow { transform: translateX(4px); }
+.w-text-link:active { transform: scale(0.96); }
+.w-text-link:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 4px;
+}
+
 /* ─── PAIN STAT RIBBON ─── */
 .w-stat-ribbon {
   margin: 48px 0 56px;
