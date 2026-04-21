@@ -1,11 +1,12 @@
 ---
 /**
- * Docs topbar right cluster — version tag + GitHub text link.
+ * Docs topbar right cluster — version tag only.
  *
  * Replaces Starlight's default SocialIcons slot (see `components.SocialIcons`
- * override in astro.config.mjs) so the docs header matches the Claude
- * design screenshot: a small mono version badge, then "GitHub ↗" as a
- * text link (no icon).
+ * override in astro.config.mjs). Previously included a "GitHub ↗" text
+ * link to the SDK repo, but that repo is private — the link 404'd for
+ * every visitor. Dropped until the SDK goes public; keeping the version
+ * badge, which is the signal readers actually need.
  *
  * Version source: openapi.json's info.version — the SDK/API version these
  * docs document. Synced from mostlyright@main by the docs-sync workflow
@@ -20,9 +21,6 @@ const apiVersion = openapi?.info?.version ?? '';
 
 <div class="docs-top-right">
   <span class="docs-version" aria-label={`Version ${apiVersion}`}>v{apiVersion}</span>
-  <a class="docs-gh-link" href="https://github.com/Tarabcak/mostlyright" rel="noopener">
-    GitHub<span aria-hidden="true"> ↗</span>
-  </a>
 </div>
 
 <style>
@@ -37,18 +35,5 @@ const apiVersion = openapi?.info?.version ?? '';
     letter-spacing: 0.04em;
     color: rgba(255, 255, 255, 0.45);
     font-variant-numeric: tabular-nums;
-  }
-  .docs-gh-link {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    text-transform: none;
-    transition: color 0.15s ease;
-  }
-  .docs-gh-link:hover {
-    color: #fff;
   }
 </style>

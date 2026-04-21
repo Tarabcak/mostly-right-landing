@@ -163,13 +163,9 @@ export default defineConfig({
           label: TAG_LABELS[g.label] ?? g.label,
         })),
       ],
-      social: [
-        {
-          icon: 'github',
-          label: 'GitHub',
-          href: 'https://github.com/Tarabcak/mostlyright',
-        },
-      ],
+      // No `social:` entries — SDK repo (Tarabcak/mostlyright) is private
+      // and the landing repo isn't a link readers want. Re-add when the
+      // SDK goes public.
     }),
     sitemap({
       changefreq: 'weekly',

@@ -16,7 +16,7 @@ obs = archive.get("NYC", at="2026-04-02T12:00Z")
 obs.temp_f
 # 71  ← NWS correction issued Apr 4
 #       (original report was 69)`}
-  after={`# MostlyRight preserves what was actually
+  after={`# Mostly Right preserves what was actually
 # reported at query time. Replay is exact.
 obs = client.observations(
     "NYC", as_of="2026-04-02T12:00:00Z"
