@@ -25,6 +25,10 @@ export default defineConfig({
     starlight({
       title: 'Mostly Right',
       description: 'Settlement truth layer for prediction markets',
+      // Starlight's default assumes /favicon.svg (which we don't ship) —
+      // point at the real PNG in public/. Same asset used by the landing
+      // pages, so favicon matches across the whole site.
+      favicon: '/favicon.png',
       customCss: ['./src/styles/docs-overrides.css'],
       // Force dark mode on every docs page — handoff DESIGN.md is
       // dark-only. The inline script sets data-theme BEFORE Starlight's
@@ -77,6 +81,11 @@ export default defineConfig({
         // empty on API-ref pages. Our override reads the live sidebar
         // and falls back to that when pagination is empty.
         Pagination: './src/components/docs/Pagination.astro',
+        // Custom <head>: Starlight doesn't emit og:image, twitter:image,
+        // twitter:title, or twitter:description by default. The override
+        // appends them, pointing at the Satori-generated OG PNG for each
+        // page (see src/pages/og/[...slug].png.ts).
+        Head: './src/components/docs/Head.astro',
       },
       // Remove right-rail TOC per design handoff — intentional
       // "No right TOC — removed for focus." The column centers on the
