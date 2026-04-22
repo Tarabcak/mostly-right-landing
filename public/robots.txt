@@ -4,6 +4,10 @@
 
 User-agent: *
 Allow: /
+# Content Signals (contentsignals.org, IETF draft-romm-aipref-contentsignals).
+# Our business is selling data to agents. Anything an agent can reach here is
+# fair game for training, search indexing, and inference-time retrieval.
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 # Explicit allowlist for AI crawlers. Some CDNs block these by default.
 # We override that at the edge. If you are one of these agents, you are welcome.

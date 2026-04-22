@@ -1,0 +1,24 @@
+# Cloudflare Pages / Netlify-style response headers.
+# Applies after the static build lands in dist/.
+
+# RFC 8288 Link headers on every page so agents can discover our machine-
+# readable resources without parsing HTML. Keep this list short: only the
+# entry-point documents, not every subpage.
+/*
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </docs/api/>; rel="service-doc"; type="text/html", </llms.txt>; rel="alternate"; type="text/plain", </.well-known/agent-skills/index.json>; rel="https://agentskills.io/rel/index"; type="application/json"
+
+# RFC 9727 mandates application/linkset+json for the API catalog response.
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+  Cache-Control: public, max-age=300
+
+# Agent Skills Discovery index is plain JSON.
+/.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=300
+
+# SKILL.md files are markdown. Serve with the text/markdown media type so
+# agents fetching via Accept: text/markdown get a clean content match.
+/.well-known/agent-skills/*/SKILL.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=300

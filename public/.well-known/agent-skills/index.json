@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "mostlyright-sdk",
+      "type": "skill-md",
+      "description": "Install and use the Mostly Right Python SDK to pull weather observations, climate reports, numerical model forecasts, and Kalshi settlement pairs for prediction markets.",
+      "url": "/.well-known/agent-skills/mostlyright-sdk/SKILL.md",
+      "digest": "sha256:18877f4d20613ef6a429f977f9a89f8a15d1bef71ea947332ef623cd3298cd5f"
+    },
+    {
+      "name": "mostlyright-api",
+      "type": "skill-md",
+      "description": "Call the Mostly Right REST API directly over HTTPS. Covers authentication, endpoint map, response formats (JSON, CSV, parquet, TOON), and the point-in-time snapshot contract.",
+      "url": "/.well-known/agent-skills/mostlyright-api/SKILL.md",
+      "digest": "sha256:8d47b6659b642612f013b5ce457e42a202ddcb1b8b4ba0c7ead8b02079bb2ef3"
+    }
+  ]
+}

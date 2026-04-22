@@ -1,0 +1,40 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.mostlyright.xyz/",
+      "service-desc": [
+        {
+          "href": "https://api.mostlyright.xyz/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://mostlyright.md/docs/api/",
+          "type": "text/html"
+        },
+        {
+          "href": "https://mostlyright.md/docs/introduction/",
+          "type": "text/html"
+        }
+      ],
+      "service-meta": [
+        {
+          "href": "https://api.mostlyright.xyz/capabilities",
+          "type": "application/json"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.mostlyright.xyz/health",
+          "type": "application/json"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "mailto:vuhcze@gmail.com"
+        }
+      ]
+    }
+  ]
+}
