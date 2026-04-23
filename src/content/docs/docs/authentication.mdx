@@ -61,9 +61,8 @@ The SDK maps HTTP status codes to typed exceptions:
 
 | Status | Exception | When |
 |---|---|---|
-| 401 | `AuthenticationError` | Missing or invalid key |
-| 403 | `ForbiddenError` | Key valid, endpoint not allowed |
-| 404 | `NotFoundError` | Unknown station or route |
+| 401 | `AuthenticationError` | Missing or invalid key. Also returned for unknown routes (auth runs before routing). |
+| 404 | `NotFoundError` | Unknown station (with a valid key) |
 | 422 | `ValidationError` | Bad date format, unknown parameter |
 | 429 | `RateLimitError` | Rate limit (once enforced) |
 | 5xx | `ServerError` | Transient server issue |

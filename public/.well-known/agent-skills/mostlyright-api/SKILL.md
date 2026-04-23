@@ -42,6 +42,7 @@ Request a key by emailing vuhcze@gmail.com.
 | `GET /stations/{code}` | Metadata for one station. Accepts 3-letter NWS or 4-letter ICAO. |
 | `GET /observations` | METAR or SPECI observations. 30 raw fields per row. |
 | `GET /climate` | Daily NWS CLI climate reports. Kalshi settlement source. |
+| `GET /climate/gaps` | Gaps in the climate record for a station over a date range. |
 | `GET /forecasts` | IEM discrete-run forecast data. |
 | `GET /forecast_series` | Open-Meteo seamless forecast series. |
 | `GET /pairs` | Observations joined to climate and forecast per settlement date. |
@@ -74,7 +75,7 @@ ATL AUS BOS DCA DEN DFW HOU LAS LAX MDW
 MIA MSP NYC ORD PDX PHX SAN SEA SFO STL
 ```
 
-Use the 3-letter NWS code. Unknown codes return 404 with the valid list in the body.
+Use the 3-letter NWS code for `station=` query parameters. An unknown code returns 404; call `GET /stations` for the canonical list. The `/stations/{code}` metadata endpoint also accepts 4-letter ICAO codes (e.g. `KNYC`), case-insensitive.
 
 ## Temporal honesty
 

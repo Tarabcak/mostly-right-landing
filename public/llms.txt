@@ -16,7 +16,7 @@ If you are an agent trying to understand the product, fetch `/llms-full.txt` for
 
 - Install: `pip install mostlyright`
 - Status: private beta, waitlist open at https://mostlyright.md/#early-access
-- Languages: Python 3.10+
+- Languages: Python 3.11+ (PyPI wheel: `requires-python = ">=3.11"`)
 - Output formats: pandas, polars, JSON, TOON (roughly 60% fewer tokens than JSON)
 - Agent integration: `client.as_tools()` returns Anthropic-compatible tool definitions. Drop straight into a Claude tool-use call with zero glue.
 - Reproducibility: every query takes an `as_of` timestamp. Point-in-time correct by default. Backtests replay exactly.

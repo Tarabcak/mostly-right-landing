@@ -54,7 +54,7 @@ client.observations(
 
 ### Required-ish parameters
 
-- **`station`** — 3-letter NWS code (e.g. `"NYC"`, `"ATL"`). If omitted, returns a cross-station slice bounded by `from_date`/`to_date`.
+- **`station`** — 3-letter NWS code (e.g. `"NYC"`, `"ATL"`). Required.
 - **`from_date`** / **`to_date`** — `YYYY-MM-DD`. Inclusive on both ends.
 
 ### Settlement-critical parameters
@@ -114,8 +114,8 @@ Identifies gaps in the climate record for a station. Useful for sanity-checking 
 ### `pairs(station, horizons=[6, 12, 24], ...)`
 Joins forecasts to ground-truth observations at settlement. This is the dataset you train models against.
 
-### `snapshot()`
-Real-time cross-station snapshot — the latest observation from every station in one call. Optimized for dashboard polling.
+### `snapshot(station, as_of)`
+Point-in-time view of one station at a given UTC moment. Temporally honest: observations are filtered to `[window_start_utc, as_of]`, climate is withheld until the NWS CLI publication threshold has passed. Useful for dashboard polling and for auditing "what did the market know at time T?"
 
 ### `forecasts(station, model, ...)` and `forecast_series(...)`
 Forecast ingestion from NWS MOS and Open-Meteo. Returns the forecast record **as issued**, keyed by `issued_at`.
@@ -148,7 +148,9 @@ utc = local.astimezone(timezone.utc).isoformat()
 ```
 
 ### Station codes
-Use 3-letter NWS codes (`"NYC"`), not ICAO (`"KLGA"`). A 404 response gives you the full list of valid codes — don't guess.
+Use 3-letter NWS codes (`"NYC"`) for the `station` parameter on `observations()`, `climate()`, `forecasts()`, `snapshot()`, and `pairs()`. An unknown code returns 404. Call `client.stations()` to get the canonical list.
+
+The `/stations/{code}` metadata endpoint accepts either 3-letter NWS (`"NYC"`) or 4-letter ICAO (`"KNYC"`), case-insensitive. Elsewhere, 3-letter NWS only.
 
 ### Empty responses
 An empty list isn't an error. It means no observations in that range — gaps happen, especially at secondary stations. Use `availability()` to confirm whether the gap is real or a query bug.

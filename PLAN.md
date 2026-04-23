@@ -60,7 +60,7 @@ Logo | Weather | Docs↗ | Dashboard↗ | Get Early Access
 ```
 
 - "Weather" links to `/weather/`
-- "Docs" links to `https://docs.mostlyright.xyz` (external, new tab)
+- "Docs" links to `/docs/` (same origin, same tab)
 - "Dashboard" links to TBD URL (external, new tab) — **DECISION NEEDED**
 - "Get Early Access" links to `#early-access` (same behavior)
 - "Our Mission" moves to footer only

@@ -119,7 +119,7 @@
           observations: { temp_f: 87.4, source: 'IEM', ts: '2024-07-04T17:51:00Z' },
           forecast: { model: 'NBM', temp_f: 88, issued: '2024-07-04T06:00:00Z' },
           settlement: { station: 'KNYC', basis: 'NWS CLI', lst: true },
-          version: 'v0.4.2',
+          data_version: 'dv_9f4c8a1',
         };
         const text = format === 'json' ? JSON.stringify(data, null, 2) : toToon(data);
         bodyEl.innerHTML = format === 'json' ? highlightJson(text) : escape(text);

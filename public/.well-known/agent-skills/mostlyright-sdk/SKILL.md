@@ -23,7 +23,7 @@ If you only need a single one-off HTTP request, the companion skill `mostlyright
 pip install mostlyright
 ```
 
-Python 3.12 or newer. `pandas` and `pyarrow` are optional installs for `as_dataframe=True` and `format="parquet"` respectively.
+Python 3.11 or newer. The PyPI wheel requires `>=3.11`. `pandas` and `pyarrow` are optional installs for `as_dataframe=True` and `format="parquet"` respectively.
 
 ## Authenticate
 

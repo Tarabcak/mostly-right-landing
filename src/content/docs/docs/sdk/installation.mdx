@@ -11,18 +11,18 @@ import AsToolsPreview from '../../../../components/docs/AsToolsPreview.astro';
 pip install mostlyright
 ```
 
-Python **3.12 or newer**. Older versions are not supported — the SDK uses modern type syntax (`str | None`) and structural pattern matching.
+Python **3.11 or newer**. The wheel's `requires-python` is `>=3.11`. Older versions are not supported.
 
 ## 02 · Optional dependencies
 
-The core SDK is zero-dependency beyond `httpx`. Install these if you need them:
+Install these separately if you need them:
 
 ```bash
 pip install pandas   # for as_dataframe=True on observations/forecasts/pairs
 pip install pyarrow  # for format="parquet" responses
 ```
 
-Neither is required for basic use.
+Neither is required for basic use. (The wheel itself pulls a small dependency tree via `httpx`.)
 
 ## 03 · Import
 
@@ -42,7 +42,7 @@ from mostlyright import MostlyRightClient
 
 client = MostlyRightClient()
 print(client.health())
-# {"status": "ok", "version": "0.11.0"}
+# {"status": "ok", "version": "0.14.1", "stations": 20, "data_dir_exists": true}
 
 stations = client.stations()
 print(f"{len(stations)} stations available")

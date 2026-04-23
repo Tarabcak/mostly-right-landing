@@ -62,7 +62,7 @@ Observations, forecasts, satellite, and settlement. All the data behind every Ka
 ```
 $ pip install mostlyright
 
-mostlyright 0.11.0 · ready
+mostlyright · ready
 
 Cities............60+
 History...........1948 → live

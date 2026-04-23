@@ -50,24 +50,9 @@ This is the opposite of standard data-engineering hygiene. In most pipelines, da
 
 ## 03 · What we do keep about corrections
 
-We do not overwrite, but we do not throw away the correction either. When AWC publishes a COR or RTD METAR (coded correction), we ingest it as a new row with a different `report_type` and, if one is given, a different `observed_at`. If the correction carries the same `observed_at` as the original, it lands in an audit table, not the primary observation table.
+We do not overwrite, but we do not throw away the correction either. When AWC publishes a COR or RTD METAR (coded correction), we ingest it as a new row with a different `observation_type` and, if one is given, a different `observed_at`. If the correction carries the same `observed_at` as the original, it lands in an audit table, not the primary observation table.
 
-You can inspect that audit table if you need to:
-
-```python
-from mostlyright import MostlyRightClient
-
-with MostlyRightClient() as client:
-    corrections = client.corrections(
-        station="NYC",
-        from_date="2026-04-02",
-        to_date="2026-04-02",
-    )
-    for c in corrections:
-        print(c.observed_at, c.original["temp_f"], "→", c.corrected["temp_f"])
-```
-
-This is an audit surface, not a settlement surface. Settlement always uses the original.
+A public audit-query surface is on the roadmap. For now, corrections are stored but not exposed through the SDK. Settlement always uses the original `observation_type="METAR"` row.
 
 ## 04 · The `as_of` guarantee
 

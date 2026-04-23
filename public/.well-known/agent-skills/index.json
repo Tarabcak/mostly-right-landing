@@ -6,14 +6,14 @@
       "type": "skill-md",
       "description": "Install and use the Mostly Right Python SDK to pull weather observations, climate reports, numerical model forecasts, and Kalshi settlement pairs for prediction markets.",
       "url": "/.well-known/agent-skills/mostlyright-sdk/SKILL.md",
-      "digest": "sha256:5ab5b411054a5ddd366cdd4d6b3ff8b4981c318d5739f5c3ca6b8460b5c3e4a1"
+      "digest": "sha256:89736b1bd382809501d238a129deef84f420d3aa6e932bb14826fe9b54e4d42a"
     },
     {
       "name": "mostlyright-api",
       "type": "skill-md",
       "description": "Call the Mostly Right REST API directly over HTTPS. Covers authentication, endpoint map, response formats (JSON, CSV, parquet, TOON), and the point-in-time snapshot contract.",
       "url": "/.well-known/agent-skills/mostlyright-api/SKILL.md",
-      "digest": "sha256:379de90e0a5ef79a5cc5064fd8e7070e64feda009d510ab6a4a4c2ffdfeb594f"
+      "digest": "sha256:0485642899a64fe6a646afda7a3302989ca1676fb2c2f45458d4d2ecaaf7bf58"
     }
   ]
 }

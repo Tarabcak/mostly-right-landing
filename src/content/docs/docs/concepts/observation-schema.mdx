@@ -1,101 +1,132 @@
 ---
 title: Observation schema
-description: The 30-field contract every observation row carries, from station code to raw METAR string, with units, types, and nullability called out.
+description: The 30-field contract every observation row carries, sourced from specs/observation.json. Canonical field names, units, types, and nullability.
 ---
 
-Every row returned by `observations()` carries the same 30 fields. Live or historical, JSON or parquet, one station or many. Column parity is enforced by a single `OBSERVATION_SCHEMA` spec inside the SDK. Any deviation at the source raises `SchemaValidationError` before it reaches you.
+Every row returned by `observations()` carries the same 30 fields. Live or historical, JSON or parquet, one station or many. Column parity is enforced by the `specs/observation.json` spec shared between the API and the SDK. Any deviation at the source raises `SchemaValidationError` before it reaches you.
 
-This is the reference for those 30 fields.
+This page is the human-readable reference. The machine-readable contract is at [`specs/observation.json`](https://api.mostlyright.md/openapi.json).
 
 ## 01 · Identity
 
-| Field         | Type   | Notes                                              |
-| ------------- | ------ | -------------------------------------------------- |
-| `station`     | string | 3-letter NWS code, uppercase (`"NYC"`, `"ATL"`)    |
-| `icao`        | string | 4-letter ICAO (`"KJFK"`), useful for GIS joins     |
-| `observed_at` | string | UTC ISO-8601 timestamp of the observation          |
-| `report_type` | string | `"METAR"` or `"SPECI"` (special, off-hour)         |
+| Field              | Type   | Notes                                             |
+| ------------------ | ------ | ------------------------------------------------- |
+| `station_code`     | string | 3-letter NWS code, uppercase (`"NYC"`, `"ATL"`)   |
+| `observed_at`      | string | UTC ISO-8601 timestamp of the observation         |
+| `observation_type` | string | `"METAR"` or `"SPECI"` (special, off-hour)        |
 
-Every row is uniquely keyed by `(station, observed_at, report_type)`. No duplicates, no silent overwrites. See [Raw-as-reported](/docs/concepts/raw-as-reported/).
+Every row is uniquely keyed by `(station_code, observed_at, observation_type)`. No duplicates, no silent overwrites. See [Raw-as-reported](/docs/concepts/raw-as-reported/).
 
-## 02 · Temperature and humidity
+## 02 · Source
 
-| Field              | Type  | Unit | Nullable | Notes                                 |
-| ------------------ | ----- | ---- | -------- | ------------------------------------- |
-| `temp_f`           | float | °F   | No       | Stored unrounded, e.g. `72.3`         |
-| `temp_c`           | float | °C   | No       | Derived from `temp_f`                 |
-| `dewpoint_f`       | float | °F   | Yes      | Missing on some older METARs          |
-| `dewpoint_c`       | float | °C   | Yes      |                                       |
-| `rel_humidity_pct` | float | %    | Yes      | Computed from `temp_f` + `dewpoint_f` |
-| `heat_index_f`     | float | °F   | Yes      | US heat index, populated when hot     |
+| Field    | Type   | Notes                                                            |
+| -------- | ------ | ---------------------------------------------------------------- |
+| `source` | string | `"AWC"`, `"IEM"`, or `"GHCNh"`. Which pipeline produced the row. |
+
+See [Data sources](/docs/concepts/data-sources/) for priority rules.
+
+## 03 · Temperature
+
+| Field        | Type  | Unit | Nullable | Notes                          |
+| ------------ | ----- | ---- | -------- | ------------------------------ |
+| `temp_f`     | float | °F   | No       | Stored unrounded, e.g. `72.3`. |
+| `temp_c`     | float | °C   | No       | Derived from `temp_f`.         |
+| `dewpoint_f` | float | °F   | Yes      | Missing on some older METARs.  |
+| `dewpoint_c` | float | °C   | Yes      |                                |
 
 Temperatures are never rounded to integers in storage. If your settlement logic needs a rounded integer, round at read time. The raw value is always available.
 
-## 03 · Wind
+## 04 · Wind
 
-| Field           | Type | Unit         | Notes                                    |
-| --------------- | ---- | ------------ | ---------------------------------------- |
-| `wind_dir_deg`  | int  | degrees true | `0` through `360`, null for variable     |
-| `wind_speed_kt` | int  | knots        | Integer knots, see raw METAR for decimal |
-| `wind_gust_kt`  | int  | knots        | Null when no gust was reported           |
+| Field              | Type | Unit          | Notes                                       |
+| ------------------ | ---- | ------------- | ------------------------------------------- |
+| `wind_dir_degrees` | int  | degrees true  | `0` through `360`, null for variable winds. |
+| `wind_speed_kt`    | int  | knots         | Integer knots. See `raw_metar` for decimal. |
+| `wind_gust_kt`     | int  | knots         | Null when no gust was reported.             |
 
 Winds are in knots because METARs are in knots. Convert to mph or m/s client-side if needed.
 
-## 04 · Pressure
+## 05 · Peak wind
 
-| Field           | Type  | Unit | Notes                                   |
-| --------------- | ----- | ---- | --------------------------------------- |
-| `pressure_inhg` | float | inHg | Altimeter setting, e.g. `30.12`         |
-| `pressure_hpa`  | float | hPa  | Altimeter setting, hectopascals         |
-| `slp_hpa`       | float | hPa  | Sea-level pressure, null on many METARs |
+| Field               | Type   | Unit         | Notes                                               |
+| ------------------- | ------ | ------------ | --------------------------------------------------- |
+| `peak_wind_gust_kt` | int    | knots        | Peak gust since the last report. Null if not given. |
+| `peak_wind_dir`     | int    | degrees true | Direction of the peak gust.                         |
+| `peak_wind_time`    | string | UTC time     | ISO-8601 timestamp of the peak gust.                |
 
-`pressure_inhg` / `pressure_hpa` are the altimeter setting, not MSL pressure. For MSL pressure, use `slp_hpa` when non-null.
+Peak wind fields are populated when a METAR includes a `PK WND` group and are null otherwise.
 
-## 05 · Visibility, sky, weather
+## 06 · Pressure
 
-| Field           | Type   | Unit  | Notes                                    |
-| --------------- | ------ | ----- | ---------------------------------------- |
-| `visibility_mi` | float  | miles | Statute miles                            |
-| `weather_codes` | string |       | Raw METAR weather codes (`"RA BR"`)      |
-| `sky_cover`     | string |       | `"CLR"`, `"SCT"`, `"BKN"`, `"OVC"`       |
-| `ceiling_ft`    | int    | feet  | Cloud ceiling, null if clear or missing  |
+| Field                   | Type  | Unit | Notes                                                  |
+| ----------------------- | ----- | ---- | ------------------------------------------------------ |
+| `altimeter_inhg`        | float | inHg | Altimeter setting, e.g. `30.12`.                       |
+| `sea_level_pressure_mb` | float | mb   | Sea-level pressure, null on many METARs. (1 mb = 1 hPa.) |
 
-`weather_codes` is the raw METAR code string. We do not translate it. If you need "rain" or "snow" booleans, derive them from this column client-side.
+`altimeter_inhg` is the altimeter setting, not MSL pressure. For MSL pressure use `sea_level_pressure_mb` when non-null.
 
-## 06 · Precipitation
+## 07 · Sky cover
 
-| Field           | Type  | Unit   | Notes                               |
-| --------------- | ----- | ------ | ----------------------------------- |
-| `precip_1h_in`  | float | inches | Past 1 hour, null if not reported   |
-| `precip_3h_in`  | float | inches | Past 3 hours, null if not reported  |
-| `precip_6h_in`  | float | inches | Past 6 hours, null if not reported  |
-| `precip_24h_in` | float | inches | Past 24 hours, null if not reported |
+METAR reports up to four cloud layers. Lower layer slots are populated first. Use `sky_cover_1` as the lowest significant layer for quick checks.
 
-Precipitation fields are cumulative across the labeled window ending at `observed_at`. They are not always populated. Some stations report only `precip_1h_in`, others only `precip_6h_in`. For settlement, use the specific window the contract names.
+| Field           | Type   | Unit | Notes                                                    |
+| --------------- | ------ | ---- | -------------------------------------------------------- |
+| `sky_cover_1`   | string |      | First layer: `"CLR"`, `"SCT"`, `"BKN"`, or `"OVC"`.      |
+| `sky_base_1_ft` | int    | feet | Base of layer 1, AGL.                                    |
+| `sky_cover_2`   | string |      | Second layer, null if absent.                            |
+| `sky_base_2_ft` | int    | feet | Base of layer 2, AGL.                                    |
+| `sky_cover_3`   | string |      | Third layer, null if absent.                             |
+| `sky_base_3_ft` | int    | feet | Base of layer 3, AGL.                                    |
+| `sky_cover_4`   | string |      | Fourth layer, null if absent.                            |
+| `sky_base_4_ft` | int    | feet | Base of layer 4, AGL.                                    |
 
-## 07 · Provenance and replay
+## 08 · Visibility and weather
 
-| Field          | Type   | Notes                                                     |
-| -------------- | ------ | --------------------------------------------------------- |
-| `source`       | string | `"AWC"`, `"IEM"`, or `"GHCNh"`. Which pipeline produced   |
-| `raw_metar`    | string | Full raw METAR string as broadcast                        |
-| `ingested_at`  | string | UTC timestamp when we parsed and stored the row           |
-| `data_version` | string | Deterministic token. Same input set produces same token   |
-| `quality_code` | string | GHCNh quality flag, null for AWC/IEM                      |
+| Field              | Type   | Unit  | Notes                                                   |
+| ------------------ | ------ | ----- | ------------------------------------------------------- |
+| `visibility_miles` | float  | miles | Statute miles.                                          |
+| `weather_codes`    | string |       | Raw METAR weather code string, e.g. `"RA BR"`.          |
+
+`weather_codes` is the raw METAR code string, not a translation. If you need "rain" or "snow" booleans, derive them from this column client-side.
+
+## 09 · Precipitation
+
+| Field               | Type  | Unit   | Notes                                                |
+| ------------------- | ----- | ------ | ---------------------------------------------------- |
+| `precip_1hr_inches` | float | inches | Past 1 hour ending at `observed_at`, null if missing. |
+
+Precipitation is cumulative across the last hour ending at `observed_at`. Not always populated; some stations only report during precipitation events.
+
+## 10 · Snow
+
+| Field               | Type  | Unit   | Notes                                  |
+| ------------------- | ----- | ------ | -------------------------------------- |
+| `snow_depth_inches` | float | inches | Current snow depth on the ground.      |
+
+## 11 · Provenance
+
+| Field       | Type   | Notes                                                      |
+| ----------- | ------ | ---------------------------------------------------------- |
+| `qc_field`  | string | Quality-control marker from the source pipeline, nullable. |
+| `raw_metar` | string | Full raw METAR string as broadcast.                        |
 
 `raw_metar` is the ground truth. Everything else in the row is a parse of it. If our parse is wrong, `raw_metar` lets you re-parse yourself. If you are building a model on the decoded fields, cross-check against `raw_metar` in training. It is the most honest signal the row carries.
 
-## 08 · Field groups at a glance
+## 12 · Field groups at a glance
 
-- **Identity (4):** `station`, `icao`, `observed_at`, `report_type`
-- **Temperature and humidity (6):** `temp_f`, `temp_c`, `dewpoint_f`, `dewpoint_c`, `rel_humidity_pct`, `heat_index_f`
-- **Wind (3):** `wind_dir_deg`, `wind_speed_kt`, `wind_gust_kt`
-- **Pressure (3):** `pressure_inhg`, `pressure_hpa`, `slp_hpa`
-- **Visibility / sky (4):** `visibility_mi`, `weather_codes`, `sky_cover`, `ceiling_ft`
-- **Precipitation (4):** `precip_1h_in`, `precip_3h_in`, `precip_6h_in`, `precip_24h_in`
-- **Provenance (5):** `source`, `raw_metar`, `ingested_at`, `data_version`, `quality_code`
+- **Identity (3):** `station_code`, `observed_at`, `observation_type`
+- **Source (1):** `source`
+- **Temperature (4):** `temp_f`, `temp_c`, `dewpoint_f`, `dewpoint_c`
+- **Wind (3):** `wind_dir_degrees`, `wind_speed_kt`, `wind_gust_kt`
+- **Peak wind (3):** `peak_wind_gust_kt`, `peak_wind_dir`, `peak_wind_time`
+- **Pressure (2):** `altimeter_inhg`, `sea_level_pressure_mb`
+- **Sky cover (8):** `sky_cover_1/2/3/4`, `sky_base_1_ft/2_ft/3_ft/4_ft`
+- **Visibility and weather (2):** `visibility_miles`, `weather_codes`
+- **Precipitation (1):** `precip_1hr_inches`
+- **Snow (1):** `snow_depth_inches`
+- **Provenance (2):** `qc_field`, `raw_metar`
 
-Thirty fields, never 29, never 31. New fields ship behind an opt-in `features` selector first, then move to everyone on the next minor version.
+Thirty fields, sourced from the `specs/observation.json` contract. New fields ship behind an opt-in `features` selector first, then move to everyone on the next minor version.
 
 ## Related
 

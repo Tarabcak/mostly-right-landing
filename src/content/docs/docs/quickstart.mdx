@@ -37,7 +37,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
   </TabItem>
 </Tabs>
 
-Python 3.12+. `pandas` is optional — install it if you want `as_dataframe=True`.
+Python 3.11+. `pandas` is optional, install it if you want `as_dataframe=True`.
 
 ## 02 · Get an API key
 
@@ -82,18 +82,18 @@ Expected output — a list of dicts, one row per observation, 30 raw fields each
 ```python
 168 observations
 {
-  "station": "NYC",
+  "station_code": "NYC",
   "observed_at": "2026-04-01T00:51:00Z",
+  "observation_type": "METAR",
+  "source": "IEM",
   "temp_f": 52,
   "temp_c": 11.1,
   "dewpoint_f": 45,
-  "wind_dir_deg": 270,
+  "wind_dir_degrees": 270,
   "wind_speed_kt": 8,
-  "pressure_inhg": 30.12,
-  "visibility_mi": 10.0,
+  "altimeter_inhg": 30.12,
+  "visibility_miles": 10.0,
   ...
-  "source": "IEM",
-  "observation_type": "METAR",
 }
 ```
 
@@ -120,7 +120,9 @@ ATL  AUS  BOS  DCA  DEN  DFW  HOU  LAS  LAX  MDW
 MIA  MSP  NYC  ORD  PDX  PHX  SAN  SEA  SFO  STL
 ```
 
-Use the 3-letter NWS code, not ICAO. If you pass an unknown code you'll get a 404 with the full list of valid codes in the response.
+Use the 3-letter NWS code for the `station` parameter on `observations()`. An unknown code returns 404. Call `client.stations()` for the canonical list.
+
+The `/stations/{code}` endpoint is more permissive and accepts either the 3-letter NWS code (`"NYC"`) or the 4-letter ICAO code (`"KNYC"`), case-insensitive, for metadata lookups.
 
 List them programmatically:
 
