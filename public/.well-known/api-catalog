@@ -1,10 +1,10 @@
 {
   "linkset": [
     {
-      "anchor": "https://api.mostlyright.xyz/",
+      "anchor": "https://api.mostlyright.md/",
       "service-desc": [
         {
-          "href": "https://api.mostlyright.xyz/openapi.json",
+          "href": "https://api.mostlyright.md/openapi.json",
           "type": "application/json"
         }
       ],
@@ -20,13 +20,13 @@
       ],
       "service-meta": [
         {
-          "href": "https://api.mostlyright.xyz/capabilities",
+          "href": "https://api.mostlyright.md/capabilities",
           "type": "application/json"
         }
       ],
       "status": [
         {
-          "href": "https://api.mostlyright.xyz/health",
+          "href": "https://api.mostlyright.md/health",
           "type": "application/json"
         }
       ],

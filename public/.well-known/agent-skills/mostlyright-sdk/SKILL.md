@@ -96,6 +96,6 @@ Call `feature_catalog()` before building a feature vector. It tells the agent wh
 
 ## Related resources
 
-- OpenAPI specification: https://api.mostlyright.xyz/openapi.json
-- Health endpoint: https://api.mostlyright.xyz/health
-- Capabilities endpoint: https://api.mostlyright.xyz/capabilities
+- OpenAPI specification: https://api.mostlyright.md/openapi.json
+- Health endpoint: https://api.mostlyright.md/health
+- Capabilities endpoint: https://api.mostlyright.md/capabilities

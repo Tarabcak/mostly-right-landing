@@ -5,7 +5,7 @@ description: Call the Mostly Right REST API directly over HTTPS to fetch weather
 
 # Mostly Right REST API
 
-Mostly Right is the settlement truth layer for prediction markets. This skill covers the REST surface at `api.mostlyright.xyz`. If Python is available, prefer the companion skill `mostlyright-sdk`.
+Mostly Right is the settlement truth layer for prediction markets. This skill covers the REST surface at `api.mostlyright.md`. If Python is available, prefer the companion skill `mostlyright-sdk`.
 
 ## When to use this skill
 
@@ -16,10 +16,10 @@ Mostly Right is the settlement truth layer for prediction markets. This skill co
 ## Base URL
 
 ```
-https://api.mostlyright.xyz
+https://api.mostlyright.md
 ```
 
-OpenAPI specification: https://api.mostlyright.xyz/openapi.json
+OpenAPI specification: https://api.mostlyright.md/openapi.json
 
 ## Authentication
 
@@ -27,7 +27,7 @@ Every endpoint except `/health`, `/capabilities`, and `/openapi.json` requires t
 
 ```bash
 curl -H "X-API-Key: $MOSTLYRIGHT_API_KEY" \
-  "https://api.mostlyright.xyz/observations?station=NYC&from_date=2026-04-01&to_date=2026-04-07"
+  "https://api.mostlyright.md/observations?station=NYC&from_date=2026-04-01&to_date=2026-04-07"
 ```
 
 Request a key by emailing vuhcze@gmail.com.
@@ -62,7 +62,7 @@ Example:
 
 ```bash
 curl -H "X-API-Key: $MOSTLYRIGHT_API_KEY" \
-  "https://api.mostlyright.xyz/pairs?station=NYC&from_date=2026-01-01&to_date=2026-04-01&format=toon"
+  "https://api.mostlyright.md/pairs?station=NYC&from_date=2026-01-01&to_date=2026-04-01&format=toon"
 ```
 
 ## Stations

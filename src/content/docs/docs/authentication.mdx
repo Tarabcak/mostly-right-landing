@@ -5,11 +5,11 @@ description: X-API-Key header, environment variables, rate limits.
 
 ## 01 · Header
 
-All requests to `api.mostlyright.xyz` require the `X-API-Key` header. Exemptions: `/health`, `/capabilities`, and `/openapi.json` (unauthenticated for discovery).
+All requests to `api.mostlyright.md` require the `X-API-Key` header. Exemptions: `/health`, `/capabilities`, and `/openapi.json` (unauthenticated for discovery).
 
 ```bash
 curl -H "X-API-Key: mr_your_key_here" \
-  https://api.mostlyright.xyz/observations?station=NYC&from_date=2026-04-01
+  https://api.mostlyright.md/observations?station=NYC&from_date=2026-04-01
 ```
 
 In Python, the SDK picks up the key from `MOSTLYRIGHT_API_KEY`:
